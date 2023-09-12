@@ -1,0 +1,91 @@
+{% load static %}
+
+{% block body %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login</title>
+    <link rel="stylesheet" href="{% static 'css/style.css'%}" />
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <div class="container">
+    {% for messages in messages %}
+    <p style="color:red">{{ messages }}</p>
+    {% endfor %}
+      <form action="" method="POST">
+         {% csrf_token %}
+        <div class="title">
+        <img src="{% static 'image/logo.png'%}" width="330" height="65"></div>
+
+
+        <div class="input-box underline">
+          <input id="emailInput" name="username" type="text" placeholder="Enter Your Email" required />
+          <div class="underline"></div>
+          <div id="emailError" style="color:red;"></div>
+        </div>
+
+        <div class="input-box">
+          <input name="password" type="password" placeholder="Enter Your Password" required />
+          <div class="underline"></div>
+        </div>
+
+        <div class="input-box button">
+          <input type="submit" name="" value="Submit" />
+        </div>
+      </form>
+      <form action="{% url 'password_reset' %}" method="POST">
+      {% csrf_token %}
+      <div class="form-group">
+        <a href="{% url 'password_reset' %}" class="forget-password">forgot password?</a>
+      </div>
+      </form>
+      <div class="singup-link">
+      <a href="{% url 'register_page' %}">Don't have an account? sign up</a>
+      </div>
+    </div>
+
+    <script>
+        document.getElementById('emailInput').addEventListener('input', function(e) {
+            const email = e.target.value;
+            const periodCount = (email.match(/\./g) || []).length;
+            const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/;
+
+            if (!emailRegex.test(email)) {
+                document.getElementById('emailError').textContent = "Invalid email format.";
+            } else if (periodCount > 3) {
+                document.getElementById('emailError').textContent = "Email can't have more than 3 periods.";
+            } else {
+                document.getElementById('emailError').textContent = '';
+            }
+        });
+    </script>
+    <style>
+    a:link {
+    /* Styles for regular, unvisited links */
+    color: inherit;
+    text-decoration: none;
+}
+
+a:visited {
+    /* Styles for visited links */
+    color: inherit; 
+}
+
+a:hover {
+    /* Styles for links on mouse-over */
+    color: #555;  /* Example gray color, you can change this */
+    text-decoration: none; /* Add underline back on hover, if desired */
+}
+
+a:active {
+    /* Styles for active (being clicked) links */
+    color: inherit;
+}
+
+    </style>
+  </body>
+</html>
+{% endblock %}
