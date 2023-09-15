@@ -52,6 +52,8 @@ urlpatterns = [
   path('add_resource/', views.add_resource, name='add_resource'),
   path('edit_resource/<int:id>/', views.edit_resource, name='edit_resource'),
   path('delete_resource/<int:id>/', views.delete_resource, name='delete_resource'),
-
+ 
+ #student dashboard
+  path('d/<int:id>/',views.downloadresource,name='downloadresource')
   
 ]
