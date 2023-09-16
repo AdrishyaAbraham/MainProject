@@ -6,10 +6,13 @@ from django.shortcuts import render, redirect,get_object_or_404
 from django.urls import reverse
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
-from .models import Student,Teacher,Resource,Class,Section,GuideTeacher,Session,ClassRegistration
-from .forms import StudentForm,TeacherForm,ResourceForm,ClassForm,SectionForm,GuideTeacherForm,SessionForm,ClassRegistrationForm
+from .models import *
+from .forms import *
+from django.shortcuts import render
+from rest_framework.views import APIView
 
-
+from rest_framework.response import Response
+from rest_framework import status
 
 def index(request):
     return render(request,'adminpanel/indexdashboard.html')
@@ -305,16 +308,16 @@ def delete_teacher(request, id):
   return HttpResponseRedirect(reverse('index2'))
 
 def add_class(request):
-    forms = ClassForm()  # Initialize the form here
-    class_obj = Class.objects.all()  # You can fetch all classes outside the POST block as well
+    forms = ClassInfoForm()  # Initialize the form here
+    class_obj = ClassInfo.objects.all()  # You can fetch all classes outside the POST block as well
 
     if request.method == 'POST':
-        forms = ClassForm(request.POST)  # Re-bind the form with POST data
+        forms = ClassInfoForm(request.POST)  # Re-bind the form with POST data
         if forms.is_valid():
             new_name = forms.cleaned_data['name']
             new_display_name = forms.cleaned_data['display_name']
 
-            new_class = Class(
+            new_class = ClassInfo(
                 name=new_name,
                 display_name=new_display_name
             )
@@ -398,13 +401,54 @@ def load_upazilla(request):
         'upazilla': upazilla,
         'union': union
     }
-    return render(request, 'others/upazilla_dropdown_list_options.html', context)
+    return render(request, 'hod/others/upazilla_dropdown_list_options.html', context)
 
+def load_union(request):
+    upazilla_id = request.GET.get('upazilla')
+    union = Union.objects.filter(upazilla_id=upazilla_id).order_by('name')
+    context = {
+        'union': union
+    }
+    return render(request, 'hod/others/union_dropdown_list_options.html', context)
+
+
+def add_district(request):
+    forms = DistrictForm()
+    if request.method == 'POST':
+        forms = DistrictForm(request.POST)
+        if forms.is_valid():
+            forms.save()
+            return redirect('district')
+    district = District.objects.all()
+    context = {'forms': forms, 'district': district}
+    return render(request, 'hod/address/district.html', context)
+
+def add_upazilla(request):
+    forms = UpazillaForm()
+    if request.method == 'POST':
+        forms = UpazillaForm(request.POST)
+        if forms.is_valid():
+            forms.save()
+            return redirect('upazilla')
+    upazilla = Upazilla.objects.all()
+    context = {'forms': forms, 'upazilla': upazilla}
+    return render(request, 'hod/address/upazilla.html', context)
+
+def add_union(request):
+    forms = UnionForm()
+    if request.method == 'POST':
+        forms = UnionForm(request.POST)
+        if forms.is_valid():
+            forms.save()
+            return redirect('union')
+    union = Union.objects.all()
+    context = {'forms': forms, 'union': union}
+    return render(request, 'hod/address/union.html', context)
 
 def class_wise_student_registration(request):
     register_class = ClassRegistration.objects.all()
     context = {'register_class': register_class}
-    return render(request, 'student/class-wise-student-registration.html', context)
+    return render(request, 'hod/hod_student/class-wise-student-registration.html', context)
 
 def student_registration(request):
     academic_info_form = AcademicInfoForm(request.POST or None)
@@ -442,19 +486,19 @@ def student_registration(request):
         'previous_academic_info_form': previous_academic_info_form,
         'previous_academic_certificate_form': previous_academic_certificate_form
     }
-    return render(request, 'student/student-registration.html', context)
+    return render(request, 'hod/hod_student/student-registration.html', context)
 
 def student_list(request):
     student = AcademicInfo.objects.filter(is_delete=False).order_by('-id')
     context = {'student': student}
-    return render(request, 'student/student-list.html', context)
+    return render(request, 'hod/hod_student/student-list.html', context)
 
 def student_profile(request, reg_no):
     student = AcademicInfo.objects.get(registration_no=reg_no)
     context = {
         'student': student
     }
-    return render(request, 'student/student-profile.html', context)
+    return render(request, 'hod/hod_student/student-profile.html', context)
 
 def student_edit(request, reg_no):
     student = AcademicInfo.objects.get(registration_no=reg_no)
@@ -500,7 +544,7 @@ def student_edit(request, reg_no):
         'previous_academic_info_form': previous_academic_info_form,
         'previous_academic_certificate_form': previous_academic_certificate_form
     }
-    return render(request, 'student/student-edit.html', context)
+    return render(request, 'hod/hod_student/student-edit.html', context)
 
 def student_delete(request, reg_no):
     student = AcademicInfo.objects.get(registration_no=reg_no)
@@ -520,19 +564,15 @@ def student_search(request):
             'forms': forms,
             'student': student
         }
-        return render(request, 'student/student-search.html', context)
+        return render(request, 'hod/hod_student/student-search.html', context)
     else:
         student = AcademicInfo.objects.filter(registration_no=reg_no)
         context = {
             'forms': forms,
             'student': student
         }
-        return render(request, 'student/student-search.html', context)
-    context = {
-            'forms': forms,
-            'student': student
-        }
-    return render(request, 'student/student-search.html', context)
+        return render(request, 'hod/hod_student/student-search.html', context)
+    
 
 
 def enrolled_student(request):
@@ -543,7 +583,7 @@ def enrolled_student(request):
         'forms': forms,
         'student': student
     }
-    return render(request, 'student/enrolled.html', context)
+    return render(request, 'hod/hod_student/enrolled.html', context)
 
 def student_enrolled(request, reg):
     student = AcademicInfo.objects.get(registration_no=reg)
@@ -561,7 +601,7 @@ def student_enrolled(request, reg):
         'student': student,
         'forms': forms
     }
-    return render(request, 'student/student-enrolled.html', context)
+    return render(request, 'hod/hod_student/student-enrolled.html', context)
 
 def enrolled_student_list(request):
     student = EnrolledStudent.objects.all()
@@ -574,13 +614,18 @@ def enrolled_student_list(request):
             'forms': forms,
             'student': student
         }
-        return render(request, 'student/enrolled-student-list.html', context)
+        return render(request, 'hod/hod_student/enrolled-student-list.html', context)
     context = {
         'forms': forms,
         'student': student
     }
-    return render(request, 'student/enrolled-student-list.html', context)
+    return render(request, 'hod/hod_student/enrolled-student-list.html', context)
 
+
+  
+
+
+        
 #------------teacher dashborad---#
 def teacherdashboard(request):
    return render(request,'teacher/teacher_dashboard.html')

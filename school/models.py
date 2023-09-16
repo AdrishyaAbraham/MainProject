@@ -84,10 +84,17 @@ class Session(models.Model):
 
     def __str__(self):
         return str(self.name)
-    
+class ClassInfo(models.Model):
+    name = models.CharField(max_length=45, unique=True)
+    display_name = models.CharField(max_length=10, unique=True)
+    date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return self.display_name
+        
 class ClassRegistration(models.Model):
     name = models.CharField(max_length=10, unique=True)
-    class_name = models.ForeignKey(Class, on_delete=models.CASCADE, null=True)
+    class_name = models.ForeignKey(ClassInfo, on_delete=models.CASCADE, null=True)
     section = models.ForeignKey(Section, on_delete=models.CASCADE, null=True)
     session = models.ForeignKey(Session, on_delete=models.CASCADE, null=True)
     guide_teacher = models.OneToOneField(GuideTeacher, on_delete=models.CASCADE, null=True)
@@ -99,13 +106,7 @@ class ClassRegistration(models.Model):
     def __str__(self):
         return self.name
     
-class ClassInfo(models.Model):
-    name = models.CharField(max_length=45, unique=True)
-    display_name = models.CharField(max_length=10, unique=True)
-    date = models.DateField(auto_now_add=True)
 
-    def __str__(self):
-        return self.display_name
 
 class PersonalInfo(models.Model):
     name = models.CharField(max_length=100)
@@ -301,6 +302,9 @@ class EnrolledStudent(models.Model):
     
     def __str__(self):
         return str(self.roll)    
+
+
+
 # class login(UserManager):
 #     login_id = models.AutoField(primary_key=True)
 #     def _create_user(self, email, password, **extra_fields):

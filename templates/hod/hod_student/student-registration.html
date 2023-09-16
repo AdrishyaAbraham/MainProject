@@ -1,10 +1,10 @@
-{% extends 'base/base.html' %}
+{% extends 'hod/base_class.html' %}
 {% load static %}
 {% block content %}
   <div class="card">
     <div class="card-header">Student Register Form</div>
     <div class="card-body">
-      <form class="" action="" method="post" enctype="multipart/form-data" id="StudentRegistrationForm" data-upazilla-url={% url 'load-upazilla' %}>
+      <form class="" action="" method="post" enctype="multipart/form-data" id="StudentRegistrationForm" data-upazilla-url={% url 'load_upazilla' %}>
         <div class="academic_info">
           <div class="card">
             <div class="card-header">Academic Information</div>
@@ -91,8 +91,8 @@
 
       </form>
       <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-      <script src="{% static 'src/js/registration.js' %}"></script>
-      <script src="{% static 'src/js/address.js' %}"></script>
+      <script src="{% static 'js/registration.js' %}"></script>
+      <script src="{% static 'js/address.js' %}"></script>
     </div>
   </div>
 {% endblock %}

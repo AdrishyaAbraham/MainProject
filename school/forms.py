@@ -89,7 +89,7 @@ class ResourceForm(forms.ModelForm):
       'uploaded_date':forms.DateInput(attrs={'class': 'form-control'}),
     }
 
-class ClassForm(forms.ModelForm):
+class ClassInfoForm(forms.ModelForm):
     class Meta:
         model = Class
         fields = '__all__'
@@ -257,3 +257,34 @@ class StudentEnrollForm(forms.Form):
 class SearchEnrolledStudentForm(forms.Form):
     reg_class = forms.ModelChoiceField(queryset=ClassRegistration.objects.all())
     roll_no = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={'placeholder': 'Enter Roll'}))
+
+
+class DistrictForm(forms.ModelForm):
+    class Meta:
+        model = District
+        fields = '__all__'
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class UpazillaForm(forms.ModelForm):
+    class Meta:
+        model = Upazilla
+        fields = '__all__'
+        widgets = {
+            'district': forms.Select(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class UnionForm(forms.ModelForm):
+    class Meta:
+        model = Union
+        fields = '__all__'
+        widgets = {
+            'district': forms.Select(attrs={'class': 'form-control'}),
+            'upazilla': forms.Select(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class SearchEnrolledStudentForm(forms.Form):
+    reg_class = forms.ModelChoiceField(queryset=ClassRegistration.objects.all())

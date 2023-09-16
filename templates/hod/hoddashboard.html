@@ -51,11 +51,6 @@
             </a>
           </li>
           <li class="sidebar-list-item">
-           <a href="{% url 'index1' %}" target="_self"> 
-              <span class="material-icons-outlined">groups</span>  Students
-            </a>
-          </li>
-          <li class="sidebar-list-item">
             <a href="{% url 'index2' %}" target="_self">
                 <span class="material-icons-outlined">groups</span> Teachers
             </a>
@@ -91,7 +86,61 @@
                           <span class="material-icons-outlined">add</span>Class details
                       </a>
                   </li>
-                  
+                    <li class="nav-item">
+                     <a class="nav-link" href="{% url 'district' %}">
+                         <i class="fa fa-plus-circle"></i>Add District</a>
+                 </li>
+                 <li class="nav-item">
+                     <a class="nav-link" href="{% url 'upazilla' %}">
+                         <i class="fa fa-plus-circle"></i>Add Upazilla</a>
+                 </li>
+                 <li class="nav-item">
+                     <a class="nav-link" href="{% url 'union' %}">
+                         <i class="fa fa-plus-circle"></i>Add Union</a>
+                 </li>
+                     <li class="sidebar-list-item">
+                      <a href="{% url 'student-registration' %}" target="_blank">
+                          <span class="material-icons-outlined">add</span>Student Registration
+                      </a>
+                  </li>
+                  <li class="sidebar-list-item">
+                      <a href="{% url 'student-list' %}" target="_blank">
+                          <span class="material-icons-outlined">add</span>Student List
+                      </a>
+                  </li>
+                 
+                
+                  {% comment %} <li class="sidebar-list-item">
+                      <a href="{% url 'student-edit' %}" target="_blank">
+                          <span class="material-icons-outlined">add</span>Student Edit
+                      </a>
+                  </li> {% endcomment %}
+                  {% comment %} <li class="sidebar-list-item">
+                      <a href="{% url 'student-delete' %}" target="_blank">
+                          <span class="material-icons-outlined">add</span>Student Delete
+                      </a>
+                  </li> {% endcomment %}
+                  <li class="sidebar-list-item">
+                      <a href="{% url 'student-search' %}" target="_blank">
+                          <span class="material-icons-outlined">add</span> Search Student 
+                      </a>
+                  </li>
+                  <li class="sidebar-list-item">
+                      <a href="{% url 'enrolled-student' %}" target="_blank">
+                          <span class="material-icons-outlined">add</span> Enrolled Student 
+                      </a>
+                  </li>
+                  {% comment %} <li class="sidebar-list-item">
+                      <a href="{% url 'enrolled' %}" target="_blank">
+                          <span class="material-icons-outlined">add</span> Enrolled 
+                      </a>
+                  </li> {% endcomment %}
+                   <li class="sidebar-list-item">
+                      <a href="{% url 'enrolled-student-list' %}" target="_blank">
+                          <span class="material-icons-outlined">add</span> Enrolled Student List
+                      </a>
+                  </li>
+      
                     <li class="sidebar-list-item">
                       <a href="#" target="_blank">
                       <span class="material-icons-outlined">campaign</span> Activities
