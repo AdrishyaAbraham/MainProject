@@ -8,6 +8,5 @@ urlpatterns = [
     path('profile/<teacher_id>', views.teacher_profile, name='teacher-profile'),
     path('delete/<teacher_id>', views.teacher_delete, name='teacher-delete'),
     path('edit/<teacher_id>', views.teacher_edit, name='teacher-edit'),
-    path('load-upazilla', views.load_upazilla, name='load-upazilla'),
      path('designation', views.add_designation, name='designation'),
 ]

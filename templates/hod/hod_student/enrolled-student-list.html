@@ -45,13 +45,13 @@
                                         <td>{{ student.date }}</td>
                                         <td>
                                             <a class="btn btn-success" href="{% url 'student-profile' student.student.registration_no %}">
-                                                <i class="fa fa-search-plus"></i>
+                                                <i class="fa fa-search-plus"></i>View
                                             </a>
                                             <a class="btn btn-info" href="{% url 'student-edit' student.student.registration_no %}">
-                                                <i class="fa fa-edit"></i>
+                                                <i class="fa fa-edit"></i>Update
                                             </a>
                                             <a class="btn btn-danger" href="{% url 'student-delete' student.student.registration_no %}">
-                                                <i class="fa fa-trash-o"></i>
+                                                <i class="fa fa-trash-o"></i>Delete
                                             </a>
                                         </td>
                                     </tr>

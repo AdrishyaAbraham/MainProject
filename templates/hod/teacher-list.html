@@ -38,7 +38,6 @@
                                       <th>Id</th>
                                       <th>Name</th>
                                       <th>Gender</th>
-                                      <th>Nationality</th>
                                       <th>Actions</th>
                                   </tr>
                               </thead>
@@ -49,17 +48,14 @@
                                         <td>{{ teacher.name }}</td>
                                         <td>{{ teacher.gender }}</td>
                                         <td>
-                                            <span class="badge badge-warning">{{ teacher.nationality }}</span>
-                                        </td>
-                                        <td>
                                             <a class="btn btn-success" href="{% url 'teacher-profile' teacher.id %}">
-                                                <i class="fa fa-search-plus"></i>
+                                                <i class="fa fa-search-plus"></i>View
                                             </a>
                                             <a class="btn btn-info" href="{% url 'teacher-edit' teacher.id %}">
-                                                <i class="fa fa-edit"></i>
+                                                <i class="fa fa-edit"></i>Update
                                             </a>
                                             <a class="btn btn-danger" href="{% url 'teacher-delete' teacher.id %}">
-                                                <i class="fa fa-trash-o"></i>
+                                                <i class="fa fa-trash-o"></i>Delete
                                             </a>
                                         </td>
                                     </tr>

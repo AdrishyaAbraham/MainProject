@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import RegexValidator
 import random
+from teacher.models import PersonalInfo
 
 class Student(models.Model):
     student_number=models.PositiveBigIntegerField(null=True)
@@ -72,7 +73,7 @@ class Section(models.Model):
         return self.name
 
 class GuideTeacher(models.Model):
-    name = models.OneToOneField('Teacher', on_delete=models.CASCADE, null=True)
+    name = models.OneToOneField(PersonalInfo, on_delete=models.CASCADE, null=True)
     date = models.DateField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False) 
     def __str__(self):
@@ -130,97 +131,29 @@ class PersonalInfo(models.Model):
         ('other', 'Other')
     )
     gender = models.CharField(choices=gender_choice, max_length=10)
-    phone_no = models.CharField(max_length=11)
+    phone_regex = RegexValidator(
+    regex=r'^(?:\+91-?)?\d{10}$',
+    message=(
+        "Indian phone number must be entered in the format: '9999999999' or '+91-9999999999'."
+        " 10 digits allowed."
+    )
+)
+    phone_no = models.CharField(validators=[phone_regex], max_length=10, blank=True,unique=True)
     email = models.EmailField(blank=True, null=True)
-    birth_certificate_no = models.IntegerField()
-    religion_choice = (
-        ('Islam', 'Islam'),
-        ('Hinduism', 'Hinduism'),
-        ('Buddhism', 'Buddhism'),
-        ('Christianity', 'Christianity'),
-        ('Others', 'Others')
-    )
-    religion = models.CharField(choices=religion_choice, max_length=45)
-    nationality_choice = (
-        ('Bangladeshi', 'Bangladeshi'),
-        ('Others', 'Others')
-    )
-    nationality = models.CharField(choices=nationality_choice, max_length=45)
-
-    def __str__(self):
-        return self.name
-class District(models.Model):
-    name = models.CharField(max_length=45, unique=True)
-    date = models.DateField(auto_now_add=True)
+   
 
     def __str__(self):
         return self.name
 
-class Upazilla(models.Model):
-    district = models.ForeignKey(District, on_delete=models.CASCADE)
-    name = models.CharField(max_length=45, unique=True)
-    date = models.DateField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
-
-class Union(models.Model):
-    district = models.ForeignKey(District, on_delete=models.CASCADE)
-    upazilla = models.ForeignKey(Upazilla, on_delete=models.CASCADE)
-    name = models.CharField(max_length=45, unique=True)
-    date = models.DateField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
-    
-class StudentAddressInfo(models.Model):
-    district = models.ForeignKey(District, on_delete=models.CASCADE)
-    upazilla = models.ForeignKey(Upazilla, on_delete=models.CASCADE)
-    union = models.ForeignKey(Union, on_delete=models.CASCADE)
-    village = models.TextField()
-
-    def __str__(self):
-        return self.village
 
 class GuardianInfo(models.Model):
     father_name = models.CharField(max_length=100)
-    father_phone_no = models.CharField(max_length=11)
-    father_occupation_choice = (
-        ('Agriculture', 'Agriculture'),
-        ('Banker', 'Banker'),
-        ('Business', 'Business'),
-        ('Doctor', 'Doctor'),
-        ('Farmer', 'Farmer'),
-        ('Fisherman', 'Fisherman'),
-        ('Public Service', 'Public Service'),
-        ('Private Service', 'Private Service'),
-        ('Shopkeeper', 'Shopkeeper'),
-        ('Driver', 'Driver'),
-        ('Worker', 'Worker'),
-        ('N/A', 'N/A'),
-    )
-    father_occupation = models.CharField(choices=father_occupation_choice, max_length=45)
-    father_yearly_income = models.IntegerField()
+    father_phone_no = models.CharField(max_length=10,unique=True)
     mother_name = models.CharField(max_length=100)
-    mother_phone_no = models.CharField(max_length=11)
-    mother_occupation_choice = (
-        ('Agriculture', 'Agriculture'),
-        ('Banker', 'Banker'),
-        ('Business', 'Business'),
-        ('Doctor', 'Doctor'),
-        ('Farmer', 'Farmer'),
-        ('Fisherman', 'Fisherman'),
-        ('Public Service', 'Public Service'),
-        ('Private Service', 'Private Service'),
-        ('Shopkeeper', 'Shopkeeper'),
-        ('Driver', 'Driver'),
-        ('Worker', 'Worker'),
-        ('N/A', 'N/A'),
-    )
-    mother_occupation = models.CharField(choices=mother_occupation_choice, max_length=45)
+    mother_phone_no = models.CharField(max_length=10,unique=True)
     guardian_name = models.CharField(max_length=100)
-    guardian_phone_no = models.CharField(max_length=11)
-    guardian_email = models.EmailField(blank=True, null=True)
+    guardian_phone_no = models.CharField(max_length=10)
+    guardian_email = models.EmailField(blank=True, null=True,unique=True)
     relationship_choice = (
         ('Father', 'Father'),
         ('Mother', 'Mother'),
@@ -253,20 +186,14 @@ class EmergencyContactDetails(models.Model):
 class PreviousAcademicInfo(models.Model):
     institute_name = models.CharField(max_length=100)
     name_of_exam = models.CharField(max_length=100)
-    group = models.CharField(max_length=45)
-    gpa = models.CharField(max_length=10)
     board_roll = models.IntegerField()
-    passing_year = models.IntegerField()
+    passing_year = models.CharField(max_length=4)
 
     def __str__(self):
         return self.institute_name
 
 class PreviousAcademicCertificate(models.Model):
-    birth_certificate = models.FileField(upload_to='documents/', blank=True)
-    release_letter = models.FileField(upload_to='documents/', blank=True)
-    testimonial = models.FileField(upload_to='documents/', blank=True)
     marksheet = models.FileField(upload_to='documents/', blank=True)
-    stipen_certificate = models.FileField(upload_to='documents/', blank=True)
     other_certificate = models.FileField(upload_to='documents/', blank=True)
 
 class AcademicInfo(models.Model):
@@ -281,7 +208,6 @@ class AcademicInfo(models.Model):
     )
     status = models.CharField(choices=status_select, default='not enroll', max_length=15)
     personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE, null=True)
-    address_info = models.ForeignKey(StudentAddressInfo, on_delete=models.CASCADE, null=True)
     guardian_info = models.ForeignKey(GuardianInfo, on_delete=models.CASCADE, null=True)
     emergency_contact_info = models.ForeignKey(EmergencyContactDetails, on_delete=models.CASCADE, null=True)
     previous_academic_info = models.ForeignKey(PreviousAcademicInfo, on_delete=models.CASCADE, null=True)

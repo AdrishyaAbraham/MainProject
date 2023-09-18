@@ -47,11 +47,7 @@ urlpatterns = [
     path('enrolled/', views.enrolled_student, name='enrolled-student'),
     path('enrolled-student/<reg>', views.student_enrolled, name='enrolled'),
     path('enrolled-student-list/', views.enrolled_student_list, name='enrolled-student-list'),
-    path('district', views.add_district, name='district'),
-    path('upazilla', views.add_upazilla, name='upazilla'),
-    path('union', views.add_union, name='union'),
-   path('load',views.load_upazilla,name='load_upazilla'),
-   
+  
   #hod---class allotment---
   path('create-class', views.add_class, name='add_class'),
 

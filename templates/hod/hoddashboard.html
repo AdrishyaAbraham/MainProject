@@ -59,7 +59,6 @@
                 <a href="{% url 'designation' %}">Add Designation</a>
                 <a href="{% url 'teacher-registration' %}" target="_blank">Teacher registration</a>
                 <a href="{% url 'teacher-list' %}" target="_blank">Teacher List</a>
-                <a href="{% url 'designation' %}" target="_blank">Add designation</a>
 
             </div>
         </li>
@@ -78,24 +77,6 @@
             </div>
         </li>
 
-
-
-
-
-
-        <li class="sidebar-list-item dropdown">
-            <span class="dropdown-title">
-                <span class="material-icons-outlined">location_on</span> Address 
-                <span class="material-icons-outlined">expand_more</span>
-            </span>
-            <div class="dropdown-content">
-              
-                <a href="{% url 'district' %}">Add District</a>
-                <a href="{% url 'upazilla' %}">Add Upazilla</a>
-                <a href="{% url 'union' %}">Add Union</a>
-            </div>
-        </li>
-        
         <li class="sidebar-list-item dropdown">
             <span class="dropdown-title">
                 <span class="material-icons-outlined">person</span> Student 
@@ -146,7 +127,7 @@
               <h3>STUDENTS</h3>
               <span class="material-icons-outlined">inventory_2</span>
             </div>
-            <h1>249</h1>
+            <h1>1</h1>
           </div>
 
           <div class="card">
@@ -154,7 +135,7 @@
               <h3>TEACHERS</h3>
               <span class="material-icons-outlined">category</span>
             </div>
-            <h1>25</h1>
+            <h1>2</h1>
           </div>
 
           <div class="card">
@@ -162,7 +143,7 @@
               <h3>ACTIVITIES</h3>
                <span class="material-icons-outlined">campaign</span> 
             </div>
-            <h1>1500</h1>
+            <h1>0</h1>
           </div>
 
           <div class="card">
@@ -170,20 +151,20 @@
               <h3>ALERTS</h3>
               <span class="material-icons-outlined">notification_important</span>
             </div>
-            <h1>56</h1>
+            <h1>0</h1>
           </div>
 
         </div>
 
         <div class="charts">
-
+{% comment %} 
           <div class="charts-card">
-            <h2 class="chart-title">Top 5 Products</h2>
+            <h2 class="chart-title"></h2>
             <div id="bar-chart"></div>
-          </div>
+          </div> {% endcomment %}
 
           <div class="charts-card">
-            <h2 class="chart-title">Purchase and Sales Orders</h2>
+            <h2 class="chart-title"></h2>
             <div id="area-chart"></div>
           </div>
 

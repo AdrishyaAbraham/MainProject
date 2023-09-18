@@ -1,8 +1,8 @@
 from django.db import models
-
+from django.core.validators import RegexValidator
 # Create your models here.
 from django.db import models
-from school.models import District, Upazilla, Union
+
 
 class Designation(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -11,21 +11,10 @@ class Designation(models.Model):
     def __str__(self):
         return self.name
     
-class AddressInfo(models.Model):
-    district = models.ForeignKey(District, on_delete=models.CASCADE, null=True)
-    upazilla = models.ForeignKey(Upazilla, on_delete=models.CASCADE, null=True)
-    union = models.ForeignKey(Union, on_delete=models.CASCADE, null=True)
-    village = models.TextField()
-
-    def __str__(self):
-        return self.village
 
 class EducationInfo(models.Model):
     name_of_exam = models.CharField(max_length=100)
-    institute = models.CharField(max_length=255)
-    group = models.CharField(max_length=100)
     grade = models.CharField(max_length=45)
-    board = models.CharField(max_length=45)
     passing_year = models.IntegerField()
 
     def __str__(self):
@@ -40,27 +29,6 @@ class TrainingInfo(models.Model):
     def __str__(self):
         return self.training_name
 
-class JobInfo(models.Model):
-    category_choice = (
-        ('bcs', 'BCS'),
-        ('nationalized', 'Nationalized'),
-        ('10% quota', '10% quota'),
-        ('non govt.', 'Non Govt.')
-    )
-    category = models.CharField(choices=category_choice, max_length=45)
-    joning_date = models.DateField()
-    institute_name = models.CharField(max_length=100)
-    job_designation = models.ForeignKey(Designation, on_delete=models.CASCADE)
-    scale = models.IntegerField()
-    grade_of_post = models.CharField(max_length=45)
-    first_time_scale_due_year = models.IntegerField()
-    second_time_scale_due_year = models.IntegerField()
-    promotion_due_year = models.IntegerField()
-    recreation_leave_due_year = models.IntegerField()
-    expected_retirement_year = models.IntegerField()
-
-    def __str__(self):
-        return self.institute_name
 
 class ExperienceInfo(models.Model):
     institute_name = models.CharField(max_length=100)
@@ -73,18 +41,7 @@ class ExperienceInfo(models.Model):
 class PersonalInfo(models.Model):
     name = models.CharField(max_length=45)
     photo = models.ImageField()
-    date_of_birth = models.DateField()
-    place_of_birth = models.CharField(max_length=45)
-    nationality_choice = (
-        ('Bangladeshi', 'Bangladeshi'),
-        ('Others', 'Others')
-    )
-    nationality = models.CharField(max_length=45, choices=nationality_choice)
-    religion_choice = (
-        ('Christianity', 'Christianity'),
-        ('Others', 'Others')
-    )
-    religion = models.CharField(max_length=45, choices=religion_choice)
+    date_of_birth=models.DateField(null=True)
     gender_choice = (
         ('male', 'Male'),
         ('female', 'Female'),
@@ -102,25 +59,18 @@ class PersonalInfo(models.Model):
         ('ab-', 'AB-')
     )
     blood_group = models.CharField(choices=blood_group_choice, max_length=5)
-    e_tin = models.IntegerField(unique=True)
-    nid = models.IntegerField(unique=True)
-    driving_license_passport = models.IntegerField(unique=True)
-    phone_no = models.CharField(max_length=11, unique=True)
-    email = models.CharField(max_length=255, unique=True)
-    father_name = models.CharField(max_length=45)
-    mother_name = models.CharField(max_length=45)
-    marital_status_choice = (
-        ('married', 'Married'),
-        ('widowed', 'Widowed'),
-        ('separated', 'Separated'),
-        ('divorced', 'Divorced'),
-        ('single', 'Single')
+    phone_regex = RegexValidator(
+    regex=r'^(?:\+91-?)?\d{10}$',
+    message=(
+        "Indian phone number must be entered in the format: '9999999999' or '+91-9999999999'."
+        " 10 digits allowed."
     )
-    marital_status = models.CharField(choices=marital_status_choice, max_length=10)
-    address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, null=True)
+)
+    phone_no = models.CharField(validators=[phone_regex], max_length=10, blank=True,unique=True)
+    email = models.CharField(max_length=30, unique=True)
+    address=models.CharField(max_length=255,null=True)
     education = models.ForeignKey(EducationInfo, on_delete=models.CASCADE, null=True)
     training = models.ForeignKey(TrainingInfo, on_delete=models.CASCADE, null=True)
-    job = models.ForeignKey(JobInfo, on_delete=models.CASCADE, null=True)
     experience = models.ForeignKey(ExperienceInfo, on_delete=models.CASCADE, null=True)
     is_delete = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
