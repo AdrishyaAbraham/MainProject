@@ -1,6 +1,6 @@
 from django import forms
-from .models import Student, Teacher, Resource,Class,Section,GuideTeacher,Session,ClassRegistration
 from .models import *
+from datetime import datetime
 
 class StudentForm(forms.ModelForm):
     class Meta:
@@ -102,6 +102,7 @@ class SectionForm(forms.ModelForm):
     class Meta:
         model = Section
         fields = '__all__'
+        exclude = ['is_deleted']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
         }
@@ -110,18 +111,23 @@ class GuideTeacherForm(forms.ModelForm):
     class Meta:
         model = GuideTeacher
         fields = '__all__'
-        labels={'name':'Year'}
+        exclude = ['is_deleted']
         widgets = {
             'name': forms.Select(attrs={'class': 'form-control'}),
         }
 
+
+# Generating a list of years from 2000 to the current year
+YEARS = [(year, year) for year in range(2000, datetime.now().year + 1)]
+
 class SessionForm(forms.ModelForm):
+    # Override the name field to use ChoiceField
+    name = forms.ChoiceField(choices=YEARS, widget=forms.Select(attrs={'class': 'form-control'}))
+
     class Meta:
         model = Session
         fields = '__all__'
-        widgets = {
-            'name': forms.NumberInput(attrs={'class': 'form-control'}),
-        }
+        exclude = ['is_deleted']  # Exclude the is_deleted field
 
 class ClassRegistrationForm(forms.ModelForm):
     class Meta:

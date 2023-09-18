@@ -9,11 +9,27 @@ from django.contrib.auth.models import User
 from .models import *
 from .forms import *
 from django.shortcuts import render
-from rest_framework.views import APIView
+from django.db import IntegrityError
 
-from rest_framework.response import Response
-from rest_framework import status
 
+def profile(request):
+    profile = UserProfile.objects.get(id=request.user.id)
+    context = {
+        'profile': profile
+    }
+    return render(request, 'login/profile.html', context)
+
+def update_profile(request):
+    profile = UserProfile.objects.get(id=request.user.id)
+    forms = ProfileForm(instance=profile)
+    if request.method == 'POST':
+        forms = ProfileForm(request.POST, request.FILES, instance=profile)
+        if forms.is_valid():
+            forms.save()
+    context = {
+        'forms': forms
+    }
+    return render(request, 'login/update-profile.html', context)
 def index(request):
     return render(request,'adminpanel/indexdashboard.html')
 
@@ -332,20 +348,42 @@ def add_class(request):
 
     return render(request, 'hod/create_class.html', context)
 
-
 def create_section(request):
     forms = SectionForm()
+    error_message = None  # Initializing the error message
+
     if request.method == 'POST':
         forms = SectionForm(request.POST)
         if forms.is_valid():
-            forms.save()
-            return redirect('create-section')
-    section = Section.objects.all()
+            try:
+                forms.save()
+                return redirect('create-section')
+            except IntegrityError:  # Catch the IntegrityError
+                error_message = "A section with this name already exists."
+
+    section = Section.objects.filter(is_deleted=False)
     context = {
         'forms': forms,
-        'section': section
+        'section': section,
+        'error_message': error_message  # Add the error message to the context
     }
-    return render(request, 'hod/create_classsection.html', context)  
+    return render(request, 'hod/create_classsection.html', context)
+
+def update_section(request, section_id):
+    section_instance = get_object_or_404(Section, id=section_id)
+    if request.method == "POST":
+        form = SectionForm(request.POST, instance=section_instance)
+        if form.is_valid():
+            form.save()
+            return redirect('create-section')
+    else:
+        form = SectionForm(instance=section_instance)
+    return render(request, 'hod/update_classsection.html', {'form': form})
+
+def delete_section(request, section_id):
+    section_instance = get_object_or_404(Section, id=section_id)
+    section_instance.delete()
+    return redirect('create-section')
 
 def create_guide_teacher(request):
     forms = GuideTeacherForm()
@@ -368,11 +406,38 @@ def create_session(request):
         if forms.is_valid():
             forms.save()
             return redirect('create-session')
-    session = Session.objects.all()
+    session = Session.objects.filter(is_deleted=False)  # Only show non-deleted sessions
     context = {
         'forms': forms,
         'session': session
     }
+    return render(request, 'hod/create_session.html', context)
+def delete_session(request, session_id):
+    session = get_object_or_404(Session, id=session_id)
+    session.is_deleted = True
+    session.save()
+    return redirect('create-session')
+
+def update_session(request, session_id):
+    session_instance = get_object_or_404(Session, id=session_id)
+    
+    # If this is a POST request, process form data
+    if request.method == 'POST':
+        form = SessionForm(request.POST, instance=session_instance)
+
+        if form.is_valid():
+            form.save()
+            return redirect('create-session')  # Redirect to your session list view
+
+    # If this is a GET (or any other method), create the default form
+    else:
+        form = SessionForm(instance=session_instance)
+
+    context = {
+        'forms': form,
+        'session_id': session_id,
+    }
+
     return render(request, 'hod/create_session.html', context)
 
 def class_registration(request):
@@ -622,7 +687,6 @@ def enrolled_student_list(request):
     return render(request, 'hod/hod_student/enrolled-student-list.html', context)
 
 
-  
 
 
         

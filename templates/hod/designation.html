@@ -1,14 +1,8 @@
 {% extends 'hod/base_class.html' %}
 {% block content %}
   <div class="card">
-    <div class="card-header">Section Register Form</div>
-   
+    <div class="card-header">Designation Register Form</div>
     <div class="card-body">
-     {% if error_message %}
-        <div class="alert alert-danger">
-          {{ error_message }}
-        </div>
-      {% endif %}
       <form class="" action="" method="post">
         {% csrf_token %}
         {{ forms.as_p }}
@@ -19,26 +13,22 @@
 
   <div class="card">
       <div class="card-header">
-          <i class="fa fa-align-justify"></i>Section List</div>
+          <i class="fa fa-align-justify"></i>Designation List</div>
       <div class="card-body">
           <table class="table table-responsive-sm">
               <thead>
                   <tr>
                       <th>Id</th>
-                      <th>Section Name</th>
+                      <th>Designation Name</th>
                       <th>Register Date</th>
                   </tr>
               </thead>
               <tbody>
-                  {% for section in section %}
+                  {% for designation in designation %}
                     <tr>
-                        <td>{{ section.id }}</td>
-                        <td>{{ section.name }}</td>
-                        <td>{{ section.date }}</td>
-                        <td>
-                <a href="{% url 'update_section' section.id %}" class="btn btn-info">Update</a>
-                <a href="{% url 'delete_section' section.id %}" class="btn btn-danger">Delete</a>
-            </td>
+                        <td>{{ designation.id }}</td>
+                        <td>{{ designation.name }}</td>
+                        <td>{{ designation.date }}</td>
                     </tr>
                   {% endfor %}
               </tbody>

@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+ 
+
   path('1/', views.index1, name='index'),
   path('', views.base, name='base'),
   path('<int:id>', views.view_student, name='view_student'),
@@ -52,10 +54,14 @@ urlpatterns = [
    
   #hod---class allotment---
   path('create-class', views.add_class, name='add_class'),
+
   path('create-section', views.create_section, name='create-section'),
-  path('create-section', views.create_section, name='create-section'),
+  path('update-section/<int:section_id>/', views.update_section, name='update_section'),
+  path('delete-section/<int:section_id>/', views.delete_section, name='delete_section'),
   path('guide-teacher', views.create_guide_teacher, name='guide-teacher'),
   path('create-session', views.create_session, name='create-session'),
+  path('delete-session/<int:session_id>/', views.delete_session, name='delete-session'),
+  path('update-session/<int:session_id>/', views.update_session, name='update-session'),
   path('class_registration', views.class_registration, name='class-registration'),
   path('class-list', views.class_list, name='class-list'),
 

@@ -29,118 +29,86 @@
         <div class="header-right">
           <span class="material-icons-outlined">notifications</span>
           <span class="material-icons-outlined">email</span>
-          <span class="material-icons-outlined">account_circle</span>
+          <a href="{% url 'profile' %}"><span class="material-icons-outlined">account_circle</span><a/>
         </div>
       </header>
       <!-- End Header -->
 
       <!-- Sidebar -->
-  <aside id="sidebar">
-      <div class="sidebar-title">
-          <div class="sidebar-brand">
+ <aside id="sidebar">
+    <div class="sidebar-title">
+        <div class="sidebar-brand">
             <span class="material-icons-outlined"></span> LightedtoLighten
-          </div>
-          <span class="material-icons-outlined" onclick="closeSidebar()">close</span>
         </div>
+        <span class="material-icons-outlined" onclick="closeSidebar()">close</span>
+    </div>
 
-      <ul class="sidebar-list">
+    <ul class="sidebar-list">
+        <li class="sidebar-list-item">
+            <a href="{% url '' }" target="_self">
+                <span class="material-icons-outlined">dashboard</span> Dashboard
+            </a>
+        </li>
+        
+        <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                <span class="material-icons-outlined">class</span> Teachers 
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content">
+                <a href="{% url 'designation' %}">Add Designation</a>
+                <a href="{% url 'teacher-registration' %}" target="_blank">Teacher registration</a>
+                <a href="{% url 'teacher-list' %}" target="_blank">Teacher List</a>
+                <a href="{% url 'designation' %}" target="_blank">Add designation</a>
 
-          <li class="sidebar-list-item">
-            <a href="{% url 'hoddashboard'}" target="_self">
-            <span class="material-icons-outlined">dashboard</span> Dashboard
-            </a>
-          </li>
-          <li class="sidebar-list-item">
-            <a href="{% url 'index2' %}" target="_self">
-                <span class="material-icons-outlined">groups</span> Teachers
-            </a>
-          </li>
-          
-          <li class="sidebar-list-item">
-              <a href="{% url 'add_class' %}" target="_blank">
-                  <span class="material-icons-outlined">card_membership</span> Class
-              </a>
-                </li>
-                  <li class="sidebar-list-item">
-                      <a href="{% url 'create-section' %}" target="_blank">
-                          <span class="material-icons-outlined">add</span> Add class section
-                      </a>
-                  </li>
-                  <li class="sidebar-list-item">
-                      <a href="{% url 'guide-teacher' %}" target="_blank">
-                          <span class="material-icons-outlined">add</span> Teachers Allotment
-                      </a>
-                  </li>
-                       <li class="sidebar-list-item">
-                      <a href="{% url 'create-session' %}" target="_blank">
-                          <span class="material-icons-outlined">add</span>Add Session
-                      </a>
-                  </li>
-                    <li class="sidebar-list-item">
-                      <a href="{% url 'class-registration' %}" target="_blank">
-                          <span class="material-icons-outlined">add</span>Register class
-                      </a>
-                  </li>
-                   <li class="sidebar-list-item">
-                      <a href="{% url 'class-list' %}" target="_blank">
-                          <span class="material-icons-outlined">add</span>Class details
-                      </a>
-                  </li>
-                    <li class="nav-item">
-                     <a class="nav-link" href="{% url 'district' %}">
-                         <i class="fa fa-plus-circle"></i>Add District</a>
-                 </li>
-                 <li class="nav-item">
-                     <a class="nav-link" href="{% url 'upazilla' %}">
-                         <i class="fa fa-plus-circle"></i>Add Upazilla</a>
-                 </li>
-                 <li class="nav-item">
-                     <a class="nav-link" href="{% url 'union' %}">
-                         <i class="fa fa-plus-circle"></i>Add Union</a>
-                 </li>
-                     <li class="sidebar-list-item">
-                      <a href="{% url 'student-registration' %}" target="_blank">
-                          <span class="material-icons-outlined">add</span>Student Registration
-                      </a>
-                  </li>
-                  <li class="sidebar-list-item">
-                      <a href="{% url 'student-list' %}" target="_blank">
-                          <span class="material-icons-outlined">add</span>Student List
-                      </a>
-                  </li>
-                 
-                
-                  {% comment %} <li class="sidebar-list-item">
-                      <a href="{% url 'student-edit' %}" target="_blank">
-                          <span class="material-icons-outlined">add</span>Student Edit
-                      </a>
-                  </li> {% endcomment %}
-                  {% comment %} <li class="sidebar-list-item">
-                      <a href="{% url 'student-delete' %}" target="_blank">
-                          <span class="material-icons-outlined">add</span>Student Delete
-                      </a>
-                  </li> {% endcomment %}
-                  <li class="sidebar-list-item">
-                      <a href="{% url 'student-search' %}" target="_blank">
-                          <span class="material-icons-outlined">add</span> Search Student 
-                      </a>
-                  </li>
-                  <li class="sidebar-list-item">
-                      <a href="{% url 'enrolled-student' %}" target="_blank">
-                          <span class="material-icons-outlined">add</span> Enrolled Student 
-                      </a>
-                  </li>
-                  {% comment %} <li class="sidebar-list-item">
-                      <a href="{% url 'enrolled' %}" target="_blank">
-                          <span class="material-icons-outlined">add</span> Enrolled 
-                      </a>
-                  </li> {% endcomment %}
-                   <li class="sidebar-list-item">
-                      <a href="{% url 'enrolled-student-list' %}" target="_blank">
-                          <span class="material-icons-outlined">add</span> Enrolled Student List
-                      </a>
-                  </li>
-      
+            </div>
+        </li>
+         <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                <span class="material-icons-outlined">class</span> Class 
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content">
+                <a href="{% url 'add_class' %}" target="_blank">Add Class </a>
+                <a href="{% url 'create-section' %}" target="_blank">Add Class Section</a>
+                <a href="{% url 'guide-teacher' %}" target="_blank">Teachers Allotment</a>
+                <a href="{% url 'create-session' %}" target="_blank">Add Session</a>
+                <a href="{% url 'class-registration' %}" target="_blank">Register Class</a>
+                <a href="{% url 'class-list' %}" target="_blank">Class Details</a>
+            </div>
+        </li>
+
+
+
+
+
+
+        <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                <span class="material-icons-outlined">location_on</span> Address 
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content">
+              
+                <a href="{% url 'district' %}">Add District</a>
+                <a href="{% url 'upazilla' %}">Add Upazilla</a>
+                <a href="{% url 'union' %}">Add Union</a>
+            </div>
+        </li>
+        
+        <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                <span class="material-icons-outlined">person</span> Student 
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content">
+                <a href="{% url 'student-registration' %}" target="_blank">Student Registration</a>
+                <a href="{% url 'student-list' %}" target="_blank">Student List</a>
+                <a href="{% url 'student-search' %}" target="_blank">Search Student</a>
+                <a href="{% url 'enrolled-student' %}" target="_blank">Enrolled Student</a>
+                <a href="{% url 'enrolled-student-list' %}" target="_blank">Enrolled Student List</a>
+            </div>
+        </li>
                     <li class="sidebar-list-item">
                       <a href="#" target="_blank">
                       <span class="material-icons-outlined">campaign</span> Activities

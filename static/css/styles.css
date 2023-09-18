@@ -6,6 +6,58 @@ body {
   font-family: 'Montserrat', sans-serif;
 }
 
+/* Dropdown */
+.dropdown-content {
+  display: none;
+  background-color: #263043;
+  min-width: 200px;
+  position: absolute;
+  z-index: 1;
+}
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.dropdown-content a {
+  color: #9e9ea4;
+  padding: 15px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-title {
+  cursor: pointer;
+}
+
+.card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 10px 0;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+}
+
+.card-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .material-symbols-outlined {
   font-variation-settings:
   'FILL' 0,

@@ -21,6 +21,7 @@
                       <th>Id</th>
                       <th>Session Year</th>
                       <th>Register Date</th>
+   
                   </tr>
               </thead>
               <tbody>
@@ -31,6 +32,9 @@
                         <td>{{ session.id }}</td>
                         <td>{{ session.name }}</td>
                         <td>{{ session.date }}</td>
+                         <td><a href="{% url 'update-session' session.id %}" class="btn btn-warning">Update</a>  <!-- Update button -->
+                        <a href="{% url 'delete-session' session.id %}" class="btn btn-danger">Delete</a></td>  <!-- Delete button -->
+
                     </tr>
                   {% endfor %}
                 {% comment %} {% endfor %} {% endcomment %}

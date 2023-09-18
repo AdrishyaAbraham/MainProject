@@ -1,0 +1,132 @@
+from django.shortcuts import render
+
+# Create your views here.
+from django.shortcuts import render, redirect
+
+from . forms import * 
+from .models import *
+
+# Create your views here.
+
+def load_upazilla(request):
+    district_id = request.GET.get('district')
+    upazilla = Upazilla.objects.filter(district_id=district_id).order_by('name')
+
+    upazilla_id = request.GET.get('upazilla')
+    union = Union.objects.filter(upazilla_id=upazilla_id).order_by('name')
+    context = {
+        'upazilla': upazilla,
+        'union': union
+    }
+    return render(request, 'hod/address/upazilla_dropdown_list_options.html', context)
+
+
+def teacher_registration(request):
+    form = PersonalInfoForm()
+    address_form = AddressInfoForm()
+    education_form = EducationInfoForm()
+    training_form = TrainingInfoForm()
+    job_form = JobInfoForm()
+    experience_form = ExperienceInfoForm()
+    if request.method == 'POST':
+        form = PersonalInfoForm(request.POST, request.FILES)
+        address_form = AddressInfoForm(request.POST)
+        education_form = EducationInfoForm(request.POST)
+        training_form = TrainingInfoForm(request.POST)
+        job_form = JobInfoForm(request.POST)
+        experience_form = ExperienceInfoForm(request.POST)
+        
+        if form.is_valid() and address_form.is_valid() and education_form.is_valid() and training_form.is_valid() and job_form.is_valid() and experience_form.is_valid():
+            address_info = address_form.save()
+            education_info = education_form.save()
+            training_info = training_form.save()
+            job_info = job_form.save()
+            experience_info = experience_form.save()
+            personal_info = form.save(commit=False)
+            personal_info.address = address_info
+            personal_info.education = education_info
+            personal_info.training = training_info
+            personal_info.job = job_info
+            personal_info.experience = experience_info
+            personal_info.save()
+            return redirect('teacher-list')
+
+    context = {
+        'form': form,
+        'address_form': address_form,  # Updated variable name here
+        'education_form': education_form,
+        'training_form': training_form,
+        'job_form': job_form,
+        'experience_form': experience_form
+    }
+    return render(request, 'hod/teacher-registration.html', context)
+
+
+def teacher_list(request):
+    teacher = PersonalInfo.objects.filter(is_delete=False)
+    context = {'teacher': teacher}
+    return render(request, 'hod/teacher-list.html', context)
+
+def teacher_profile(request, teacher_id):
+    teacher = PersonalInfo.objects.get(id=teacher_id)
+    context = {
+        'teacher': teacher
+    }
+    return render(request, 'hod/teacher-profile.html', context)
+
+def teacher_delete(request, teacher_id):
+    teacher = PersonalInfo.objects.get(id=teacher_id)
+    teacher.is_delete = True
+    teacher.save()
+    return redirect('teacher-list')
+
+def teacher_edit(request, teacher_id):
+    teacher = PersonalInfo.objects.get(id=teacher_id)
+    form = PersonalInfoForm(instance=teacher)
+    address_form = AddressInfoForm(instance=teacher.address)
+    education_form = EducationInfoForm(instance=teacher.education)
+    training_form = TrainingInfoForm(instance=teacher.training)
+    job_form = JobInfoForm(instance=teacher.job)
+    experience_form = ExperienceInfoForm(instance=teacher.experience)
+    if request.method == 'POST':
+        form = forms.PersonalInfoForm(request.POST, request.FILES, instance=teacher)
+        address_form = forms.AddressInfoForm(request.POST, instance=teacher.address)
+        education_form = forms.EducationInfoForm(request.POST, instance=teacher.education)
+        training_form = forms.TrainingInfoForm(request.POST, instance=teacher.training)
+        job_form = forms.JobInfoForm(request.POST, instance=teacher.job)
+        experience_form = forms.ExperienceInfoForm(request.POST, instance=teacher.experience)
+        if form.is_valid() and address_form.is_valid() and education_form.is_valid() and training_form.is_valid() and job_form.is_valid() and experience_form.is_valid():
+            address_info = address_form.save()
+            education_info = education_form.save()
+            training_info = training_form.save()
+            job_info = job_form.save()
+            experience_info = experience_form.save()
+            personal_info = form.save(commit=False)
+            personal_info.address = address_info
+            personal_info.education = education_info
+            personal_info.training = training_info
+            personal_info.job = job_info
+            personal_info.experience = experience_info
+            personal_info.save()
+            return redirect('teacher-list')
+    context = {
+        'form': form,
+       'address_form': address_form,
+        'education_form': education_form,
+        'training_form': training_form,
+        'job_form': job_form,
+        'experience_form': experience_form
+    }
+    return render(request, 'hod/teacher-edit.html', context)
+
+
+def add_designation(request):
+    forms = AddDesignationForm()
+    if request.method == 'POST':
+        forms = AddDesignationForm(request.POST)
+        if forms.is_valid():
+            forms.save()
+            return redirect('designation')
+    designation = Designation.objects.all()
+    context = {'forms': forms, 'designation': designation}
+    return render(request, 'hod/designation.html', context)

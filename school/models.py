@@ -67,23 +67,24 @@ class Class(models.Model):
 class Section(models.Model):
     name = models.CharField(max_length=45, unique=True)
     date = models.DateField(auto_now_add=True)
-
+    is_deleted = models.BooleanField(default=False) 
     def __str__(self):
         return self.name
 
 class GuideTeacher(models.Model):
     name = models.OneToOneField('Teacher', on_delete=models.CASCADE, null=True)
     date = models.DateField(auto_now_add=True)
-
+    is_deleted = models.BooleanField(default=False) 
     def __str__(self):
         return str(self.name)
     
 class Session(models.Model):
     name = models.IntegerField(unique=True)
     date = models.DateField(auto_now_add=True)
-
+    is_deleted = models.BooleanField(default=False) 
     def __str__(self):
         return str(self.name)
+    
 class ClassInfo(models.Model):
     name = models.CharField(max_length=45, unique=True)
     display_name = models.CharField(max_length=10, unique=True)
