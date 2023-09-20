@@ -20,7 +20,7 @@
                 {% if request.user.userprofile %}
                 <img src="{{ request.user.userprofile.photo.url }}" class="img-avatar" alt="admin">
                 {% else %}
-                <img src="{% static 'src/img/man.png' %}" class="img-avatar" alt="Anynumos">
+                <img src="{% static 'src/img/man.png' %}" class="img-avatar" alt="Admin">
                 {% endif %}
             </a>
             <div class="dropdown-menu dropdown-menu-right">

@@ -81,7 +81,7 @@ var barChartOptions = {
     theme: 'dark',
   },
   xaxis: {
-    categories: ['Laptop', 'Phone', 'Monitor', 'Headphones', 'Camera'],
+    categories: ['students','Teachers'],
     title: {
       style: {
         color: '#f5f7ff',
@@ -134,11 +134,11 @@ barChart.render();
 var areaChartOptions = {
   series: [
     {
-      name: 'Purchase Orders',
+      name: 'Students',
       data: [31, 40, 28, 51, 42, 109, 100],
     },
     {
-      name: 'Sales Orders',
+      name: 'Teachers',
       data: [11, 32, 45, 32, 34, 52, 41],
     },
   ],
@@ -213,7 +213,7 @@ var areaChartOptions = {
   yaxis: [
     {
       title: {
-        text: 'Purchase Orders',
+        text: 'Students',
         style: {
           color: '#f5f7ff',
         },
@@ -227,7 +227,7 @@ var areaChartOptions = {
     {
       opposite: true,
       title: {
-        text: 'Sales Orders',
+        text: 'Teachers',
         style: {
           color: '#f5f7ff',
         },

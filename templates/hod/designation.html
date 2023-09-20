@@ -1,5 +1,7 @@
 {% extends 'hod/base_class.html' %}
 {% block content %}
+<a href="{% url 'hoddashboard' %}" class="btn btn-secondary mb-3">Back to Home</a>
+
   <div class="card">
     <div class="card-header">Designation Register Form</div>
     <div class="card-body">
@@ -29,6 +31,7 @@
                         <td>{{ designation.id }}</td>
                         <td>{{ designation.name }}</td>
                         <td>{{ designation.date }}</td>
+                        <td><a href="{% url 'update_designation' designation.id %}" class="btn btn-info">Edit</a></td>
                     </tr>
                   {% endfor %}
               </tbody>

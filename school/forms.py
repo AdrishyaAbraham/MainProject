@@ -2,82 +2,29 @@ from django import forms
 from .models import *
 from datetime import datetime
 
-class StudentForm(forms.ModelForm):
-    class Meta:
-        model = Student
-        fields = ['student_number', 'name', 'email','address','phone_number','gender', 'dob','doj','fathername','father_contact','mothername','mother_contact']
-        labels = {
-            'student_number': 'Student Number',
-            'name': 'Name',
-            'email': 'Email',
-            'address':'Address',
-            'phone_number': 'Phone Number',
-            'gender':'Gender',
-            'dob': 'Date Of Birth',
-            'doj':'Date of Joining',
-            'fathername':'Father Name',
-            'father_contact':'Father Contact Number',
-            'mothername':'Mother Name',
-            'mother_contact':'Mother Contact Number',
-        }
-        widgets = {
-            'student_number': forms.NumberInput(attrs={'class': 'form-control'}),
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'}),
-            'address':forms.TextInput(attrs={'class': 'form-control'}),
-            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
-            'gender':forms.RadioSelect(),
-            'dob': forms.DateInput(attrs={'class': 'form-control'},format='%Y-%m-%d'),
-            'doj':forms.DateInput(attrs={'class': 'form-control'}),
-            'fathername':forms.TextInput(attrs={'class': 'form-control'}),
-            'father_contact':forms.TextInput(attrs={'class': 'form-control'}),
-            'mothername':forms.TextInput(attrs={'class': 'form-control'}),
-            'mother_contact':forms.TextInput(attrs={'class': 'form-control'}),
-        }
-        input_formats = {
-            'dob': ['%Y-%m-%d']
-        }
+import os
 
-class TeacherForm(forms.ModelForm):
-  class Meta:
-    model = Teacher
-    fields = ['teacher_number', 'name', 'email','address','phone_number','gender','dob','doj']
-    labels = {
-      'teacher_number': 'Teacher Number',
-      'name': 'Name',
-      'email': 'Email',
-      'address':'Address',
-      'phone_number': 'Phone Number',
-      'gender':'Gender',
-      'dob':'Date of Birth',
-      'doj':'Date of Joining',
-
-      
-    }
-    widgets = {
-      'teacher_number': forms.NumberInput(attrs={'class': 'form-control'}),
-      'name': forms.TextInput(attrs={'class': 'form-control'}),
-      'email': forms.EmailInput(attrs={'class': 'form-control'}),
-      'address': forms.TextInput(attrs={'class': 'form-control'}),
-      'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
-      'gender': forms.RadioSelect(),
-      'dob': forms.DateInput(attrs={'class': 'form-control'}),
-      'doj': forms.DateInput(attrs={'class': 'form-control'}),
-
-    }
-
-
+def validate_pdf_file(value):
+    ext = os.path.splitext(value.name)[1]  # [0] returns path+filename
+    valid_extensions = ['.pdf']
+    if not ext.lower() in valid_extensions:
+        raise ValidationError('Unsupported file extension. Only PDF files are allowed.')
+    
+def validate_only_alphabets(value):
+     if not value.replace(" ", "").isalpha():
+        raise ValidationError('Only alphabets and spaces are allowed.')
+     
 class ResourceForm(forms.ModelForm):
   class Meta:
     model = Resource
-    fields = ['resource_id', 'resource_title', 'resource_file','file_type','description','uploaded_date']
+    fields = '__all__'
     labels = {
       'resouce_id': 'resource_id',
       'resource_title': 'resource_title',
+      'teacher_name':'teacher_name',
       'resouce_file': 'resource_file',
       'file_type':'file Type',
       'description':'Description',
-      'uploaded_date':'uploaded date',
       
     }
     widgets = {
@@ -86,8 +33,8 @@ class ResourceForm(forms.ModelForm):
       'resource_file': forms.FileInput(attrs={'class': 'form-control'}),
       'file_type':forms.TextInput(attrs={'class': 'form-control'}),
       'description':forms.TextInput(attrs={'class': 'form-control'}),
-      'uploaded_date':forms.DateInput(attrs={'class': 'form-control'}),
     }
+
 
 class ClassInfoForm(forms.ModelForm):
     class Meta:
@@ -97,6 +44,30 @@ class ClassInfoForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'display_name': forms.TextInput(attrs={'class': 'form-control'}),
         }
+    
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        
+        # Check if the name contains only alphabets
+        validate_only_alphabets(name)
+        
+        # Check for minimum length
+        if len(name) < 3:
+            raise ValidationError("The name should be at least 3 characters long.")
+            
+        return name
+
+    def clean_display_name(self):
+        display_name = self.cleaned_data.get('display_name')
+        
+        # Check if the display_name contains only alphabets
+        validate_only_alphabets(display_name)
+        
+        # Check for specific length range
+        if not (2 <= len(display_name) <= 10):
+            raise ValidationError("The display name should be between 2 and 5 characters long.")
+            
+        return display_name
 
 class SectionForm(forms.ModelForm):
     class Meta:
@@ -106,6 +77,13 @@ class SectionForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
         }
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+
+        # Validate the name with our custom validator
+        validate_only_alphabets(name)
+
+        return name
 
 class GuideTeacherForm(forms.ModelForm):
     class Meta:
@@ -115,7 +93,19 @@ class GuideTeacherForm(forms.ModelForm):
         widgets = {
             'name': forms.Select(attrs={'class': 'form-control'}),
         }
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
 
+        # Validate the name with our custom validator
+        validate_only_alphabets(name)
+
+        return name
+    
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        if GuideTeacher.objects.filter(name=name).exists():
+            raise ValidationError('This guide teacher is already selected.')
+        return name
 
 # Generating a list of years from 2000 to the current year
 YEARS = [(year, year) for year in range(2000, datetime.now().year + 1)]
@@ -140,6 +130,13 @@ class ClassRegistrationForm(forms.ModelForm):
             'session': forms.Select(attrs={'class': 'form-control'}),
             'guide_teacher': forms.Select(attrs={'class': 'form-control'}),
         }
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+
+        # Validate the name with our custom validator
+        validate_only_alphabets(name)
+
+        return name
 class AcademicInfoForm(forms.ModelForm):
     class Meta:
         model = AcademicInfo
@@ -161,6 +158,13 @@ class PersonalInfoForm(forms.ModelForm):
             'phone_no': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.TextInput(attrs={'class': 'form-control'}),
         }
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+
+        # Validate the name with our custom validator
+        validate_only_alphabets(name)
+
+        return name
 
 
 class GuardianInfoForm(forms.ModelForm):
@@ -185,7 +189,15 @@ class GuardianInfoForm(forms.ModelForm):
             'guardian_email': forms.TextInput(attrs={'class': 'form-control'}),
             'relationship_with_student': forms.Select(attrs={'class': 'form-control'}),
         }
+    def clean_name(self):
+        father_name = self.cleaned_data.get('father_name')
+        mother_name=self.cleaned_data.get('mother_name')
+        # Validate the name with our custom validator
+        validate_only_alphabets(father_name)
+        validate_only_alphabets(mother_name)
 
+        return father_name and mother_name
+    
 class EmergencyContactDetailsForm(forms.ModelForm):
     class Meta:
         model = EmergencyContactDetails
@@ -197,7 +209,14 @@ class EmergencyContactDetailsForm(forms.ModelForm):
             'phone_no': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.TextInput(attrs={'class': 'form-control'}),
         }
+    def clean_name(self):
+    
+        emergency_guardian_name=self.cleaned_data.get('emergency_guardian_name')
+        # Validate the name with our custom validator
+        validate_only_alphabets(emergency_guardian_name)
 
+        return emergency_guardian_name
+    
 class PreviousAcademicInfoForm(forms.ModelForm):
     passing_year= forms.ChoiceField(choices=YEARS, widget=forms.Select(attrs={'class': 'form-control'}))
     class Meta:
@@ -210,12 +229,23 @@ class PreviousAcademicInfoForm(forms.ModelForm):
             'board_roll': forms.TextInput(attrs={'class': 'form-control'}),
            
         }
+    def clean_name(self):
+    
+        institute_name=self.cleaned_data.get('institute_name')
+        # Validate the name with our custom validator
+        validate_only_alphabets(institute_name)
+
+        return institute_name
 
 class PreviousAcademicCertificateForm(forms.ModelForm):
+    marksheet = forms.FileField(validators=[validate_pdf_file])
+    other_certificate = forms.FileField(validators=[validate_pdf_file])
+    
+
     class Meta:
         model = PreviousAcademicCertificate
         fields = '__all__'
-
+    
 class StudentSearchForm(forms.Form):
     class_info = forms.ModelChoiceField(required=False, queryset=ClassInfo.objects.all())
     registration_no = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={'placeholder': 'Registration No', 'aria-controls': 'DataTables_Table_0'}))

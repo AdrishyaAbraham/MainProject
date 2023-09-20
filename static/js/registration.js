@@ -7,12 +7,12 @@ $('#academic_info_btn').on('click', function(){
 // Presonal Information
 $('#personal_info_btn').on('click', function(){
   $('.personal_info').hide();
-  $('.address_info').show();
+  $('.guardian_info').show();
 });
 
 $('#personal_info_prev_btn').on('click', function(){
   $('.personal_info').hide();
-  $('.academic_info').show();
+  $('.guardian_info').show();
 });
 
 // Address Information
@@ -34,7 +34,7 @@ $('#guardian_info_btn').on('click', function(){
 
 $('#guardian_info_prev_btn').on('click', function(){
   $('.guardian_info').hide();
-  $('.address_info').show();
+  $('.personal_info').show();
 });
 
 // Emergency Contact Information

@@ -2,64 +2,24 @@ from django.db import models
 from django.core.validators import RegexValidator
 import random
 from teacher.models import PersonalInfo
-
-class Student(models.Model):
-    student_number=models.PositiveBigIntegerField(null=True)
-    name=models.CharField(max_length=60)
-    email=models.EmailField(max_length=100)
-    address = models.CharField(max_length=100, null=True)
-    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,10}$', message="Phone number must be entered in the format: '+91'. Up to 10 digits allowed.")
-    phone_number = models.CharField(validators=[phone_regex], max_length=10, blank=True) # Validators should be a list
-    GENDER_CHOICES = (
-        ('M', 'Male'),
-        ('F', 'Female'),
-    )
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES,null=True)
-    dob = models.DateField(max_length=8,null=True)
-    doj = models.DateField(max_length=8,null=True)
-    fathername=models.CharField(max_length=50,null=True)
-    father_contact=models.CharField(validators=[phone_regex], max_length=10, blank=True)
-    mothername=models.CharField(max_length=50,null=True)
-    mother_contact=models.CharField(validators=[phone_regex], max_length=10, blank=True)
-
-    def __str__(self) -> str:
-        return f'Student: {self.name} '
-
-
-class Teacher(models.Model):
-    teacher_number=models.PositiveBigIntegerField()
-    name=models.CharField(max_length=60)
-    email=models.EmailField(max_length=100)
-    address = models.CharField(max_length=100, null=True)
-    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,110}$', message="Phone number must be entered in the format: '+91'. Up to 10 digits allowed.")
-    phone_number = models.CharField(validators=[phone_regex], max_length=10, blank=True) # Validators should be a list
-    GENDER_CHOICES = (
-        ('M', 'Male'),
-        ('F', 'Female'),
-    )
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES,null=True)
-    dob = models.DateField(max_length=8,null=True)
-    doj = models.DateField(max_length=8,null=True)
-    
-    def __str__(self) -> str:
-        return f'Teacher: {self.name} '    
+from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 class Resource(models.Model):
     resource_id=models.PositiveBigIntegerField()
-    teacher_name= models.OneToOneField(Teacher, on_delete=models.CASCADE, null=True)
+    teacher_name= models.ForeignKey(PersonalInfo, on_delete=models.CASCADE, null=True)
     resource_title=models.CharField(max_length=60,null=True)
     resource_file=models.FileField(upload_to='notes/pdfs/',null=True)
     file_type=models.CharField(max_length=30,null=True)
     description=models.CharField(max_length=200,null=True)
-    uploaded_date=models.DateField(max_length=30,null=True)
-
+    uploaded_date = models.DateField(auto_now_add=True,null=True)
     def __str__(self) -> str:
         return f'Resourse: {self.resource_title}'
 
 
 class Class(models.Model):
     name = models.CharField(max_length=45, unique=True)
-    display_name = models.CharField(max_length=10, unique=True)
+    display_name = models.CharField(max_length=10, )
     date = models.DateField(auto_now_add=True)
 
     def __str__(self):
@@ -95,7 +55,7 @@ class ClassInfo(models.Model):
         return self.display_name
         
 class ClassRegistration(models.Model):
-    name = models.CharField(max_length=10, unique=True)
+    name = models.CharField(max_length=15, unique=True)
     class_name = models.ForeignKey(ClassInfo, on_delete=models.CASCADE, null=True)
     section = models.ForeignKey(Section, on_delete=models.CASCADE, null=True)
     session = models.ForeignKey(Session, on_delete=models.CASCADE, null=True)
@@ -140,7 +100,36 @@ class PersonalInfo(models.Model):
 )
     phone_no = models.CharField(validators=[phone_regex], max_length=10, blank=True,unique=True)
     email = models.EmailField(blank=True, null=True)
+    # password=models.CharField(blank=True,max_length=10)
+#     groups = models.ManyToManyField(
+#     Group,
+#         verbose_name=('groups'),
+#         blank=True,
+#         help_text=(
+#             'The groups this user belongs to. A user will get all permissions '
+#             'granted to each of their groups.'
+#         ),
+#           related_name="student_personalinfo_set",
+#     related_query_name="student_personalinfo",
+# )
+    
+    # # Override the user_permissions field
+    # user_permissions = models.ManyToManyField(
+    #     Permission,
+    #     verbose_name=('user permissions'),
+    #     blank=True,
+    #     help_text=('Specific permissions for this user.'),
+    #    related_name="student_personalinfo_permissions_set",
+    # related_query_name="student_personalinfo_permissions",
+    # )
+    
    
+    # last_login = models.DateTimeField('last login', default=timezone.now)
+    # is_active = models.BooleanField(default=True)
+    # is_staff = models.BooleanField(default=False) # This is for admin site
+
+    # USERNAME_FIELD = 'email'
+    # REQUIRED_FIELDS = ['name', 'phone_no']
 
     def __str__(self):
         return self.name
@@ -232,25 +221,3 @@ class EnrolledStudent(models.Model):
 
 
 
-# class login(UserManager):
-#     login_id = models.AutoField(primary_key=True)
-#     def _create_user(self, email, password, **extra_fields):
-#         email = self.normalize_email(email)
-#         user = User(email=email, **extra_fields)
-#         user.password = make_password(password)
-#         user.save(using=self._db)
-#         return user
-    
-# class User(AbstractUser):
-#     GENDER = [("M", "Male"), ("F", "Female")]
-
-#     user_id = models.AutoField(primary_key=True)
-#     email = models.EmailField(unique=True)
-#     full_name = models.CharField(max_length=255)
-#     phone = models.CharField(max_length=20)
-#     address=models.TextField()
-#     gender = models.CharField(max_length=1, choices=GENDER)
-#     DOB=models.DateField()
-#     DOJ=models.DateField()
-#     profile_pic = models.ImageField()
-#     login_id = models.ForeignKey(login,on_delete=models.CASCADE)

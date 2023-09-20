@@ -3,40 +3,8 @@ from . import views
 
 urlpatterns = [
  
-
-  path('1/', views.index1, name='index'),
-  path('', views.base, name='base'),
-  path('<int:id>', views.view_student, name='view_student'),
-  path('add/', views.add, name='add'),
-  path('edit/<int:id>/', views.edit, name='edit'),
-  path('delete/<int:id>/', views.delete, name='delete'),
-
-  #teacher path...
-  path('', views.index2, name='index2'),
-  path('', views.base_teacher, name='base_teacher'),
-  path('<int:id>', views.view_teacher, name='view_teacher'),
-  path('add_teacher/', views.add_teacher, name='add_teacher'),
-  path('edit/<int:id>/', views.edit_teacher, name='edit_teacher'),
-  path('delete/<int:id>/', views.delete_teacher, name='delete_teacher'),
-
-  #hod dashboard...teacher path...
-  path('2/', views.index2, name='index2'),
-  path('', views.base_teacher, name='base_teacher'),
-  path('<int:id>', views.view_teacher, name='view_teacher'),
-  path('add_teacher/', views.add_teacher, name='add_teacher'),
-  path('edit_teacher/<int:id>/', views.edit_teacher, name='edit_teacher'),
-  path('delete_teacher/<int:id>/', views.delete_teacher, name='delete_teacher'),
- 
-
   #hod ...dashboard...student path..
-  path('1/', views.index1, name='index'),
-  path('b/', views.base, name='base'),
-  path('<int:id>', views.view_student, name='view_student'),
-  path('add/', views.add, name='add'),
-  path('edit/<int:id>/', views.edit, name='edit'),
-  path('delete/<int:id>/', views.delete, name='delete'),
-  path('v/', views.editprofile, name='editprofile'),
-  
+
     path('class-wise-student-registration', views.class_wise_student_registration, name='class-wise-student-registration'),
     path('student-registration', views.student_registration, name='student-registration'),
     path('student-list', views.student_list, name='student-list'),
@@ -50,14 +18,18 @@ urlpatterns = [
   
   #hod---class allotment---
   path('create-class', views.add_class, name='add_class'),
-
+  #class section----------
   path('create-section', views.create_section, name='create-section'),
   path('update-section/<int:section_id>/', views.update_section, name='update_section'),
   path('delete-section/<int:section_id>/', views.delete_section, name='delete_section'),
+  #teacher allotment-------
   path('guide-teacher', views.create_guide_teacher, name='guide-teacher'),
+  #class session------------
   path('create-session', views.create_session, name='create-session'),
   path('delete-session/<int:session_id>/', views.delete_session, name='delete-session'),
   path('update-session/<int:session_id>/', views.update_session, name='update-session'),
+
+  #register class--------
   path('class_registration', views.class_registration, name='class-registration'),
   path('class-list', views.class_list, name='class-list'),
 

@@ -11,6 +11,24 @@ from .forms import *
 from django.shortcuts import render
 from django.db import IntegrityError
 
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+
+# def student_login(request):
+#     if request.method == "POST":
+#         email = request.POST['email']
+#         phone_no = request.POST['phone_no']
+        
+#         user = authenticate(request, username=email, password=phone_no)
+#         if user is not None:
+#             login(request, user)
+#             # Redirect to a success page
+#             return redirect('studentdashboard')
+#         else:
+#             context = {"error": "Invalid login credentials."}
+#             return render(request, 'login/login_page.html', context)
+
+#     return render(request, 'login/login_page.html')
 
 def profile(request):
     profile = UserProfile.objects.get(id=request.user.id)
@@ -33,295 +51,13 @@ def update_profile(request):
 def index(request):
     return render(request,'adminpanel/indexdashboard.html')
 
-# def index1(request):
-#     return render(request,'adminpanel/index.html',{
-#        'students': Student.objects.all()
-#     })
-
-# def index2(request):
-#     return render(request,'adminpanel/index_teacher.html',{
-#        'teachers': Teacher.objects.all()
-#     })
-
-# def base(request):
-#     return render(request,'adminpanel/base.html')
-
-# def view_student(request, id):
-#   return HttpResponseRedirect(reverse('index1'))
-
-
-# def add(request):
-#   if request.method == 'POST':
-#     form = StudentForm(request.POST)
-#     if form.is_valid():
-#       new_student_number = form.cleaned_data['student_number']
-#       new_name = form.cleaned_data['name']
-#       new_email = form.cleaned_data['email']
-      
-#       new_student = Student(
-#         student_number=new_student_number,
-#         name=new_name,
-#         email=new_email,
-       
-#       )
-#       new_student.save()
-#       return render(request, 'adminpanel/add.html', {
-#         'form': StudentForm(),
-#         'success': True
-#       })
-#   else:
-#     form = StudentForm()
-#   return render(request, 'adminpanel/add.html', {
-#     'form': StudentForm()
-#   })
-
-
-# def edit(request, id):
-#   if request.method == 'POST':
-#     student = Student.objects.get(pk=id)
-#     form = StudentForm(request.POST, instance=student)
-#     if form.is_valid():
-#       form.save()
-#       return render(request, 'adminpanel/edit.html', {
-#         'form': form,
-#         'success': True
-#       })
-#   else:
-#     student = Student.objects.get(pk=id)
-#     form = StudentForm(instance=student)
-#   return render(request, 'adminpanel/edit.html', {
-#     'form': form
-#   })
-
-
-# def delete(request, id):
-#   if request.method == 'POST':
-#     student = Student.objects.get(pk=id)
-#     student.delete()
-#   return HttpResponseRedirect(reverse('index1'))
-
-# #teacher----adminpage---
-
-
-# def base_teacher(request):
-#     return render(request,'adminpanel/base_teacher.html')
-
-# def view_teacher(request,id):
-#     return HttpResponseRedirect(reverse('index2'))
-
-# def add_teacher(request):
-#   if request.method == 'POST':
-#     form = TeacherForm(request.POST)
-#     if form.is_valid():
-#       new_teacher_number = form.cleaned_data['teacher_number']
-#       new_name = form.cleaned_data['name']
-#       new_email = form.cleaned_data['email']
-      
-#       new_teacher = Teacher(
-#         teacher_number=new_teacher_number,
-#         name=new_name,
-#         email=new_email,
-       
-#       )
-#       new_teacher.save()
-#       return render(request, 'adminpanel/add_teacher.html', {
-#         'form': TeacherForm(),
-#         'success': True
-#       })
-#   else:
-#     form = TeacherForm()
-#   return render(request, 'adminpanel/add_teacher.html', {
-#     'form': TeacherForm()
-#   })
-
-
-# def edit_teacher(request, id):
-#   if request.method == 'POST':
-#     teacher = Teacher.objects.get(pk=id)
-#     form = TeacherForm(request.POST, instance=teacher)
-#     if form.is_valid():
-#       form.save()
-#       return render(request, 'adminpanel/edit_teacher.html', {
-#         'form': form,
-#         'success': True
-#       })
-#   else:
-#     teacher = Teacher.objects.get(pk=id)
-#     form = TeacherForm(instance=teacher)
-#   return render(request, 'adminpanel/edit_teacher.html', {
-#     'form': form
-#   })
-
-
-# def delete_teacher(request, id):
-  # if request.method == 'POST':
-  #   teacher = Teacher.objects.get(pk=id)
-  #   teacher.delete()
-  # return HttpResponseRedirect(reverse('index2'))
 
 #----------------HOD-dashboard-----------#
 
 def hoddashboard(request):
    return render(request,'hod/hoddashboard.html')
 
-def index1(request):
-    return render(request,'hod/index.html',{
-       'students': Student.objects.all()
-    })
 
-def index2(request):
-    return render(request,'hod/index_teacher.html',{
-       'teachers': Teacher.objects.all()
-    })
-
-def base(request):
-    return render(request,'hod/base.html')
-
-def view_student(request, id):
-  return HttpResponseRedirect(reverse('index1'))
-
-
-def add(request):
-  if request.method == 'POST':
-    form = StudentForm(request.POST)
-    if form.is_valid():
-      new_student_number = form.cleaned_data['student_number']
-      new_name = form.cleaned_data['name']
-      new_email = form.cleaned_data['email']
-      new_address=form.cleaned_data['address']
-      new_phone_number=form.cleaned_data['phone_number']
-      new_gender=form.cleaned_data['gender']
-      new_dob=form.cleaned_data['dob']
-      new_doj=form.cleaned_data['doj']
-      new_fathername=form.cleaned_data['fathername']
-      new_father_contact=form.cleaned_data['father_contact']
-      new_mothername=form.cleaned_data['mothername']
-      new_mother_contact=form.cleaned_data['mother_contact']
-
-
-      
-      new_student = Student(
-        student_number=new_student_number,
-        name=new_name,
-        email=new_email,
-        address=new_address,
-        phone_number=new_phone_number,
-        gener=new_gender,
-        dob=new_dob,
-        doj=new_doj,
-        fathername=new_fathername,
-        father_contact=new_father_contact,
-        mothername=new_mothername,
-        mother_contact=new_mother_contact,
-
-       
-      )
-      new_student.save()
-      return render(request, 'hod/add.html', {
-        'form': StudentForm(),
-        'success': True
-      })
-    else:
-       print(form.errors)
-  else:
-     
-     form = StudentForm()
-  return render(request, 'hod/add.html', {
-    'form': StudentForm()
-  })
-
-
-def edit(request, id):
-  if request.method == 'POST':
-    student = Student.objects.get(pk=id)
-    form = StudentForm(request.POST, instance=student)
-    if form.is_valid():
-      form.save()
-      return render(request, 'hod/edit.html', {
-        'form': form,
-        'success': True
-      })
-  else:
-    student = Student.objects.get(pk=id)
-    form = StudentForm(instance=student)
-  return render(request, 'hod/edit.html', {
-    'form': form
-  })
-
-
-def delete(request, id):
-  if request.method == 'POST':
-    student = Student.objects.get(pk=id)
-    student.delete()
-  return HttpResponseRedirect(reverse('index1'))
-
-def base_teacher(request):
-    return render(request,'hod/base_teacher.html')
-
-def view_teacher():
-    return HttpResponseRedirect(reverse('index2'))
-
-def add_teacher(request):
-  if request.method == 'POST':
-    form = TeacherForm(request.POST)
-    if form.is_valid():
-      new_teacher_number = form.cleaned_data['teacher_number']
-      new_name = form.cleaned_data['name']
-      new_email = form.cleaned_data['email']
-      new_address = form.cleaned_data['address']
-      new_phone_number = form.cleaned_data['phone_number']
-      new_gender = form.cleaned_data['gender']
-      new_dob = form.cleaned_data['dob']
-      new_doj = form.cleaned_data['doj']
-
-      
-      new_teacher = Teacher(
-        teacher_number=new_teacher_number,
-        name=new_name,
-        email=new_email,
-        address=new_address,
-        phone_number=new_phone_number,
-        gender=new_gender,
-        dob=new_dob,
-        doj=new_doj,
-
-       
-      )
-      new_teacher.save()
-      return render(request, 'hod/add_teacher.html', {
-        'form': TeacherForm(),
-        'success': True
-      })
-  else:
-    form = TeacherForm()
-  return render(request, 'hod/add_teacher.html', {
-    'form': TeacherForm()
-  })
-
-
-def edit_teacher(request, id):
-  if request.method == 'POST':
-    teacher = Teacher.objects.get(pk=id)
-    form = TeacherForm(request.POST, instance=teacher)
-    if form.is_valid():
-      form.save()
-      return render(request, 'hod/edit_teacher.html', {
-        'form': form,
-        'success': True
-      })
-  else:
-    teacher = Teacher.objects.get(pk=id)
-    form = TeacherForm(instance=teacher)
-  return render(request, 'hod/edit_teacher.html', {
-    'form': form
-  })
-
-
-def delete_teacher(request, id):
-  if request.method == 'POST':
-    teacher = Teacher.objects.get(pk=id)
-    teacher.delete()
-  return HttpResponseRedirect(reverse('index2'))
 
 def add_class(request):
     forms = ClassInfoForm()  # Initialize the form here

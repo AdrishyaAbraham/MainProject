@@ -50,31 +50,36 @@
             <span class="material-icons-outlined">dashboard</span> Dashboard
             </a>
           </li>
-		  <li class="sidebar-list-item">
-           <a href="{% url 'index1' %}" target="_blank"> 
-              <span class="material-icons-outlined">book</span> Academic
-            </a>
-          </li>
-          <li class="sidebar-list-item">
-           <a href="{% url 'index1' %}" target="_blank"> 
-              <span class="material-icons-outlined">groups</span> Students
-            </a>
-          </li>
-          <li class="sidebar-list-item">
-            <a href="{% url 'index2' %}" target="_blank">
-            <span class="material-icons-outlined">table_view</span> Attendance
-            </a>
-          </li>
+		  
+           <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                <span class="material-icons-outlined">groups</span> Students 
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content">
+                <a href="">Stude List</a>
+                <a href="" target="_blank">Student Attendance</a>
+
+            </div>
+        </li>
+         
+        <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                <span class="material-icons-outlined">class</span> Attendance 
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content">
+                <a href="">My Attendance</a>
+                <a href="" target="_blank">Apply Leave</a>
+            </div>
+        </li>
+          
 		   <li class="sidebar-list-item">
-            <a href="{% url 'index2' %}" target="_blank">
+            <a href="" target="_blank">
             <span class="material-icons-outlined">star_half</span> Mark Updation
             </a>
           </li>
-		   <li class="sidebar-list-item">
-            <a href="" target="_blank">
-         <span class="material-icons-outlined">calendar_view_month</span> Apply for leave
-            </a>
-          </li>
+		 
 		   <li class="sidebar-list-item">
             <a href="{% url 'index_resource' %}" target="_blank">
             <span class="material-icons-outlined">upload_file</span> Upload Resources
@@ -90,11 +95,7 @@
             <span class="material-icons-outlined">campaign</span> Activities
             </a>
           </li>
-          <li class="sidebar-list-item">
-            <a href="#" target="_blank">
-              <span class="material-icons-outlined">fact_check</span> Inventory
-            </a>
-          </li>
+        
           <li class="sidebar-list-item">
             <a href="#" target="_blank">
               <span class="material-icons-outlined">poll</span> Reports

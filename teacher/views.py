@@ -1,12 +1,32 @@
 from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 from django.shortcuts import render, redirect
 
 from . forms import * 
 from .models import *
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from teacher.models import PersonalInfo
 
-# Create your views here.
+def teacher_login(request):
+    if request.method == "POST":
+        email = request.POST['email']
+        phone_no = request.POST['phone_no']
+
+        # We're authenticating using the teacher's PersonalInfo model.
+        user = authenticate(request, username=email, password=phone_no)
+        if user is not None:
+            login(request, user)
+            # Redirect to a teacher dashboard or another desired page
+            return redirect('teacherdashboard')
+        else:
+            # Return an error message or render the same page with an error context
+            context = {"error": "Invalid login credentials."}
+            return render(request, 'login/teacher_login.html', context)
+
+    return render(request, 'login/teacher_login.html')
 
 
 def teacher_registration(request):
@@ -97,4 +117,16 @@ def add_designation(request):
             return redirect('designation')
     designation = Designation.objects.all()
     context = {'forms': forms, 'designation': designation}
+    return render(request, 'hod/designation.html', context)
+
+def update_designation(request, designation_id):
+    instance = get_object_or_404(Designation, id=designation_id)
+    forms = AddDesignationForm(request.POST or None, instance=instance)
+    
+    if request.method == 'POST':
+        if forms.is_valid():
+            forms.save()
+            return redirect('designation') # Redirect back to the designation page
+    
+    context = {'forms': forms}
     return render(request, 'hod/designation.html', context)

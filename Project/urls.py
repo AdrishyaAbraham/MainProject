@@ -30,16 +30,13 @@ urlpatterns = [
     path('s/', include('school.urls')),
     path('teacher/', include('teacher.urls')),
 
-    path('i/', index, name='indexdashboard'),
     path('t/',teacherdashboard, name='teacherdashboard'),
-   
     path('st/',studentdashboard, name='studentdashboard'),
-    path('d/',downloadresource, name='downloadresource'),
     path('',hoddashboard,name="hoddashboard"),
-    # path('', login_page, name=''),
+
+#     path('log/', student_login, name=''),
     # path('register/', register_page, name='register_page'),
-    path('index1/', index1, name='index1'),
-    path('index2', index2, name='index2'),
+   
     path('logout/',logout,name='logout'),
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
