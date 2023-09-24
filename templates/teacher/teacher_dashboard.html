@@ -15,9 +15,54 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+    .header-right {
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-container {
+    position: relative;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.dropdown-toggle:hover + .dropdown-content,
+.dropdown-content:hover {
+    display: block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 180px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-content p {
+    color: black;
+    padding: 10px 14px;
+    text-decoration: none;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.dropdown-content p:last-child {
+    border-bottom: none;
+}
+
+.dropdown-content p:hover {
+    background-color: #f1f1f1;
+}
+</style>
   </head>
   <body>
-    <div class="grid-container">
+<div class="grid-container">
 
       <!-- Header -->
       <header class="header">
@@ -28,10 +73,33 @@
           <span class="material-icons-outlined">search</span>
         </div>
         <div class="header-right">
-          <span class="material-icons-outlined">notifications</span>
-          <span class="material-icons-outlined">email</span>
-          <span class="material-icons-outlined">account_circle</span>
+        <div class="dropdown-container">
+        <span class="material-icons-outlined dropdown-toggle">notifications</span>
+        <div class="dropdown-content">
+            <p>Notification 1</p>
+            <p>Notification 2</p>
+            <p>Notification 3</p>
         </div>
+        </div>
+    
+    <div class="dropdown-container">
+        <span class="material-icons-outlined dropdown-toggle">email</span>
+        <div class="dropdown-content">
+            <p style="color:black;">{{ request.user.email }}</p>
+            
+        </div>
+    </div>
+
+    <div class="dropdown-container">
+        <span class="material-icons-outlined dropdown-toggle">account_circle</span>
+        <div class="dropdown-content">
+            <p>Profile</p>
+            <p>Settings</p>
+            <a href="{% url 'logout' %}"><p>Logout</p></a>
+        </div>
+    </div>
+
+
       </header>
       <!-- End Header -->
 
@@ -57,7 +125,7 @@
                 <span class="material-icons-outlined">expand_more</span>
             </span>
             <div class="dropdown-content">
-                <a href="">Stude List</a>
+           
                 <a href="" target="_blank">Student Attendance</a>
 
             </div>
@@ -81,7 +149,7 @@
           </li>
 		 
 		   <li class="sidebar-list-item">
-            <a href="{% url 'index_resource' %}" target="_blank">
+            <a href="" target="_blank">
             <span class="material-icons-outlined">upload_file</span> Upload Resources
             </a>
           </li>

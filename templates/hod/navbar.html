@@ -17,11 +17,11 @@
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle nav-link" data-toggle="dropdown" href="#" role="button"
                aria-haspopup="true" aria-expanded="false">
-                {% if request.user.userprofile %}
-                <img src="{{ request.user.userprofile.photo.url }}" class="img-avatar" alt="admin">
-                {% else %}
+                {% comment %} {% if request.user.userprofile %} {% endcomment %}
+                {% comment %} <img src="{{ request.user.userprofile.photo.url }}" class="img-avatar" alt="admin"> {% endcomment %}
+                {% comment %} {% else %} {% endcomment %}
                 <img src="{% static 'src/img/man.png' %}" class="img-avatar" alt="Admin">
-                {% endif %}
+                {% comment %} {% endif %} {% endcomment %}
             </a>
             <div class="dropdown-menu dropdown-menu-right">
                 <div class="dropdown-header text-center">
@@ -32,10 +32,10 @@
                 <div class="dropdown-header text-center">
                     <strong>Settings</strong>
                 </div>
-                <a class="dropdown-item" href="{% url 'profile' %}"><i class="fa fa-user"></i> Profile</a>
-                <a class="dropdown-item" href="{% url 'update-profile' %}"><i class="fa fa-wrench"></i> Settings</a>
+                <a class="dropdown-item" href=""><i class="fa fa-user"></i> Profile</a>
+                <a class="dropdown-item" href=""><i class="fa fa-wrench"></i> Settings</a>
                 <a class="dropdown-item" href="#"><i class="fa fa-usd"></i> Payments<span class="badge badge-secondary">42</span></a>
-                <a class="dropdown-item" href="{% url 'logout' %}"><i class="fa fa-lock"></i> Logout</a>
+                <a class="dropdown-item" href=""><i class="fa fa-lock"></i> Logout</a>
             </div>
         </li>
     </ul>

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Mark Student Attendance</h2>
+
+    <form method="POST" action="{% url 'mark_attendance' %}">
+        {% csrf_token %}
+        <label for="class_name">Select Class:</label>
+        <select name="class_name">
+            {% for class in classes %}
+                <option value="{{ class.id }}" {% if selected_class and class.id == selected_class.id %}selected{% endif %}>{{ class.name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Show Students</button>
+    </form>
+
+    <form method="POST" action="{% url 'mark_attendance' %}">
+        {% csrf_token %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>{{ student.student.personal_info.name }}</td>
+                    <td>
+                        <input type="checkbox" name="status_{{ student.id }}" value="1"> Present
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <input type="submit" value="Mark Attendance">
+    </form>
+{% endblock %}

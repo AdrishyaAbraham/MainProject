@@ -32,6 +32,8 @@
                         <td>{{ class_obj.name|title }}</td>
                         <td>{{ class_obj.display_name|title }}</td>
                         <td>{{ class_obj.date }}</td>
+                        <td><a href="{% url 'update_class' class_obj.id %}" class="btn btn-warning">Update</a></td>
+                         <td><a href="{% url 'delete_class' class_obj.id %}" class="btn btn-danger">Delete</a></td>
                     </tr>
                   {% endfor %}
               </tbody>

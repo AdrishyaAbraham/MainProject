@@ -25,20 +25,11 @@
             </div>
           </div>
           <button id="personal_info_prev_btn" type="button" class="btn btn-primary pull-left">Previous</button>
+           <button id="submit" type="submit" class="btn btn-primary pull-right">Submit</button>
           <button id="personal_info_btn" type="button" class="btn btn-primary pull-right">Next</button>
         </div>
 
-        <div class="address_info">
-          <div class="card">
-            <div class="card-header">Address Information</div>
-            <div class="card-body">
-              {% csrf_token %}
-              {{ student_address_info_form.as_p }}
-            </div>
-          </div>
-          <button id="address_info_prev_btn" type="button" class="btn btn-primary pull-left">Previous</button>
-          <button id="address_info_btn" type="button" class="btn btn-primary pull-right">Next</button>
-        </div>
+  
 
         <div class="guardian_info">
           <div class="card">
@@ -50,18 +41,6 @@
           </div>
           <button id="guardian_info_prev_btn" type="button" class="btn btn-primary pull-left">Previous</button>
           <button id="guardian_info_btn" type="button" class="btn btn-primary pull-right">Next</button>
-        </div>
-
-        <div class="emergency_contact_info">
-          <div class="card">
-            <div class="card-header">In Case Of Emergency Contact Details</div>
-            <div class="card-body">
-              {% csrf_token %}
-              {{ emergency_contact_details_form.as_p }}
-            </div>
-          </div>
-          <button id="emergency_contact_info_prev_btn" type="button" class="btn btn-primary pull-left">Previous</button>
-          <button id="emergency_contact_info_btn" type="button" class="btn btn-primary pull-right">Next</button>
         </div>
 
         <div class="previous_academic_info">

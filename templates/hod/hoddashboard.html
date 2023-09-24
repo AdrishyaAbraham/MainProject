@@ -29,7 +29,7 @@
         <div class="header-right">
           <span class="material-icons-outlined">notifications</span>
           <span class="material-icons-outlined">email</span>
-          <a href="{% url 'profile' %}"><span class="material-icons-outlined">account_circle</span><a/>
+          <a href="{% url 'admin_profile' admin.id %}"><span class="material-icons-outlined">account_circle</span></a>
         </div>
       </header>
       <!-- End Header -->
@@ -88,6 +88,8 @@
                 <a href="{% url 'student-search' %}" target="_blank">Search Student</a>
                 <a href="{% url 'enrolled-student' %}" target="_blank">Enrolled Student</a>
                 <a href="{% url 'enrolled-student-list' %}" target="_blank">Enrolled Student List</a>
+                <a href="" target="_blank">Student Attendance </a>
+
             </div>
         </li>
                     <li class="sidebar-list-item">
@@ -178,6 +180,8 @@
     <!-- ApexCharts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.35.5/apexcharts.min.js"></script>
     <!-- Custom JS -->
+    
     <script src="{% static 'js/scripts.js' %} "></script>
+    <script src="{% static 'js/validation.js' %} "></script>
   </body>
 </html>

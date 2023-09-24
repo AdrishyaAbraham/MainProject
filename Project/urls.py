@@ -17,22 +17,22 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from school.views import *
-from teacher.views import *
 from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('profile/', profile, name='profile'),
-    path('update/', update_profile, name='update-profile'),
+
     # path('login/',include('django.contrib.auth.urls')),
     path('s/', include('school.urls')),
-    path('teacher/', include('teacher.urls')),
-
+    path('logout/',user_logout,name='logout'),
     path('t/',teacherdashboard, name='teacherdashboard'),
+    path('',login_page, name='login_page'),
+    
+
     path('st/',studentdashboard, name='studentdashboard'),
-    path('',hoddashboard,name="hoddashboard"),
+    path('h/',hoddashboard,name="hoddashboard"),
 
 #     path('log/', student_login, name=''),
     # path('register/', register_page, name='register_page'),

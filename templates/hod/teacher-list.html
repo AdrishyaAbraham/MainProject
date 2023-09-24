@@ -45,16 +45,16 @@
                                   {% for teacher in teacher %}
                                     <tr role="row" class="odd">
                                         <td>{{ forloop.counter }}</td>
-                                        <td>{{ teacher.name }}</td>
+                                        <td>{{ teacher.user.name }}</td>
                                         <td>{{ teacher.gender }}</td>
                                         <td>
-                                            <a class="btn btn-success" href="{% url 'teacher-profile' teacher.id %}">
+                                            <a class="btn btn-success" href="{% url 'teacher_profile' teacher.id %}">
                                                 <i class="fa fa-search-plus"></i>View
                                             </a>
-                                            <a class="btn btn-info" href="{% url 'teacher-edit' teacher.id %}">
+                                            <a class="btn btn-info" href="{% url 'teacher_edit' teacher.id %}">
                                                 <i class="fa fa-edit"></i>Update
                                             </a>
-                                            <a class="btn btn-danger" href="{% url 'teacher-delete' teacher.id %}">
+                                            <a class="btn btn-danger" href="{% url 'teacher_delete' teacher.id %}">
                                                 <i class="fa fa-trash-o"></i>Delete
                                             </a>
                                         </td>
