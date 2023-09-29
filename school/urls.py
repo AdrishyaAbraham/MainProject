@@ -3,12 +3,16 @@ from . import views
 
 urlpatterns = [
  
+ #users profile view....
+    path('admin_profile/<int:admin_id>/', views.admin_profile, name='admin_profile'),
+    path('student_acprofile/<int:student_id>/', views.student_acprofile, name='student_acprofile'),
+    path('teacher_acprofile/<int:teacher_id>/', views.teacher_acprofile, name='teacher_acprofile'),
+
   #hod ...dashboard...student path..
 
     path('class-wise-student-registration', views.class_wise_student_registration, name='class-wise-student-registration'),
     path('student-registration', views.student_registration, name='student-registration'),
     path('student-list', views.student_list, name='student-list'),
-    path('admin_profile/<int:admin_id>/', views.admin_profile, name='admin_profile'),
     path('profile/<reg_no>', views.student_profile, name='student-profile'),
     path('edit/<reg_no>', views.student_edit, name='student-edit'),
     path('delete/<reg_no>', views.student_delete, name='student-delete'),
@@ -16,7 +20,6 @@ urlpatterns = [
     path('enrolled/', views.enrolled_student, name='enrolled-student'),
     path('enrolled-student/<reg>', views.student_enrolled, name='enrolled'),
     path('enrolled-student-list/', views.enrolled_student_list, name='enrolled-student-list'),
-    #  path('mark_attendance/', views.mark_attendance, name='mark_attendance'),
    
   #hod---class allotment---
   path('create-class', views.add_class, name='add_class'),
@@ -51,9 +54,13 @@ urlpatterns = [
   path('', views.uploadresource, name='uploadresource'),
   path('<int:id>', views.view_resource, name='view_resource'),
   path('add_resource/', views.add_resource, name='add_resource'),
+  path('index_resource/', views.index_resource, name='index_resource'),
+
   path('edit_resource/<int:id>/', views.edit_resource, name='edit_resource'),
   path('delete_resource/<int:id>/', views.delete_resource, name='delete_resource'),
- 
+  path('class_students', views.class_student, name='class_student'),
+  path('mark_attendance/', views.mark_attendance, name='mark_attendance'),
+
  #student dashboard
   path('d/<int:id>/',views.downloadresource,name='downloadresource')
   

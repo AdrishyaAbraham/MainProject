@@ -139,16 +139,6 @@ class TeacherPersonalInfo(models.Model):
   
 
 
-class Resource(models.Model):
-    resource_id=models.PositiveBigIntegerField()
-    teacher_name= models.ForeignKey(TeacherPersonalInfo, on_delete=models.CASCADE, null=True)
-    resource_title=models.CharField(max_length=60,null=True)
-    resource_file=models.FileField(upload_to='notes/pdfs/',null=True)
-    file_type=models.CharField(max_length=30,null=True)
-    description=models.CharField(max_length=200,null=True)
-    uploaded_date = models.DateField(auto_now_add=True,null=True)
-    def __str__(self) -> str:
-        return f'Resourse: {self.resource_title}'
 
 class Section(models.Model):
     name = models.CharField(max_length=45, unique=True)
@@ -195,6 +185,17 @@ class ClassRegistration(models.Model):
         return self.name
     
 
+class Resource(models.Model):
+    resource_id=models.PositiveBigIntegerField()
+    teacher_name= models.ForeignKey(TeacherPersonalInfo, on_delete=models.CASCADE, null=True)
+    class_registration = models.ForeignKey(ClassRegistration, on_delete=models.CASCADE,null=True)
+    resource_title=models.CharField(max_length=60,null=True)
+    resource_file=models.FileField(upload_to='notes/pdfs/',null=True)
+    file_type=models.CharField(max_length=30,null=True)
+    description=models.CharField(max_length=200,null=True)
+    uploaded_date = models.DateField(auto_now_add=True,null=True)
+    def __str__(self) -> str:
+        return f'Resourse: {self.resource_title}'
 
 class PersonalInfo(models.Model):
     
@@ -299,3 +300,10 @@ class EnrolledStudent(models.Model):
     
     def __str__(self):
         return str(self.roll)    
+class StudentAttendance(models.Model):
+    student = models.ForeignKey(EnrolledStudent, on_delete=models.CASCADE)
+    date = models.DateField(default=timezone.now)
+    is_present = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ['student', 'date']  # Ensuring one attendance entry per student per day

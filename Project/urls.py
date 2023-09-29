@@ -24,7 +24,6 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # path('login/',include('django.contrib.auth.urls')),
     path('s/', include('school.urls')),
     path('logout/',user_logout,name='logout'),
     path('t/',teacherdashboard, name='teacherdashboard'),
@@ -34,10 +33,8 @@ urlpatterns = [
     path('st/',studentdashboard, name='studentdashboard'),
     path('h/',hoddashboard,name="hoddashboard"),
 
-#     path('log/', student_login, name=''),
-    # path('register/', register_page, name='register_page'),
    
-    path('logout/',logout,name='logout'),
+    path('logout/',user_logout,name='logout'),
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),

@@ -15,12 +15,12 @@
     <title>{% block title %}{% endblock %}</title>
 
     <!-- Icons -->
-    <link href="{% static 'dist/vendors/css/font-awesome.min.css' %}" rel="stylesheet">
-    <link href="{% static 'dist/vendors/css/simple-line-icons.min.css' %}" rel="stylesheet">
+    {% comment %} <link href="{% static 'dist/vendors/css/font-awesome.min.css' %}" rel="stylesheet"> {% endcomment %}
+    {% comment %} <link href="{% static 'dist/vendors/css/simple-line-icons.min.css' %}" rel="stylesheet"> {% endcomment %}
 
     <!-- Main styles for this application -->
     <link href="{% static 'css/style_class.css' %}" rel="stylesheet">
-    <link href="{% static 'css/form.css' %}" rel="stylesheet">
+    {% comment %} <link href="{% static 'css/form.css' %}" rel="stylesheet"> {% endcomment %}
 
     {% block extrahead %}
     {% endblock %}
@@ -59,7 +59,7 @@
 
 
 <!--Navbar-->
-{% include 'hod/navbar.html' %}
+{% comment %} {% include 'hod/navbar.html' %} {% endcomment %}
 
 <div class="app-body">
     <!--Sidebar-->

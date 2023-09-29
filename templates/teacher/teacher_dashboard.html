@@ -27,12 +27,12 @@
     cursor: pointer;
 }
 
-.dropdown-toggle:hover + .dropdown-content,
-.dropdown-content:hover {
+.dropdown-toggle:hover + .dropdown-content-info,
+.dropdown-content-info:hover {
     display: block;
 }
 
-.dropdown-content {
+.dropdown-content-info {
     display: none;
     position: absolute;
     right: 0;
@@ -45,18 +45,18 @@
     margin: 0;
 }
 
-.dropdown-content p {
+.dropdown-content-info p {
     color: black;
     padding: 10px 14px;
     text-decoration: none;
     border-bottom: 1px solid #e5e5e5;
 }
 
-.dropdown-content p:last-child {
+.dropdown-content-info p:last-child {
     border-bottom: none;
 }
 
-.dropdown-content p:hover {
+.dropdown-content-info p:hover {
     background-color: #f1f1f1;
 }
 </style>
@@ -75,7 +75,7 @@
         <div class="header-right">
         <div class="dropdown-container">
         <span class="material-icons-outlined dropdown-toggle">notifications</span>
-        <div class="dropdown-content">
+        <div class="dropdown-content-info">
             <p>Notification 1</p>
             <p>Notification 2</p>
             <p>Notification 3</p>
@@ -84,7 +84,7 @@
     
     <div class="dropdown-container">
         <span class="material-icons-outlined dropdown-toggle">email</span>
-        <div class="dropdown-content">
+        <div class="dropdown-content-info">
             <p style="color:black;">{{ request.user.email }}</p>
             
         </div>
@@ -92,8 +92,8 @@
 
     <div class="dropdown-container">
         <span class="material-icons-outlined dropdown-toggle">account_circle</span>
-        <div class="dropdown-content">
-            <p>Profile</p>
+        <div class="dropdown-content-info">
+             <a href="{% url 'teacher_acprofile' user.id  %}"><p>Profile</p></a>
             <p>Settings</p>
             <a href="{% url 'logout' %}"><p>Logout</p></a>
         </div>
@@ -121,12 +121,13 @@
 		  
            <li class="sidebar-list-item dropdown">
             <span class="dropdown-title">
-                <span class="material-icons-outlined">groups</span> Students 
+               <span class="material-icons-outlined">groups</span> Students 
                 <span class="material-icons-outlined">expand_more</span>
             </span>
             <div class="dropdown-content">
-           
-                <a href="" target="_blank">Student Attendance</a>
+                <a href="{% url 'class_student' %}" target="_blank">Students Details</a>
+
+                <a href="{% url 'mark_attendance' %}" target="_blank">Student Attendance</a>
 
             </div>
         </li>
@@ -148,11 +149,17 @@
             </a>
           </li>
 		 
-		   <li class="sidebar-list-item">
-            <a href="" target="_blank">
-            <span class="material-icons-outlined">upload_file</span> Upload Resources
-            </a>
-          </li>
+		
+          <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                        <span class="material-icons-outlined">upload_file</span> Upload Resources
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content">
+                <a href="{% url 'add_resource' %}">Add Resources</a>
+                {% comment %} <a href="" target="_blank">Apply Leave</a> {% endcomment %}
+            </div>
+        </li>
 		   <li class="sidebar-list-item">
             <a href="" target="_blank">
             <span class="material-icons-outlined">forum</span> Feedback

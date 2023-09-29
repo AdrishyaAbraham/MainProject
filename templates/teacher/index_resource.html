@@ -1,5 +1,5 @@
 {%extends "teacher/resource.html"%}
-
+{%load static %}
 
 {% block body %}
 <h3 class="m-4">Resource Material</h3>
@@ -47,7 +47,7 @@
                           <div class="modal-content">
                             <div class="modal-header">
                               <h5 class="modal-title">
-                                Resource: {{ resource.resource_title }} 
+                                Resource: {{ resource.resource_title }}
                               </h5>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true"></span>
@@ -56,7 +56,7 @@
                             <div class="modal-body">
                               <ul class="list-unstyled">
                                 <li>Resource: <strong>{{ resource.resource_id }}</strong></li>
-                                <li>resource_title: <strong>{{ resource_title }}</strong></li>
+                            <li>resource_title: <strong>{{ resource.resource_title }}</strong></li>
         
                               </ul>
                             </div> 

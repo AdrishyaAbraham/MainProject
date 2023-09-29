@@ -7,52 +7,66 @@
           <div class="card-header">
               <i class="fa fa-edit"></i> Student Tables
           </div>
+        {% comment %} {% if student %} {% endcomment %}
           <div class="card-body">
               <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
                   <div class="row">
                       <div class="col-sm-12 col-md-6">
+                          <div class="dataTables_length" id="DataTables_Table_0_length">
+                              <label>Show
+                                  <select name="DataTables_Table_0_length" aria-controls="DataTables_Table_0" class="custom-select custom-select-sm form-control form-control-sm">
+                                      <option value="10">10</option>
+                                      <option value="25">25</option>
+                                      <option value="50">50</option>
+                                      <option value="100">100</option>
+                                  </select> entries</label>
+                          </div>
+                      </div>
+                      <div class="col-sm-12 col-md-6">
                           <div id="DataTables_Table_0_filter" class="dataTables_filter">
                               <form action="" method="GET">
-                                {{ forms }}
-                                <input type="submit" value="Search">
+                                
+                                </label>
                               </form>
                           </div>
                       </div>
                   </div>
-                  <br>
                   <div class="row">
                       <div class="col-sm-12">
                           <table class="table table-striped table-bordered datatable dataTable no-footer" id="DataTables_Table_0" role="grid" aria-describedby="DataTables_Table_0_info" style="border-collapse: collapse !important">
                               <thead>
                                   <tr role="row">
-                                      <th>Id</th>
+                                      {% comment %} <th>Id</th> {% endcomment %}
                                       <th>Name</th>
                                       <th>Reg No</th>
-                                      <th>Roll</th>
-                                      <th>Class</th>
-                                      <th>Enrollment Date</th>
+                                       <th>Roll No</th>
+                                    <th>Class</th>
+                                      <th>Status</th>
+                                      <th>Date</th>
                                       <th>Actions</th>
                                   </tr>
                               </thead>
                               <tbody>
-                                  {% for student in student %}
+                                 {% for student in students %}
+
                                     <tr role="row" class="odd">
-                                        <td>{{ forloop.counter }}</td>
-                                        <td>{{ student.student.personal_info.user.name }}</td>
-                                        <td>{{ student.student.registration_no }}</td>
-                                        <td>{{ student.roll }}</td>
-                                        <td>{{ student.class_name }}</td>
-                                        <td>{{ student.date }}</td>
+                                        {% comment %} <td>{{ forloop.counter }}</td> {% endcomment %}
+                                            <td>{{ student.student.personal_info.user.name }}</td>
+                                            <td>{{ student.student.registration_no }}</td>
+                                            <td>({{ student.roll }})</td>
+                                            <td>{{ student.class_name }}</td>
+                                        <td>{{ student.status }}</td>
+                                        <td>{{ student.date }}</td> 
                                         <td>
-                                            <a class="btn btn-success" href="{% url 'student-profile' student.student.registration_no %}">
+                                            {% comment %} <a class="btn btn-success" href="{% url 'student-profile' student.registration_no %}">
                                                 <i class="fa fa-search-plus"></i>View
                                             </a>
-                                            <a class="btn btn-info" href="{% url 'student-edit' student.student.registration_no %}">
+                                            <a class="btn btn-info" href="{% url 'student-edit' student.registration_no%}">
                                                 <i class="fa fa-edit"></i>Update
                                             </a>
-                                            <a class="btn btn-danger" href="{% url 'student-delete' student.student.registration_no %}">
+                                            <a class="btn btn-danger" href="{% url 'student-delete' student.registration_no %}">
                                                 <i class="fa fa-trash-o"></i>Delete
-                                            </a>
+                                            </a> {% endcomment %}
                                         </td>
                                     </tr>
                                   {% endfor %}
@@ -79,6 +93,13 @@
                   </div>
               </div>
           </div>
+          {% comment %} {% else %}
+          <div class="card-body">
+              <h3>No Student Found</h3>
+          </div>
+          {% endif %} {% endcomment %}
       </div>
   </div>
 {% endblock %}
+
+

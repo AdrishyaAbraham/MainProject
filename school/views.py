@@ -10,6 +10,7 @@ from .models import *
 from .forms import *
 from django.shortcuts import render
 from django.db import IntegrityError
+from django.forms import modelformset_factory
 
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
@@ -59,6 +60,27 @@ def admin_profile(request, admin_id):
     # Render the template with the context data
     return render(request, 'hod/hodprofile.html', context)
 
+def student_acprofile(request, student_id):
+    # Fetch the CustomUser object for the given admin_id
+    student_user = get_object_or_404(CustomUser, pk=student_id, role='student')
+    
+    # Create a context dictionary to pass data to the template
+    context = {
+        'user': student_user
+    }
+    
+    # Render the template with the context data
+    return render(request, 'student/studentprofile.html', context)
+
+def teacher_acprofile(request, teacher_id):
+    teacher_user = get_object_or_404(CustomUser, pk=teacher_id, role='teacher')
+    
+    context = {
+        'user': teacher_user
+    }
+    
+    # Render the template with the context data
+    return render(request, 'teacher/teacherprofile.html', context)
 
 def bulk_register(request):
     if request.method == 'POST':
@@ -459,7 +481,7 @@ def teacherdashboard(request):
 
 def user_logout(request):
     logout(request)
-    return redirect('teacher_login')
+    return redirect('/')
 
 def teacher_registration(request):
     form = TeacherPersonalInfoForm(request.POST or None, request.FILES or None)
@@ -579,41 +601,56 @@ def update_designation(request, designation_id):
 
         
 #------------teacher dashborad---#
+def class_student(request):
+    # Assuming user is logged in and is a GuideTeacher
+    try:
+        guide_teacher = GuideTeacher.objects.get(name=request.user.teacherpersonalinfo)
+    except GuideTeacher.DoesNotExist:
+        return render(request, 'error.html', {'message': 'You are not a guide teacher!'})
+
+    class_registrations = ClassRegistration.objects.filter(guide_teacher=guide_teacher)
+    students = EnrolledStudent.objects.filter(class_name__in=class_registrations)
+
+    AttendanceFormSet = modelformset_factory(StudentAttendance, form=StudentAttendanceForm, extra=0)
+
+    if request.method == 'POST':
+        formset = AttendanceFormSet(request.POST)
+        if formset.is_valid():
+            formset.save()
+            # Redirect to a success page or the same page after saving
+            return redirect('class_student')
+    else:
+        queryset = StudentAttendance.objects.filter(student__in=students, date=timezone.now())
+        if not queryset.exists():
+            queryset = [StudentAttendance(student=student, date=timezone.now()) for student in students]
+        formset = AttendanceFormSet(queryset=queryset)
+
+    context = {
+        'formset': formset,
+        'students': students
+    }
+    return render(request, 'teacher/class_student.html', context)
+
+def mark_attendance(request):
+   return render(request,'teacher/attendance/mark_attendace.html')
 
 
-def attendance(request):
-   return render(request,'teacher/attendance.html')
 
 def add_resource(request):
-  if request.method == 'POST':
-    form = ResourceForm(request.POST)
-    if form.is_valid():
-      new_resource_id = form.cleaned_data['resource_id']
-      new_resource_title = form.cleaned_data['resource_title']
-      new_resource_file = form.cleaned_data['resource_file']
-      new_file_type = form.cleaned_data['file_type']
-      new_description = form.cleaned_data['description']
-      new_uploaded_date = form.cleaned_data['uploaded_date']
+    # Assuming the teacher is the logged-in user
+    teacher = TeacherPersonalInfo.objects.get(user=request.user)
 
-      new_resource = Resource(
-        resource_id=new_resource_id,
-        resource_title=new_resource_title,
-        resource_file=new_resource_file,
-        file_type=new_file_type,
-        description=new_description,
-        uploaded_date=new_uploaded_date,
-      )
-      new_resource.save()
-      return render(request, 'teacher/add_resource.html', {
-        'form': ResourceForm(),
-        'success': True
-      })
-  else:
-    form = ResourceForm()
-  return render(request, 'teacher/add_resource.html', {
-    'form': ResourceForm()
-  })
-
+    if request.method == 'POST':
+        form = ResourceForm(request.POST)
+        if form.is_valid():
+            resource = form.save(commit=False)
+            # Set the class registration for the resource based on the teacher's classes
+            resource.class_registration = ClassRegistration.objects.get(guide_teacher=teacher)
+            resource.save()
+            return redirect('teacher/index_resource.html')
+    else:
+        form = ResourceForm()
+    return render(request, 'teacher/add_resource.html', {'form': form})
 
 def view_resource():
  return HttpResponseRedirect(reverse('index_resource'))
@@ -648,12 +685,18 @@ def uploadresource(request):
    return render(request,'teacher/resource.html')
 
 
+def index_resource(request):
+   return render(request,'teacher/index_resource.html')
 
 
 #--------------student dashboard-------#
 def studentdashboard(request):
    return render(request,'student/student_dashboard.html')
 
+def student_resources(request):
+    student_class = EnrolledStudent.objects.get(student__user=request.user).class_name
+    resources = Resource.objects.filter(class_registration=student_class)
+    return render(request, 'student/resources.html', {'resources': resources})
 
 def downloadresource(request, resource_id):
     resource = get_object_or_404(Resource, id=resource_id)

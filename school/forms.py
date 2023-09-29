@@ -1,6 +1,7 @@
 from django import forms
 from .models import *
 from datetime import datetime
+from django.forms import modelformset_factory
 
 import os
 from django.contrib.auth.models import User
@@ -30,10 +31,10 @@ class ResourceForm(forms.ModelForm):
   class Meta:
     model = Resource
     fields = '__all__'
+    excluded=['teacher_name']
     labels = {
       'resouce_id': 'resource_id',
       'resource_title': 'resource_title',
-      'teacher_name':'teacher_name',
       'resouce_file': 'resource_file',
       'file_type':'file Type',
       'description':'Description',
@@ -52,7 +53,7 @@ class ClassInfoForm(forms.ModelForm):
     class Meta:
         model = ClassInfo
         fields = '__all__'
-        exclued='is_deleted'
+        exclude=['is_deleted']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'display_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -456,3 +457,14 @@ class AddDesignationForm(forms.ModelForm):
             raise ValidationError("Name should only contain alphabets and spaces.")
 
         return name
+
+class StudentAttendanceForm(forms.ModelForm):
+    class Meta:
+        model = StudentAttendance
+        fields = ['student', 'is_present']
+        student = forms.ModelChoiceField(queryset=EnrolledStudent.objects.all())
+        date = forms.DateField(widget=forms.SelectDateWidget())
+        is_present = forms.BooleanField(initial=True, required=False)  
+        
+
+

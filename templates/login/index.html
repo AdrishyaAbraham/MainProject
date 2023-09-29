@@ -22,18 +22,18 @@
 
 
         <div class="input-box underline">
-          <input id="emailInput" name="username" type="text" placeholder="Enter Your Email" required />
+          <input id="username" name="username" type="text" placeholder="Enter Your Email" required />
           <div class="underline"></div>
           <div id="emailError" style="color:red;"></div>
         </div>
 
         <div class="input-box">
-          <input name="password" type="password" placeholder="Enter Your Password" required />
+          <input id="password" name="password" type="password" placeholder="Enter Your Password" required />
           <div class="underline"></div>
         </div>
 
         <div class="input-box button">
-          <input type="submit" name="" value="Submit" />
+          <input id="submit" type="submit" name="" value="Submit" />
         </div>
       </form>
       <form action="{% url 'password_reset' %}" method="POST">
