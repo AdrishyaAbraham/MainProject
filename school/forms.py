@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
+from datetime import timedelta
 
 def validate_pdf_file(value):
     ext = os.path.splitext(value.name)[1]  # [0] returns path+filename
@@ -31,7 +32,7 @@ class ResourceForm(forms.ModelForm):
   class Meta:
     model = Resource
     fields = '__all__'
-    excluded=['teacher_name']
+    exclude=['teacher_name','class_registration']
     labels = {
       'resouce_id': 'resource_id',
       'resource_title': 'resource_title',
@@ -173,6 +174,7 @@ class PersonalInfoForm(forms.ModelForm):
     class Meta:
         model = PersonalInfo
         fields = '__all__'
+        exclude=['role','user']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'photo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
@@ -205,7 +207,10 @@ class PersonalInfoForm(forms.ModelForm):
         if password and password_confirm and password != password_confirm:
            self.add_error('password_confirm', "Passwords don't match")
         return cleaned_data
+    
 class GuardianInfoForm(forms.ModelForm):
+
+    role = forms.ChoiceField(choices=CustomUser.USER_ROLES, initial='parent')
     phone_regex = RegexValidator(
         regex=r'^\+?1?\d{9,15}$', 
         message="Phone number must be entered in the format: '+999999999'. Up to 10 digits allowed."
@@ -217,7 +222,7 @@ class GuardianInfoForm(forms.ModelForm):
     class Meta:
         model = GuardianInfo
         fields = '__all__'
-        exclude=['student'] 
+        exclude=['role','user','student']
         widgets = {
             'father_name': forms.TextInput(attrs={'class': 'form-control'}),
             'father_phone_no': forms.TextInput(attrs={'class': 'form-control'}),
@@ -458,13 +463,78 @@ class AddDesignationForm(forms.ModelForm):
 
         return name
 
-class StudentAttendanceForm(forms.ModelForm):
+class LeaveReportStudentForm(forms.ModelForm):
     class Meta:
-        model = StudentAttendance
-        fields = ['student', 'is_present']
-        student = forms.ModelChoiceField(queryset=EnrolledStudent.objects.all())
-        date = forms.DateField(widget=forms.SelectDateWidget())
-        is_present = forms.BooleanField(initial=True, required=False)  
-        
+        model = LeaveReportStudent
+        fields = ['leave_date', 'leave_message']
+        widgets = {
+            'leave_date': forms.DateInput(attrs={'type': 'date'}),
+         }
 
+    def clean_leave_date(self):
+        leave_date = self.cleaned_data.get('leave_date')
+        today = datetime.date(datetime.now())
 
+        if leave_date.weekday() != 6:
+            raise forms.ValidationError("You can only apply for leave on Sundays.")
+
+        # Check if leave_date is from the current year
+        if leave_date.year != today.year:
+            raise forms.ValidationError("You can only apply for leaves from the current session year.")
+
+        # Check if leave_date is not in the future
+        if leave_date > today:
+            raise forms.ValidationError("You cannot apply for a leave in the future.")
+
+        # Check if leave_date is not more than one week in the past
+        if leave_date < (today - timedelta(days=7)):
+            raise forms.ValidationError("You can only apply for leave until one week after the date on which you were absent.")
+
+        return leave_date
+
+from datetime import datetime, timedelta
+
+class LeaveReportStaffForm(forms.ModelForm):
+    class Meta:
+        model = LeaveReportStaff
+        fields = ['leave_date', 'leave_message']
+        widgets = {
+            'leave_date': forms.DateInput(attrs={'type': 'date'}),
+         }
+
+def clean_leave_date(self):
+    leave_date = self.cleaned_data.get('leave_date')
+    
+    # Ensure leave_date is a date object
+    if not isinstance(leave_date, datetime.date):
+        raise forms.ValidationError("Invalid date format.")
+
+    today = datetime.date(datetime.now())
+
+    if leave_date.weekday() != 6:
+        raise forms.ValidationError("You can only apply for leave on Sundays.")
+
+    # Check if leave_date is from the current year
+    if leave_date.year != today.year:
+        raise forms.ValidationError("You can only apply for leaves from the current session year.")
+
+    # Check if leave_date is not in the future
+    if leave_date > today:
+        raise forms.ValidationError("You cannot apply for a leave in the future.")
+
+    # Check if leave_date is not more than one week in the past
+    if leave_date < (today - timedelta(days=7)):
+        raise forms.ValidationError("You can only apply for leave until one week after the date on which you were absent.")
+
+    return leave_date
+
+           
+class addNoticeform(forms.ModelForm):
+    class Meta:
+        model=Notice
+        fields="__all__"
+
+class TeacherNoticeForm(forms.ModelForm):
+    class Meta:
+        model = TeacherNotice
+        fields = "__all__"

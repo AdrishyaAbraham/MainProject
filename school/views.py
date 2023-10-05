@@ -11,14 +11,8 @@ from .forms import *
 from django.shortcuts import render
 from django.db import IntegrityError
 from django.forms import modelformset_factory
-
-from django.contrib.auth import authenticate, login
-from django.shortcuts import render, redirect
-from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.forms import UserCreationForm
-from .forms import PersonalInfoForm 
 import csv
 import logging
 
@@ -39,6 +33,8 @@ def login_page(request):
                     return redirect('teacherdashboard')
                 elif user.role=='student':
                     return redirect('studentdashboard')
+                elif user.role=='parent':
+                    return redirect('parentdashboard')
                 else:
                    messages.error(request, 'Account is deactivated')
         else: 
@@ -81,6 +77,22 @@ def teacher_acprofile(request, teacher_id):
     
     # Render the template with the context data
     return render(request, 'teacher/teacherprofile.html', context)
+
+
+def parent_acprofile(request, teacher_id):
+    teacher_user = get_object_or_404(CustomUser, pk=parent_id, role='parent')
+    
+    context = {
+        'user': parent_user
+    }
+    
+    # Render the template with the context data
+    return render(request, 'parent/parentdashboard.html', context)
+
+def logout_user(request):
+    print('Logged Out')
+    logout(request)
+    return redirect('/')
 
 def bulk_register(request):
     if request.method == 'POST':
@@ -468,15 +480,30 @@ def enrolled_student_list(request):
 
 
 def teacherdashboard(request):
+
+    latest_notices = TeacherNotice.objects.all().order_by('-date_created')[:5]
+    notices = Notice.objects.all().order_by('-date_created')[:5]  # Fetch the latest 5 notices
     user=request.user
     print(user)
     teacher = TeacherPersonalInfo.objects.all()
     context = {
-        'teacher': teacher
+        'teacher': teacher,
+        'latest_notices': latest_notices,
+        'notices': notices,
     }
     return render(request,'teacher/teacher_dashboard.html',context)
 
-
+ 
+def staff_take_attendance(request):
+    subjects = ClassRegistration.objects.filter(staff_id=request.user.id)
+    session_years = Session.objects.all()
+    context = {
+        "subjects": subjects,
+        "session_years": session_years
+    }
+    return render(request, "teacher/attendance/take_attendance.html", context)
+ 
+ 
 
 
 def user_logout(request):
@@ -599,8 +626,234 @@ def update_designation(request, designation_id):
     context = {'forms': forms}
     return render(request, 'hod/designation.html', context)
 
+
+from django.core.exceptions import ObjectDoesNotExist
+
+
+
+def student_leave_view(request):
+    if request.method == "POST":
+        form = LeaveReportStudentForm(request.POST)
+        if form.is_valid():
+            try:
+                # Assuming the student is logged in and you have access to their object
+                student_user = request.user
+
+                # Fetch the corresponding PersonalInfo object for the logged-in user
+                student_personal_info = PersonalInfo.objects.get(user=student_user)
+
+                leave_report = form.save(commit=False)
+                leave_report.student_id = student_personal_info
+                leave_report.save()
+
+                messages.success(request, "Your leave application has been submitted.")
+                return redirect('student_leave_view')
+
+            except ObjectDoesNotExist:
+                # Handle the error, for example, by displaying an error message
+                messages.error(request, "Your personal information is not available. Please ensure it's updated.")
+                # No need for the success message here since an error has occurred
+                # messages.success(request, "Your leave application has been submitted.")
+        # If the form isn't valid, you might want to display an error message, too
+
+    else:
+        form = LeaveReportStudentForm()
+
+    leaves = LeaveReportStudent.objects.all()
+    context = {
+        "form": form,
+        "leaves": leaves
+    }
+    return render(request, 'student/student_leave_view.html', context)
+
+
+
+def student_leave_approve(request):
+    
+    leave = LeaveReportStudent.objects.get(id=leave_id)
+    approved_leaves = LeaveReportStudent.objects.filter(leave_status=LeaveReportStudent.APPROVED)
+
+    if request.method == "POST":
+        # Get the action from the POST data (approve or reject)
+        action = request.POST.get('action')
+        leave_id = request.POST.get('leave_id')
+
+        # Fetch the leave application by its ID
+        leave = LeaveReportStudent.objects.get(id=leave_id)
+
+        if action == "approve":
+            leave.leave_status = LeaveReportStudent.APPROVED
+            leave.save()
+        elif action == "reject":
+            leave.leave_status = LeaveReportStudent.REJECTED
+            leave.save()
+        return redirect('student_leave_approve')  # redirect back to the same page to see updates
+
+    context = {
+        "approved_leaves": approved_leaves
+    }
+    return render(request, 'teacher/attendance/approved_leave.html', context)
+ 
+def student_leave_reject(request, leave_id):
+    leave = LeaveReportStudent.objects.get(id=leave_id)
+    leave.leave_status = 2
+    leave.save()
+    return redirect('student_leave_view')
+
+def teacher_review_leave_applications(request):
+    # Fetch all leave applications that are pending
+    pending_leaves = LeaveReportStudent.objects.filter(leave_status=LeaveReportStudent.PENDING)
+    approved_leaves = LeaveReportStudent.objects.filter(leave_status=LeaveReportStudent.APPROVED)
+
+    if request.method == "POST":
+        # Get the action from the POST data (approve or reject)
+        action = request.POST.get('action')
+        leave_id = request.POST.get('leave_id')
+
+        # Fetch the leave application by its ID
+        leave = LeaveReportStudent.objects.get(id=leave_id)
+
+        if action == "approve":
+            leave.leave_status = LeaveReportStudent.APPROVED
+            leave.save()
+        elif action == "reject":
+            leave.leave_status = LeaveReportStudent.REJECTED
+            leave.save()
+        return redirect('teacher_review_leave_applications')  # redirect back to the same page to see updates
+
+    context = {
+        "pending_leaves": pending_leaves,
+        "approved_leaves": approved_leaves
+    }
+    return render(request, 'teacher/attendance/teacher_leave_review.html', context)
+
+def staff_leave_apply(request):
+    staff_user = request.user
+    staff_personal_info = TeacherPersonalInfo.objects.get(user=staff_user)
+    submitted_leaves = LeaveReportStaff.objects.filter(staff_id=staff_personal_info)
+    
+    if request.method == "POST":
+        form = LeaveReportStaffForm(request.POST)
+        if form.is_valid():
+            try:                
+                leave_report = form.save(commit=False)
+                leave_report.staff_id = staff_personal_info
+                leave_report.save()
+
+                messages.success(request, "Your leave application has been submitted successfully.")
+                return redirect('staff_leave_apply')
+            except ObjectDoesNotExist:
+                messages.error(request, "Your personal information is not available. Please ensure it's updated.")
+        else:
+            messages.error(request, "Please correct the errors below.")
+
+    else:
+        form = LeaveReportStaffForm()
+
+    context = {
+        "form": form,
+        "leaves": submitted_leaves
+    }
+
+    return render(request, 'teacher/attendance/staff_leave_view.html', context)
+
+def admin_review_leaves(request):
+    # Fetch all leave applications that are pending
+    pending_leaves = LeaveReportStaff.objects.filter(leave_status=LeaveReportStaff.PENDING)
+
+    if request.method == "POST":
+        # Get the action from the POST data (approve or reject)
+        action = request.POST.get('action')
+        leave_id = request.POST.get('leave_id')
+
+        # Fetch the leave application by its ID
+        leave = LeaveReportStaff.objects.get(id=leave_id)
+
+        if action == "approve":
+            leave.approve()
+        elif action == "reject":
+            leave.reject()
+        return redirect('admin_review_leaves')  # redirect back to the same page to see updates
+
+    context = {
+        "pending_leaves": pending_leaves,
+    }
+    return render(request, 'admin/teacher_leave_review.html', context)
+ 
+def staff_leave_approve(request, leave_id):
+    leave = LeaveReportStaff.objects.get(id=leave_id)
+    leave.leave_status = 1
+    leave.save()
+    return redirect('staff_leave_view')
+ 
+ 
+def staff_leave_reject(request, leave_id):
+    leave = LeaveReportStaff.objects.get(id=leave_id)
+    leave.leave_status = 2
+    leave.save()
+    return redirect('staff_leave_view')
+ 
+ 
+def admin_view_attendance(request):
+    subjects = ClassInfo.objects.all()
+    session_years = Session.objects.all()
+    context = {
+        "subjects": subjects,
+        "session_years": session_years
+    }
+    return render(request, "hod/attendance/admin_view_attenndace.html", context)
+ 
+ 
+#--------------cicrculars and notfications----#
+
+from django.contrib.auth.decorators import login_required
+
+
+def addNotice(request):    
+    if request.user.is_authenticated:
+        form=addNoticeform()
+        if(request.method=='POST'):
+            form=addNoticeform(request.POST)
+            if(form.is_valid()):
+                form.save()
+                return redirect('display_notices')
+        context={'form':form}
+        return render(request,'hod/hod_student/circular.html',context)
+    else: 
+        return redirect('hoddashboard') 
+
+
+def display_notices(request):
+    if request.user.is_authenticated:
+        notices = Notice.objects.all().order_by('-date_created') # To fetch the latest notices first
+        context = {'notices': notices}
+        return render(request, 'hod/circular_view.html', context)
+    else:
+        return redirect('hoddashboard')
+    
+def update_notice(request, notice_id):
+    notice_instance = get_object_or_404(Notice, id=notice_id)
+
+    if request.method == "POST":
+        form = addNoticeform(request.POST, instance=notice_instance)
+        if form.is_valid():
+            form.save()
+            return redirect('display_notices')
+    else:
+        form = addNoticeform(instance=notice_instance)
+
+    context = {
+        'form': form,
+        'notice': notice_instance
+    }
+    return render(request, 'hod/hod_student/update_notice.html', context)
+
         
 #------------teacher dashborad---#
+
+
+
+@login_required
 def class_student(request):
     # Assuming user is logged in and is a GuideTeacher
     try:
@@ -611,22 +864,8 @@ def class_student(request):
     class_registrations = ClassRegistration.objects.filter(guide_teacher=guide_teacher)
     students = EnrolledStudent.objects.filter(class_name__in=class_registrations)
 
-    AttendanceFormSet = modelformset_factory(StudentAttendance, form=StudentAttendanceForm, extra=0)
-
-    if request.method == 'POST':
-        formset = AttendanceFormSet(request.POST)
-        if formset.is_valid():
-            formset.save()
-            # Redirect to a success page or the same page after saving
-            return redirect('class_student')
-    else:
-        queryset = StudentAttendance.objects.filter(student__in=students, date=timezone.now())
-        if not queryset.exists():
-            queryset = [StudentAttendance(student=student, date=timezone.now()) for student in students]
-        formset = AttendanceFormSet(queryset=queryset)
-
     context = {
-        'formset': formset,
+    
         'students': students
     }
     return render(request, 'teacher/class_student.html', context)
@@ -634,19 +873,41 @@ def class_student(request):
 def mark_attendance(request):
    return render(request,'teacher/attendance/mark_attendace.html')
 
-
+def add_teacher_notice(request):    
+    if request.user.is_authenticated:
+        form = TeacherNoticeForm()
+        if request.method == 'POST':
+            form = TeacherNoticeForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('display_teacher_notices')
+        context = {'form': form}
+        return render(request, 'hod/hod_student/add_notice.html', context)
+    else: 
+        return redirect('hoddashboard')
+    
+def display_teacher_notices(request):
+    if request.user.is_authenticated:
+        notice = TeacherNotice.objects.all().order_by('-date_created')
+        context = {'notice': notice}
+        return render(request, 'hod/hod_student/notices.html', context)
+    else:
+        return redirect('hoddashboard')
 
 def add_resource(request):
     # Assuming the teacher is the logged-in user
     teacher = TeacherPersonalInfo.objects.get(user=request.user)
 
     if request.method == 'POST':
-        form = ResourceForm(request.POST)
+        form = ResourceForm(request.POST, request.FILES) # Notice the request.FILES added
         if form.is_valid():
-            resource = form.save(commit=False)
-            # Set the class registration for the resource based on the teacher's classes
+            resource = form.save(commit=False)  # Don't commit/save yet, we need to populate the excluded fields
+
+            # Populate the excluded fields
+            resource.teacher_name = teacher
             resource.class_registration = ClassRegistration.objects.get(guide_teacher=teacher)
-            resource.save()
+
+            resource.save()  # Now save the model instance
             return redirect('teacher/index_resource.html')
     else:
         form = ResourceForm()
@@ -691,7 +952,12 @@ def index_resource(request):
 
 #--------------student dashboard-------#
 def studentdashboard(request):
-   return render(request,'student/student_dashboard.html')
+    notices = Notice.objects.all().order_by('-date_created')[:5]  # Fetch the latest 5 notices
+    context = {
+        
+        'notices': notices,
+    }
+    return render(request,'student/student_dashboard.html',context)
 
 def student_resources(request):
     student_class = EnrolledStudent.objects.get(student__user=request.user).class_name
@@ -707,8 +973,7 @@ def editprofile(request):
    return render(request,'student/edit-profile.html')
 
 
-def logout_user(request):
-    print('Logged Out')
-    logout(request)
-    return redirect('/')
+#------parent dashboard-----#
+def parentdashboard(request):
+   return render(request,'parent/parentdashboard.html')
 

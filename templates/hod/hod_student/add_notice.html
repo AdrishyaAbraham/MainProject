@@ -1,0 +1,10 @@
+{% extends 'hod/base_class.html' %}
+{% block content %}
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Notice</button>
+</form>
+
+{% endblock %}

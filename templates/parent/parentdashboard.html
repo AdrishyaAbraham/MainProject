@@ -27,13 +27,32 @@
         <div class="header-left">
           <span class="material-icons-outlined">search</span>
         </div>
-        <div class="header-right">
-          <span class="material-icons-outlined">notifications</span>
-          <span class="material-icons-outlined">email</span>
-          <a href="{% url 'editprofile' %}" target="_blank">
-          <span class="material-icons-outlined">account_circle</span>
-          </a>
+         <div class="header-right">
+        <div class="dropdown-container">
+        <span class="material-icons-outlined dropdown-toggle">notifications</span>
+        <div class="dropdown-content-info">
+            <p>Notification 1</p>
+            <p>Notification 2</p>
+            <p>Notification 3</p>
         </div>
+        </div>
+    
+    <div class="dropdown-container">
+        <span class="material-icons-outlined dropdown-toggle">email</span>
+        <div class="dropdown-content-info">
+            <p style="color:black;">{{ request.user.email }}</p>
+            
+        </div>
+    </div>
+
+    <div class="dropdown-container">
+        <span class="material-icons-outlined dropdown-toggle">account_circle</span>
+        <div class="dropdown-content-info">
+             <a href="{% url 'admin_profile' user.id  %}"><p>Profile</p></a>
+            <p>Settings</p>
+            <a href="{% url 'logout' %}"><p>Logout</p></a>
+        </div>
+    </div>
       </header>
       <!-- End Header -->
 
@@ -67,19 +86,10 @@
          <span class="material-icons-outlined">calendar_view_month</span> Resources
             </a>
           </li>
-		   <li class="sidebar-list-item">
-             <a href="" target="_blank">
-            <span class="material-icons-outlined">upload_file</span> Certificate
-            </a>
-          </li>
+	
           <li class="sidebar-list-item">
             <a href="#" target="_blank">
-            <span class="material-icons-outlined">campaign</span> Activities
-            </a>
-          </li> bnm
-          <li class="sidebar-list-item">
-            <a href="#" target="_blank">
-              <span class="material-icons-outlined">poll</span> Reports
+              <span class="material-icons-outlined">poll</span> Feedback
             </a>
           </li>
           <li class="sidebar-list-item">

@@ -1,0 +1,13 @@
+
+{% extends 'hod/base_class.html' %}
+{% block content %}
+
+
+
+{% for notices in notice %}
+<p>{{ notices.message }}</p>
+<p><small>Posted on: {{ notices.date_created }}</small></p>
+<hr>
+{% endfor %}
+
+{% endblock %}

@@ -57,11 +57,16 @@
               <span class="material-icons-outlined">book</span> Academics
             </a>
           </li>
-          <li class="sidebar-list-item">
-            <a href="" target="_blank">
-            <span class="material-icons-outlined">table_view</span> Leave
-            </a>
-          </li>
+         <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                <span id="student_leave" class="material-icons-outlined">table_view</span> Leave
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content" >
+                <a href="{% url 'student_leave_view' %}" target="_blank">Appl Leave</a>
+                {% comment %} <a href="{% url 'student-list' %}" target="_blank">Student List</a> {% endcomment %}
+        </div>
+        </li>
 		   <li class="sidebar-list-item">
             <a href="" target="_blank">
             <span class="material-icons-outlined">star_half</span> Talent Search
@@ -139,6 +144,16 @@
           </div> {% endcomment %}
 
         </div>
+          <div class="main-notices">
+          <h2>Recent Notices</h2>
+    <ul>
+        {% for notice in notices %}
+            <li>
+                {{ notice.date_created|date:"F d, Y" }}: {{ notice.Message }}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
 
         <div class="charts">
 

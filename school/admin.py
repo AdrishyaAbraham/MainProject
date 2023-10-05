@@ -19,6 +19,10 @@ admin.site.register(Designation),
 admin.site.register(ExperienceInfo),
 admin.site.register(TrainingInfo),
 admin.site.register(EducationInfo),
+admin.site.register(Notice),
+admin.site.register(TeacherNotice),
+admin.site.register(LeaveReportStudent),
+admin.site.register(LeaveReportStaff),
 
 
 

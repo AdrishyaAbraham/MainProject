@@ -128,6 +128,8 @@
                 <a href="{% url 'designation' %}">Add Designation</a>
                 <a href="{% url 'teacher-registration' %}" target="_blank">Teacher registration</a>
                 <a href="{% url 'teacher-list' %}" target="_blank">Teacher List</a>
+                <a href="{% url 'admin_review_leaves' %}" target="_blank">Teacher Leave List</a>
+
 
             </div>
         </li>
@@ -161,16 +163,40 @@
 
             </div>
         </li>
+
+        <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                <span id="student" class="material-icons-outlined">person</span> Attendance 
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content" >
+                <a href="{% url 'attendance' %}" target="_blank">Student Attendance</a>
+                <a href="{% url 'student-list' %}" target="_blank">Student List</a>
+                <a href="{% url 'student-search' %}" target="_self"><p id="search">Search Student</a><p>
+                <a href="{% url 'enrolled-student' %}" target="_blank" >Enrolled Student</a>
+                <a href="{% url 'enrolled-student-list' %}" target="_blank">Enrolled Student List</a>
+                <a href="" target="_blank">Student Attendance </a>
+
+            </div>
+        </li>
                     <li class="sidebar-list-item">
                       <a href="#" target="_blank">
                       <span class="material-icons-outlined">campaign</span> Activities
                       </a>
                     </li>
-                    <li class="sidebar-list-item">
-                      <a href="#" target="_blank">
-                        <span class="material-icons-outlined">fact_check</span> Circulars 
-                      </a>
-                    </li>
+                      <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                <span class="material-icons-outlined">fact_check</span> Circulars                 
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content" >
+                 <a href="{% url 'addNotice' %}" target="_blank">Add notice
+                 <a href="{% url 'display_notices' %}" target="_blank">View notice
+                 <a href="{% url 'add_teacher_notice' %}" target="_blank">Add teacher notice
+               
+            </div>
+        </li>
+      
                     <li class="sidebar-list-item">
                       <a href="#" target="_blank">
                         <span class="material-icons-outlined">poll</span> Reports

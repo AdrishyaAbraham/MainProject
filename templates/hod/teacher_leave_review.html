@@ -1,0 +1,36 @@
+{% extends 'hod/base_class.html' %}
+
+{% block content %}
+
+
+
+<h2>Pending Leave Applications</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Staff Name</th>
+            <th>Leave Date</th>
+            <th>Leave Message</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for leave in pending_leaves %}
+        <tr>
+            <td>{{ leave.staff_id.name }}</td>
+            <td>{{ leave.leave_date }}</td>
+            <td>{{ leave.leave_message }}</td>
+            <td>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="leave_id" value="{{ leave.id }}">
+                    <button type="submit" name="action" value="approve">Approve</button>
+                    <button type="submit" name="action" value="reject">Reject</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'hod/base_class.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h2>Review Leave Applications</h2>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Date of Leave</th>
+                <th>Reason for Leave</th>
+                <th>Applied On</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave in pending_leaves %}
+                <tr>
+                    <td>{{ leave.student_id.user.name }}</td>
+                    <td>{{ leave.leave_date }}</td>
+                    <td>{{ leave.leave_message }}</td>
+                    <td>{{ leave.created_at }}</td>
+                    <td>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="leave_id" value="{{ leave.id }}">
+                            <button type="submit" name="action" value="approve" class="btn btn-success btn-sm">Approve</button>
+                            <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+   
+</div>
+
+{% endblock %}

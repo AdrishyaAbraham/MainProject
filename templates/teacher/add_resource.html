@@ -19,6 +19,12 @@
               {% csrf_token %}
               {{ form.as_p }}
               <button type="submit" class="btn btn-primary">Add</button>
+              {% if form.errors %}
+    <div class="alert alert-danger" role="alert">
+        {{ form.errors }}
+    </div>
+{% endif %}
+
               <a href="{% url 'index_resource' %}" class="btn btn-secondary">Cancel</a>
             </form>
           </div>

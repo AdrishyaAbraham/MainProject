@@ -1,0 +1,33 @@
+
+{% extends 'hod/base_class.html'%}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notices</title>
+    {% comment %} <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> {% endcomment %}
+</head>
+<body>
+  {% block content %}
+
+
+ <div class="container-fluid">
+    <div class="animated fadeIn">
+        <div class="container mt-5">
+    <h2>Notices</h2>
+
+    <ul class="list-group">
+        {% for notice in notices %}
+            <li class="list-group-item">
+                <strong>{{ notice.date_created|date:"F d, Y" }}:</strong> {{ notice.Message }}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+</div>
+</div>
+</body>
+</html>

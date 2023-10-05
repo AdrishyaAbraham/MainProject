@@ -7,9 +7,12 @@ urlpatterns = [
     path('admin_profile/<int:admin_id>/', views.admin_profile, name='admin_profile'),
     path('student_acprofile/<int:student_id>/', views.student_acprofile, name='student_acprofile'),
     path('teacher_acprofile/<int:teacher_id>/', views.teacher_acprofile, name='teacher_acprofile'),
+    
+
+
 
   #hod ...dashboard...student path..
-
+    
     path('class-wise-student-registration', views.class_wise_student_registration, name='class-wise-student-registration'),
     path('student-registration', views.student_registration, name='student-registration'),
     path('student-list', views.student_list, name='student-list'),
@@ -20,7 +23,12 @@ urlpatterns = [
     path('enrolled/', views.enrolled_student, name='enrolled-student'),
     path('enrolled-student/<reg>', views.student_enrolled, name='enrolled'),
     path('enrolled-student-list/', views.enrolled_student_list, name='enrolled-student-list'),
-   
+    path('addNotice/', views.addNotice,name='addNotice'),
+    path('Notice/', views.display_notices,name='display_notices'),
+    path('update_notice/<int:notice_id>/', views.update_notice, name='update_notice'),
+    path('add_teacher_notice/', views.add_teacher_notice, name='add_teacher_notice'),
+    path('display_teacher_notices/', views.display_teacher_notices, name='display_teacher_notices'),
+
   #hod---class allotment---
   path('create-class', views.add_class, name='add_class'),
   path('update_class/<int:class_id>/', views.update_class, name='update_class'),
@@ -38,6 +46,8 @@ urlpatterns = [
   path('teacher_edit/<teacher_id>', views.teacher_edit, name='teacher_edit'),
   path('designation', views.add_designation, name='designation'),
   path('designation/<int:designation_id>/', views.update_designation, name='update_designation'),
+  path('admin_review_leaves/', views.admin_review_leaves, name='admin_review_leaves'),
+
 
      
   #class session------------
@@ -60,8 +70,18 @@ urlpatterns = [
   path('delete_resource/<int:id>/', views.delete_resource, name='delete_resource'),
   path('class_students', views.class_student, name='class_student'),
   path('mark_attendance/', views.mark_attendance, name='mark_attendance'),
+  path('admin_view_attendance/', views.admin_view_attendance, name='attendance'),
+  path('teacher/review_leave/', views.teacher_review_leave_applications, name='teacher_review_leave_applications'),
+  path('approved_leave/', views.student_leave_approve, name='student_leave_approve'),
+  path('staff/leave/apply/', views.staff_leave_apply, name='staff_leave_apply'),
 
  #student dashboard
-  path('d/<int:id>/',views.downloadresource,name='downloadresource')
+  path('d/<int:id>/',views.downloadresource,name='downloadresource'),
+  path('student_leave/',views.student_leave_view,name='student_leave_view'),
+
+
+ #parent dashaboard...
+  path('parent/',views.parentdashboard,name='parentdashboard'),
+
   
 ]

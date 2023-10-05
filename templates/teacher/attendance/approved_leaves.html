@@ -1,0 +1,31 @@
+ 
+ {% extends 'hod/base_class.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+ <h2>Approved Leave Applications</h2>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Date of Leave</th>
+            <th>Leave Message</th>
+            <th>Applied On</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for leave in approved_leaves %}
+            <tr>
+                <td>{{ leave.leave_date }}</td>
+                <td>{{ leave.leave_message }}</td>
+                <td>{{ leave.created_at }}</td>
+                <td>Approved</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</div>
+
+{% endblock %}

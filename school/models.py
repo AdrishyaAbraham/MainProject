@@ -42,8 +42,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ('student', 'Student'),
         ('teacher', 'Teacher'),
         ('admin', 'Admin'),
-        ('Priest', 'Priest'),
-        ('Parent', 'Parent'),
+        ('priest', 'Priest'),
+        ('parent', 'Parent'),
 
     )
     email = models.EmailField(unique=True)
@@ -63,6 +63,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+    
 class Designation(models.Model):
     name = models.CharField(max_length=100, unique=True)
     date = models.DateField(auto_now_add=True)
@@ -232,7 +233,7 @@ class PersonalInfo(models.Model):
  
 
 class GuardianInfo(models.Model):
-    # user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE,null=True)
     student = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE,null=True)
     father_name = models.CharField(max_length=100)
     father_phone_no = models.CharField(max_length=10,unique=True)
@@ -300,10 +301,81 @@ class EnrolledStudent(models.Model):
     
     def __str__(self):
         return str(self.roll)    
-class StudentAttendance(models.Model):
-    student = models.ForeignKey(EnrolledStudent, on_delete=models.CASCADE)
-    date = models.DateField(default=timezone.now)
-    is_present = models.BooleanField(default=True)
 
-    class Meta:
-        unique_together = ['student', 'date']  # Ensuring one attendance entry per student per day
+class Attendance(models.Model):
+   
+    # Subject Attendance
+    ClassInfo_id = models.ForeignKey(EnrolledStudent, on_delete=models.DO_NOTHING)
+    attendance_date = models.DateField()
+    session_year_id = models.ForeignKey(Session, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    objects = models.Manager()
+
+ 
+ 
+class AttendanceReport(models.Model):
+    # Individual Student Attendance
+    student_id = models.ForeignKey(PersonalInfo, on_delete=models.DO_NOTHING)
+    attendance_id = models.ForeignKey(Attendance, on_delete=models.CASCADE)
+    status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    objects = models.Manager()
+
+class LeaveReportStudent(models.Model):
+     PENDING = 0
+     APPROVED = 1
+     REJECTED = 2
+
+     LEAVE_STATUS_CHOICES = [
+        (PENDING, 'Pending'),
+        (APPROVED, 'Approved'),
+        (REJECTED, 'Rejected'),
+     ]
+
+
+     leave_status = models.IntegerField(choices=LEAVE_STATUS_CHOICES, default=PENDING)
+     student_id = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE)
+     leave_date = models.DateField(null=True)
+     leave_message = models.TextField()
+     created_at = models.DateTimeField(auto_now_add=True)
+     updated_at = models.DateTimeField(auto_now=True)
+     objects = models.Manager()
+
+ 
+class LeaveReportStaff(models.Model):
+
+    PENDING = 0
+    APPROVED = 1
+    REJECTED = 2
+
+    LEAVE_STATUS_CHOICES = [
+        (PENDING, 'Pending'),
+        (APPROVED, 'Approved'),
+        (REJECTED, 'Rejected'),
+     ]
+
+
+    staff_id = models.ForeignKey(TeacherPersonalInfo, on_delete=models.CASCADE)
+    leave_date = models.CharField(max_length=255)
+    leave_message = models.TextField()
+    leave_status = models.IntegerField(choices=LEAVE_STATUS_CHOICES, default=PENDING)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    objects = models.Manager()
+
+class Notice(models.Model):
+    Message = models.CharField(max_length=200,null=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.Message
+
+class TeacherNotice(models.Model):
+    message = models.TextField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name='teacher_notices')
+
+    def __str__(self):
+        return self.message

@@ -1,0 +1,10 @@
+{% extends "hod/base_class.html" %}
+
+{% block content %}
+    <h2>Update Notice</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+{% endblock %}

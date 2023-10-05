@@ -1,0 +1,102 @@
+{% extends 'hod/base_class.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Leave View</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+
+<div class="animated fadeIn">
+      <div class="card">
+          <div class="card-header">
+              <i class="fa fa-edit"></i>Apply for Leave
+          </div>
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    
+    {{ form.as_p }}
+    <input type="submit" value="Apply for Leave">
+</form>
+    <div class="container mt-5">
+        <h2>Staff Leave Requests</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Staff Name</th>
+                    <th>Leave Date</th>
+                    <th>Leave Message</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for leave in leaves %}
+                    <tr>
+                        <td>{{ leave.staff_id.user.name }}</td>
+                        <td>{{ leave.leave_date }}</td>
+                        <td>{{ leave.leave_message }}</td>
+                        <td>{{ leave.get_leave_status_display }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+<script>
+window.onload = function() {
+    const leaveDateInput = document.querySelector("#id_leave_date");
+    
+    leaveDateInput.addEventListener("change", function() {
+        const selectedDate = new Date(this.value);
+        const today = new Date();
+        const oneWeekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+        // Check if the selected date is a Sunday
+        if (selectedDate.getDay() !== 0) {
+            alert("You can only apply for leave on Sundays.");
+            this.value = "";  // Clear the input value
+            return;
+        }
+
+        // Check if the date is from the current year
+        if (selectedDate.getFullYear() !== today.getFullYear()) {
+            alert("You can only apply for leaves from the current session year.");
+            this.value = "";  // Clear the input value
+            return;
+        }
+
+        // Check if the date is in the future
+        if (selectedDate > today) {
+            alert("You cannot apply for a leave in the future.");
+            this.value = "";  // Clear the input value
+            return;
+        }
+
+        // Check if the date is more than one week in the past
+        if (selectedDate < oneWeekAgo) {
+            alert("You can only apply for leave until one week after the date on which you were absent.");
+            this.value = "";  // Clear the input value
+            return;
+        }
+    });
+};
+</script>
+</body>
+</html>
+{% endblock %}

@@ -128,6 +128,9 @@
                 <a href="{% url 'class_student' %}" target="_blank">Students Details</a>
 
                 <a href="{% url 'mark_attendance' %}" target="_blank">Student Attendance</a>
+                <a href="{% url 'teacher_review_leave_applications' %}" target="_blank">Student Leave List</a>
+                <a href="{% url 'student_leave_approve' %}" target="_blank">Approved Leaves</a>
+
 
             </div>
         </li>
@@ -139,7 +142,7 @@
             </span>
             <div class="dropdown-content">
                 <a href="">My Attendance</a>
-                <a href="" target="_blank">Apply Leave</a>
+                <a href="{% url 'staff_leave_apply' %}" target="_blank">Apply Leave</a>
             </div>
         </li>
           
@@ -226,6 +229,22 @@
           </div>
 
         </div>
+      <div class="">
+    <div class="">
+        <h3>TEACHER NOTICES</h3>
+        <br>
+        <ul>
+            {% for notice in latest_notices %}
+            <li>{{ notice.date_created|date:"d M Y" }}: {{ notice.message }}</li>
+            {% endfor %}
+              {% for notice in notices %}
+            <li>
+                {{ notice.date_created|date:"d M Y" }}: {{ notice.Message }}
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+</div>
 
         <div class="charts">
 
