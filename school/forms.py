@@ -215,6 +215,10 @@ class GuardianInfoForm(forms.ModelForm):
         regex=r'^\+?1?\d{9,15}$', 
         message="Phone number must be entered in the format: '+999999999'. Up to 10 digits allowed."
     )
+    parent_email = forms.CharField(widget=forms.EmailInput(attrs={'class': 'form-control'}), label='Email')
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Passwprd')
+    address = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), label='Address')
+    mobile = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), label='Phone')
     father_phone_no = forms.CharField(validators=[phone_regex], widget=forms.TextInput(attrs={'class': 'form-control'}))  # Use CharField
     mother_phone_no = forms.CharField(validators=[phone_regex], widget=forms.TextInput(attrs={'class': 'form-control'}))  # Use CharField
     guardian_phone_no = forms.CharField(validators=[phone_regex], widget=forms.TextInput(attrs={'class': 'form-control'}))  # Use CharField

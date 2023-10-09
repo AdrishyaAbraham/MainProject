@@ -79,15 +79,15 @@ def teacher_acprofile(request, teacher_id):
     return render(request, 'teacher/teacherprofile.html', context)
 
 
-def parent_acprofile(request, teacher_id):
-    teacher_user = get_object_or_404(CustomUser, pk=parent_id, role='parent')
+def parent_acprofile(request, parent_id):
+    parent_user = get_object_or_404(CustomUser, pk=parent_id, role='parent')
     
     context = {
         'user': parent_user
     }
     
     # Render the template with the context data
-    return render(request, 'parent/parentdashboard.html', context)
+    return render(request, 'parent/parentprofile.html', context)
 
 def logout_user(request):
     print('Logged Out')
@@ -318,30 +318,46 @@ def student_registration(request):
     previous_academic_certificate_form = PreviousAcademicCertificateForm(request.POST or None, request.FILES)
 
     if request.method == 'POST':
-        if academic_info_form.is_valid() and personal_info_form.is_valid() and guardian_info_form.is_valid()  and previous_academic_info_form.is_valid() and previous_academic_certificate_form.is_valid():
-            email = personal_info_form.cleaned_data.get('email')
-            password = personal_info_form.cleaned_data.get('password')
-            address = personal_info_form.cleaned_data.get('address')
-            mobile = personal_info_form.cleaned_data.get('mobile')
-            name = personal_info_form.cleaned_data.get('name')
-            
-            if CustomUser.objects.filter(email=email, role='student').exists():
-                # Here you can add an error message indicating that a user with this email already exists
-                messages.error(request, 'A student with this email already exists.')
+        if all([academic_info_form.is_valid(), personal_info_form.is_valid(), guardian_info_form.is_valid(), 
+                previous_academic_info_form.is_valid(), previous_academic_certificate_form.is_valid()]):
+
+            student_email = personal_info_form.cleaned_data.get('email')
+            parent_email = guardian_info_form.cleaned_data.get('parent_email')
+
+            if CustomUser.objects.filter(email=student_email).exists():
+                messages.error(request, 'A user with this student email already exists.')
+            elif CustomUser.objects.filter(email=parent_email).exists():
+                messages.error(request, 'A user with this parent email already exists.')
             else:
-                user = CustomUser.objects.create_user(name=name,email=email, password=password,address=address,mobile=mobile, role='student')
-                s1 = personal_info_form.save()
-                s1.user = user  # associate the user with the PersonalInfo model
-                s1.save()
-                s3 = guardian_info_form.save()
-                s5 = previous_academic_info_form.save()
-                s6 = previous_academic_certificate_form.save()
+                # Common data
+                password = personal_info_form.cleaned_data.get('password')
+                address = personal_info_form.cleaned_data.get('address')
+                mobile = personal_info_form.cleaned_data.get('mobile')
+                name = personal_info_form.cleaned_data.get('name')
+
+                # Create parent user
+                parent_user = CustomUser.objects.create_user(name=name, email=parent_email, password=password, address=address, mobile=mobile, role='parent')
+                
+                guardian = guardian_info_form.save(commit=False)
+                guardian.user = parent_user
+                guardian.save()
+
+                # Create student user and link to the parent
+                student_user = CustomUser.objects.create_user(name=name, email=student_email, password=password, address=address, mobile=mobile, role='student')
+                student_personal_info = personal_info_form.save(commit=False)
+                student_personal_info.user = student_user
+                student_personal_info.save()
+                
+                prev_academic_info = previous_academic_info_form.save()
+                prev_academic_cert = previous_academic_certificate_form.save()
+
                 academic_info = academic_info_form.save(commit=False)
-                academic_info.personal_info = s1
-                academic_info.guardian_info = s3
-                academic_info.previous_academic_info = s5
-                academic_info.previous_academic_certificate = s6
+                academic_info.personal_info = student_personal_info
+                academic_info.guardian_info = guardian
+                academic_info.previous_academic_info = prev_academic_info
+                academic_info.previous_academic_certificate = prev_academic_cert
                 academic_info.save()
+
                 return redirect('student-list')
 
     context = {
@@ -352,6 +368,7 @@ def student_registration(request):
         'previous_academic_certificate_form': previous_academic_certificate_form
     }
     return render(request, 'hod/hod_student/student-registration.html', context)
+
 
 def student_list(request):
     # Use select_related to prefetch related data
@@ -1078,6 +1095,69 @@ def editprofile(request):
 
 
 #------parent dashboard-----#
+from django.shortcuts import render, get_list_or_404, redirect
+
 def parentdashboard(request):
-   return render(request,'parent/parentdashboard.html')
+    if not request.user.is_authenticated:
+        return redirect('login_page')  # Assuming you have a view called login_page
+
+    children = GuardianInfo.objects.filter(user=request.user).values_list('student', flat=True)
+    students = PersonalInfo.objects.filter(id__in=children)
+    student_attendance = AttendanceReport.objects.filter(student_id__in=children)
+    # student_resources = Resource.objects.filter(student__in=children)  # You need to add a ForeignKey from Resource to PersonalInfo
+
+    unread_notices = Notice.objects.filter(is_read=False) # Fetch unread notices
+    unread_count = unread_notices.count()
+
+    context = {
+        'students': students,
+        'attendance': student_attendance,
+        # 'resources': student_resources,
+        'unread_count': unread_count,
+        'latest_notices': unread_notices[:5] # display only the 5 latest unread notices
+    }
+
+    return render(request, 'parent/parentdashboard.html', context)
+
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+@login_required
+def view_student_attendance(request):
+    students_info = []
+
+    # Check if user is a student
+    if hasattr(request.user, 'personalinfo'):
+        students_info.append(request.user.personalinfo)
+    
+    # Check if user is a parent
+    elif hasattr(request.user, 'guardianinfo'):
+        guardian = GuardianInfo.objects.filter(user=request.user)
+        students_info.extend(list(guardian.values_list('student', flat=True)))
+
+    # If no related student info found, redirect
+    if not students_info:
+        messages.error(request, "You are neither a student nor a parent!")
+        return redirect('/')  # Redirect to a suitable page
+    # Handle pagination
+    page = request.GET.get('page', 1)  # Default to page 1 if not specified
+    per_page = 10  # Number of attendance records per page, adjust as needed
+
+    paginated_data = {}
+
+    for student in students_info:
+        attendance_records = AttendanceReport.objects.filter(student_id=student)
+        paginator = Paginator(attendance_records, per_page)
+
+        try:
+            paginated_data[student] = paginator.page(page)
+        except PageNotAnInteger:
+            paginated_data[student] = paginator.page(1)
+        except EmptyPage:
+            paginated_data[student] = paginator.page(paginator.num_pages)
+
+    # Fetch attendance data for the related students
+    attendance_by_student = {student: AttendanceReport.objects.filter(student_id=student) for student in students_info}
+
+    return render(request, 'parent/viewattendace.html', {'attendance_by_student': attendance_by_student})
+
 

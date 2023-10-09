@@ -1,0 +1,41 @@
+{% extends "hod/base_class.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Attendance Report</h2>
+    
+    {% for student, attendance_records in attendance_by_student.items %}
+    <h3>{{ student.user.name }}</h3>
+
+    {% if attendance_records %}
+    <table class="table table-striped">
+        <!-- ... [Rest of the table structure remains unchanged] -->
+    </table>
+    
+    <!-- Pagination Controls -->
+    <div class="pagination">
+        <span class="step-links">
+            {% if attendance_records.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ attendance_records.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ attendance_records.number }} of {{ attendance_records.paginator.num_pages }}.
+            </span>
+
+            {% if attendance_records.has_next %}
+                <a href="?page={{ attendance_records.next_page_number }}">next</a>
+                <a href="?page={{ attendance_records.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
+    {% else %}
+    <p>No attendance data available for this student.</p>
+    {% endif %}
+    
+    <hr>  <!-- Separator between students -->
+    {% endfor %}
+</div>
+{% endblock %}

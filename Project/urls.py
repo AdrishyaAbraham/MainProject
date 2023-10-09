@@ -32,6 +32,8 @@ urlpatterns = [
 
     path('st/',studentdashboard, name='studentdashboard'),
     path('h/',hoddashboard,name="hoddashboard"),
+    path('p/',parentdashboard,name="parentdashboard"),
+
 
    
     path('logout/',user_logout,name='logout'),

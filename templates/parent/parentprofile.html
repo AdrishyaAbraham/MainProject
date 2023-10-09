@@ -1,0 +1,47 @@
+{% extends 'hod/base_class.html' %} <!-- Assuming you have a base template. If not, you can remove this. -->
+
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        <h2> Profile</h2>
+    </div>
+    <div class="card-body">
+        <!-- Displaying the admin's photo -->
+        {% comment %} {% if user.photo %}
+            <img src="{{ user.photo.url }}" alt="Admin Photo" style="max-width: 150px; border-radius: 50%;">
+        {% else %}
+            <img src="{% static 'path_to_default_image.jpg' %}" alt="Default Photo" style="max-width: 150px; border-radius: 50%;">
+        {% endif %} {% endcomment %}
+
+        <!-- Displaying the admin's details -->
+        <table class="table table-bordered mt-4">
+            <tr>
+                <th>Name</th>
+                <td>{{ user.name }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <th>Mobile</th>
+                <td>{{ user.mobile }}</td>
+            </tr>
+            <tr>
+                <th>Role</th>
+                <td>{{ user.role }}</td>
+            </tr>
+            <tr>
+                <th>Address</th>
+                <td>{{ user.address }}</td>
+            </tr>
+            <tr>
+                <th>Date Joined</th>
+                <td>{{ user.date_joined }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

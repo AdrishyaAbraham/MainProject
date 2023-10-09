@@ -15,9 +15,54 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+    .header-right {
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-container {
+    position: relative;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.dropdown-toggle:hover + .dropdown-content-info,
+.dropdown-content-info:hover {
+    display: block;
+}
+
+.dropdown-content-info {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 180px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-content-info p {
+    color: black;
+    padding: 10px 14px;
+    text-decoration: none;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.dropdown-content-info p:last-child {
+    border-bottom: none;
+}
+
+.dropdown-content-info p:hover {
+    background-color: #f1f1f1;
+}
+</style>
   </head>
   <body>
-    <div class="grid-container">
+<div class="grid-container">
 
       <!-- Header -->
       <header class="header">
@@ -27,11 +72,18 @@
         <div class="header-left">
           <span class="material-icons-outlined">search</span>
         </div>
-         <div class="header-right">
+        <div class="header-right">
         <div class="dropdown-container">
         <span class="material-icons-outlined dropdown-toggle">notifications</span>
+        {% if unread_count > 0 %}
+        <span class="notification-count">{{ unread_count }}</span>
+       {% endif %}
+</span>
+
         <div class="dropdown-content-info">
-            <p>Notification 1</p>
+            {% for notice in latest_notices %}
+            <p class="{% if not notice.is_read %}unread{% endif %}">{{ notice.title }}</p>
+            {% endfor %}
             <p>Notification 2</p>
             <p>Notification 3</p>
         </div>
@@ -48,11 +100,13 @@
     <div class="dropdown-container">
         <span class="material-icons-outlined dropdown-toggle">account_circle</span>
         <div class="dropdown-content-info">
-             <a href="{% url 'admin_profile' user.id  %}"><p>Profile</p></a>
+             <a href="{% url 'teacher_acprofile' user.id  %}"><p>Profile</p></a>
             <p>Settings</p>
             <a href="{% url 'logout' %}"><p>Logout</p></a>
         </div>
     </div>
+
+
       </header>
       <!-- End Header -->
 
@@ -72,17 +126,17 @@
             </a>
           </li>
 		  <li class="sidebar-list-item">
-           <a href="{%%}" target="_blank"> 
+           <a href="" target="_blank"> 
               <span class="material-icons-outlined">book</span> Student Academics
             </a>
           </li>
           <li class="sidebar-list-item">
-            <a href="" target="_blank">
-            <span class="material-icons-outlined">table_view</span> Student Leave Status
+            <a href="{% url 'view_student_attendance' %}" target="_blank">
+            <span class="material-icons-outlined">table_view</span> Student Leave 
             </a>
           </li>
 		   <li class="sidebar-list-item">
-            <a href="{% url 'downloadresource' %}" target="_blank">
+            <a href="" target="_blank">
          <span class="material-icons-outlined">calendar_view_month</span> Resources
             </a>
           </li>
@@ -112,12 +166,12 @@
         <div class="main-cards">
 
           <div class="card">
-            <div class="card-inner">
-              <h3>NOTIFICATIONS</h3>
-              <span class="material-icons-outlined">inventory_2</span>
-            </div>
-            <h1>1</h1>
-          </div>
+        <div class="card-inner">
+        <h3>NOTIFICATIONS</h3>
+        <span class="material-icons-outlined">inventory_2</span>
+    </div>
+    <h1>{{ unread_count }}</h1>
+      </div>
 
           <div class="card">
             <div class="card-inner">
@@ -146,6 +200,32 @@
         </div>
 
         <div class="charts">
+        <div class="children-section">
+
+    <h2>Your Children</h2>
+
+    {% for student in students %}
+        <h3>{{ student.user.name }}</h3>
+
+        <h4>Attendance:</h4>
+        <ul>
+        {% for attend in attendance %}
+            {% if attend.student_id == student %}
+                <li>Date: {{ attend.attendance_id.attendance_date }}, Status: {% if attend.status %} Present {% else %} Absent {% endif %}</li>
+            {% endif %}
+        {% endfor %}
+        </ul>
+
+        {% comment %} <h4>Resources:</h4>
+        <ul>
+        {% for resource in resources %}
+            {% if resource.student == student %}
+                <li>Title: {{ resource.resource_title }} - <a href="{{ resource.resource_file.url }}">Download</a></li>
+            {% endif %}
+        {% endfor %}
+        </ul> {% endcomment %}
+    {% endfor %}
+</div>
 
           {% comment %} <div class="charts-card">
             <h2 class="chart-title">Top 5 Products</h2>
