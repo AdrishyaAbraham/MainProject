@@ -233,7 +233,7 @@ class PersonalInfo(models.Model):
  
 
 class GuardianInfo(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE,null=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True)
     student = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE,null=True)
     father_name = models.CharField(max_length=100)
     father_phone_no = models.CharField(max_length=10,unique=True)
@@ -241,7 +241,7 @@ class GuardianInfo(models.Model):
     mother_phone_no = models.CharField(max_length=10,unique=True)
     guardian_name = models.CharField(max_length=100)
     guardian_phone_no = models.CharField(max_length=10)
-    guardian_email = models.EmailField(blank=True, null=True,unique=True)
+    guardian_email = models.EmailField(blank=True, null=True)
     relationship_choice = (
         ('Father', 'Father'),
         ('Mother', 'Mother'),
