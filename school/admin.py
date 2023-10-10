@@ -23,6 +23,10 @@ admin.site.register(Notice),
 admin.site.register(TeacherNotice),
 admin.site.register(LeaveReportStudent),
 admin.site.register(LeaveReportStaff),
+admin.site.register(Attendance),
+admin.site.register(AttendanceReport),
+
+
 
 
 

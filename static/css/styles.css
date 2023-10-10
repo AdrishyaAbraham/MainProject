@@ -5,6 +5,17 @@ body {
   color: #9e9ea4;
   font-family: 'Montserrat', sans-serif;
 }
+.notification-count {
+  background-color: red;
+  color: white;
+  border-radius: 50%; /* make it round */
+  padding: 3px 6px;
+  font-size: 14px;
+  position: absolute;
+  top: 8px;
+  right: -5px; /* adjust based on your needs */
+  font-weight: bold;
+}
 
 /* Dropdown */
 .dropdown-content {

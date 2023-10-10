@@ -3,13 +3,14 @@
 {% block content %}
 
 
-
+<div class="container mt-4">
 <h2>Pending Leave Applications</h2>
 
-<table>
+<table class="table table-bordered">
     <thead>
         <tr>
             <th>Staff Name</th>
+            <th>Class</th>
             <th>Leave Date</th>
             <th>Leave Message</th>
             <th>Actions</th>
@@ -18,7 +19,8 @@
     <tbody>
         {% for leave in pending_leaves %}
         <tr>
-            <td>{{ leave.staff_id.name }}</td>
+            <td>{{ leave.staff_id.user.name }}</td>
+            <td>{{ leave.assigned_class.class_name }}</td>
             <td>{{ leave.leave_date }}</td>
             <td>{{ leave.leave_message }}</td>
             <td>

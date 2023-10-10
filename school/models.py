@@ -304,7 +304,7 @@ class EnrolledStudent(models.Model):
 
 class Attendance(models.Model):
    
-    # Subject Attendance
+    
     ClassInfo_id = models.ForeignKey(EnrolledStudent, on_delete=models.DO_NOTHING)
     attendance_date = models.DateField()
     session_year_id = models.ForeignKey(Session, on_delete=models.CASCADE)
@@ -364,18 +364,29 @@ class LeaveReportStaff(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = models.Manager()
+    def approve(self):
+        self.leave_status = self.APPROVED
+        self.save()
+
+    def reject(self):
+        self.leave_status = self.REJECTED
+        self.save()
 
 class Notice(models.Model):
+    title=models.CharField(max_length=50,null=True)
     Message = models.CharField(max_length=200,null=True)
     date_created = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
     
     def __str__(self):
         return self.Message
 
 class TeacherNotice(models.Model):
+    
+    title=models.CharField(max_length=50,null=True)
     message = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name='teacher_notices')
-
+    is_read = models.BooleanField(default=False)
     def __str__(self):
         return self.message

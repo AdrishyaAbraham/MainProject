@@ -1,0 +1,22 @@
+{% extends 'hod/base_class.html' %}
+
+{% block content %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Student Name</th>
+            <th>Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in attendance_records %}
+        <tr>
+            <td>{{ record.student_id.user.name }}</td>  <!-- Assuming there's a user relation in PersonalInfo model with a name attribute -->
+            <td>{{ record.attendance_id.attendance_date }}</td>
+            <td>{{ record.status|yesno:"Present,Absent" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

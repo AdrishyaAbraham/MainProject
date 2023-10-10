@@ -1,0 +1,20 @@
+{% extends 'hod/base_class.html' %}  {# Assuming you have a base template #}
+
+{% block content %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in attendance_data %}
+        <tr>
+            <td>{{ record.attendance_id.attendance_date }}</td> 
+            <td>{{ record.status|yesno:"Present,Absent" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

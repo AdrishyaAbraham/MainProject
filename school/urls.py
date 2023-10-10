@@ -47,6 +47,7 @@ urlpatterns = [
   path('designation', views.add_designation, name='designation'),
   path('designation/<int:designation_id>/', views.update_designation, name='update_designation'),
   path('admin_review_leaves/', views.admin_review_leaves, name='admin_review_leaves'),
+  path('mark_attendance/', views.mark_attendance, name='mark_attendance'),
 
 
      
@@ -74,11 +75,12 @@ urlpatterns = [
   path('teacher/review_leave/', views.teacher_review_leave_applications, name='teacher_review_leave_applications'),
   path('approved_leave/', views.student_leave_approve, name='student_leave_approve'),
   path('staff/leave/apply/', views.staff_leave_apply, name='staff_leave_apply'),
+   path('view_class_attendance/', views.view_class_attendance, name='view_class_attendance'),
 
  #student dashboard
   path('d/<int:id>/',views.downloadresource,name='downloadresource'),
   path('student_leave/',views.student_leave_view,name='student_leave_view'),
-
+  path('view_attendance/', views.view_student_attendance, name='view_student_attendance'),
 
  #parent dashaboard...
   path('parent/',views.parentdashboard,name='parentdashboard'),

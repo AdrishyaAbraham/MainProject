@@ -75,8 +75,15 @@
         <div class="header-right">
         <div class="dropdown-container">
         <span class="material-icons-outlined dropdown-toggle">notifications</span>
+        {% if unread_count > 0 %}
+        <span class="notification-count">{{ unread_count }}</span>
+       {% endif %}
+</span>
+
         <div class="dropdown-content-info">
-            <p>Notification 1</p>
+            {% for notice in latest_notices %}
+            <p class="{% if not notice.is_read %}unread{% endif %}">{{ notice.title }}</p>
+            {% endfor %}
             <p>Notification 2</p>
             <p>Notification 3</p>
         </div>
@@ -127,7 +134,8 @@
             <div class="dropdown-content">
                 <a href="{% url 'class_student' %}" target="_blank">Students Details</a>
 
-                <a href="{% url 'mark_attendance' %}" target="_blank">Student Attendance</a>
+                <a href="{% url 'mark_attendance'  %}" target="_blank">Student Attendance</a>
+                <a href="{% url 'view_class_attendance'  %}" target="_blank">View All Attendance</a>
                 <a href="{% url 'teacher_review_leave_applications' %}" target="_blank">Student Leave List</a>
                 <a href="{% url 'student_leave_approve' %}" target="_blank">Approved Leaves</a>
 
@@ -235,7 +243,7 @@
         <br>
         <ul>
             {% for notice in latest_notices %}
-            <li>{{ notice.date_created|date:"d M Y" }}: {{ notice.message }}</li>
+            <li>{{ notice.date_created|date:"d M Y" }}:  {{ notice.message }}</li>
             {% endfor %}
               {% for notice in notices %}
             <li>

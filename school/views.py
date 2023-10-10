@@ -483,8 +483,8 @@ def teacherdashboard(request):
 
     latest_notices = TeacherNotice.objects.all().order_by('-date_created')[:5]
     notices = Notice.objects.all().order_by('-date_created')[:5]  # Fetch the latest 5 notices
-    user=request.user
-    print(user)
+    # user=request.user
+    # print(user)
     teacher = TeacherPersonalInfo.objects.all()
     context = {
         'teacher': teacher,
@@ -629,6 +629,95 @@ def update_designation(request, designation_id):
 
 from django.core.exceptions import ObjectDoesNotExist
 
+#---------------attendance and leaves--------#
+
+from django.contrib.auth.decorators import login_required
+@login_required
+def mark_attendance(request):
+    today = datetime.today().date()
+
+    # Check if today is Sunday
+    if today.weekday() != 6:  # 6 represents Sunday in Python's date.weekday() method
+        messages.error(request, "Attendance can only be marked on Sundays!")
+        return redirect('teacherdashboard')  # Redirect to a suitable page
+
+    # Get the teacher's assigned class
+    try:
+        guide_teacher = GuideTeacher.objects.get(name=request.user.teacherpersonalinfo)
+        assigned_class = guide_teacher.classregistration
+    except (GuideTeacher.DoesNotExist, AttributeError):
+        print("DEBUG: Teacher is not assigned to any class!") # Debugging line
+        messages.error(request, "You are not assigned to any class!")
+        return redirect('/')  # Redirect to dashboard or any other suitable page
+
+    # Fetch students of the assigned class
+    students = EnrolledStudent.objects.filter(class_name=assigned_class)
+
+    # Get the current session (assuming session name corresponds to the year)
+    current_year = datetime.now().year
+    try:
+        current_session = Session.objects.get(name=current_year)
+    except Session.DoesNotExist:
+        print(f"DEBUG: Current session {current_year} not found!") # Debugging line
+        messages.error(request, "Current session not found!")
+        return redirect('teacherdashboard')  # Redirect to dashboard or any other suitable page
+
+    if request.method == "POST":
+        absent_student_ids = request.POST.getlist('absent_students')
+        for student in students:
+            student_info = student.student.personal_info  # Moved inside the loop
+
+            # Create a record in the Attendance model
+            attendance = Attendance(
+                ClassInfo_id=student,
+                attendance_date=today,
+                session_year_id=current_session
+            )
+            attendance.save()
+
+            # Create a record in the AttendanceReport model
+            is_absent = str(student.id) in absent_student_ids
+            AttendanceReport.objects.create(
+                student_id=student_info,
+                attendance_id=attendance,
+                status=not is_absent  # True if present, False if absent
+            )
+
+        messages.success(request, "Attendance marked successfully!")
+        return redirect('mark_attendance')  # Redirect to a suitable page
+
+    return render(request, 'teacher/attendance/mark_attendance.html', {'students': students})
+
+@login_required
+def view_class_attendance(request):
+    # Get the teacher's assigned class
+    try:
+        guide_teacher = GuideTeacher.objects.get(name=request.user.teacherpersonalinfo)
+        assigned_class = guide_teacher.classregistration
+    except (GuideTeacher.DoesNotExist, AttributeError):
+        messages.error(request, "You are not assigned to any class!")
+        return redirect('/')  # Redirect to dashboard or any other suitable page
+
+    # Fetch students of the assigned class
+    students = EnrolledStudent.objects.filter(class_name=assigned_class)
+    personal_info_list = [s.student.personal_info for s in students]
+    # Fetch attendance records of all students in the assigned class
+    attendance_records = AttendanceReport.objects.filter(student_id__in=personal_info_list)
+
+    return render(request, 'teacher/attendance/view_class_attendance.html', {'attendance_records': attendance_records})
+
+@login_required
+def view_student_attendance(request):
+    # Ensure the user is a student
+    if not hasattr(request.user, 'personalinfo'):  # Replace with your student-related attribute check
+        messages.error(request, "You are not a student!")
+        return redirect('/')  # Redirect to a suitable page
+
+    # Fetch attendance data for the logged-in student
+    student_attendance = AttendanceReport.objects.filter(student_id=request.user.personalinfo)
+
+    return render(request, 'student/view_attendance.html', {'attendance_data': student_attendance})
+
 
 
 def student_leave_view(request):
@@ -759,7 +848,7 @@ def staff_leave_apply(request):
 
 def admin_review_leaves(request):
     # Fetch all leave applications that are pending
-    pending_leaves = LeaveReportStaff.objects.filter(leave_status=LeaveReportStaff.PENDING)
+    pending_leaves = LeaveReportStaff.objects.filter(leave_status=LeaveReportStaff.PENDING).select_related('staff_id')
 
     if request.method == "POST":
         # Get the action from the POST data (approve or reject)
@@ -775,10 +864,21 @@ def admin_review_leaves(request):
             leave.reject()
         return redirect('admin_review_leaves')  # redirect back to the same page to see updates
 
+    # Fetching the classes associated with the teachers
+    teacher_classes = {}
+    for leave in pending_leaves:
+        try:
+            assigned_class = ClassRegistration.objects.get(guide_teacher__name=leave.staff_id)
+            leave.assigned_class = assigned_class
+        except ClassRegistration.DoesNotExist:
+            leave.assigned_class = None
+
     context = {
         "pending_leaves": pending_leaves,
+        "teacher_classes": teacher_classes,
     }
-    return render(request, 'admin/teacher_leave_review.html', context)
+    return render(request, 'hod/teacher_leave_review.html', context)
+
  
 def staff_leave_approve(request, leave_id):
     leave = LeaveReportStaff.objects.get(id=leave_id)
@@ -826,6 +926,7 @@ def addNotice(request):
 def display_notices(request):
     if request.user.is_authenticated:
         notices = Notice.objects.all().order_by('-date_created') # To fetch the latest notices first
+       
         context = {'notices': notices}
         return render(request, 'hod/circular_view.html', context)
     else:
@@ -870,8 +971,6 @@ def class_student(request):
     }
     return render(request, 'teacher/class_student.html', context)
 
-def mark_attendance(request):
-   return render(request,'teacher/attendance/mark_attendace.html')
 
 def add_teacher_notice(request):    
     if request.user.is_authenticated:
@@ -889,23 +988,28 @@ def add_teacher_notice(request):
 def display_teacher_notices(request):
     if request.user.is_authenticated:
         notice = TeacherNotice.objects.all().order_by('-date_created')
-        context = {'notice': notice}
+        unread_count = Notice.objects.filter(is_read=False).count()
+        
+        context = {'notice': notice,
+                'unread_count': unread_count,}
         return render(request, 'hod/hod_student/notices.html', context)
     else:
         return redirect('hoddashboard')
 
+@login_required    
 def add_resource(request):
     # Assuming the teacher is the logged-in user
     teacher = TeacherPersonalInfo.objects.get(user=request.user)
+    guide_teacher_instance = GuideTeacher.objects.get(name=teacher)
 
     if request.method == 'POST':
-        form = ResourceForm(request.POST, request.FILES) # Notice the request.FILES added
+        form = ResourceForm(request.POST, request.FILES)  # Notice the request.FILES added
         if form.is_valid():
-            resource = form.save(commit=False)  # Don't commit/save yet, we need to populate the excluded fields
+            resource = form.save(commit=False)  # Don't commit/save yet
 
             # Populate the excluded fields
             resource.teacher_name = teacher
-            resource.class_registration = ClassRegistration.objects.get(guide_teacher=teacher)
+            resource.class_registration = ClassRegistration.objects.get(guide_teacher=guide_teacher_instance)
 
             resource.save()  # Now save the model instance
             return redirect('teacher/index_resource.html')
