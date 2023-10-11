@@ -91,6 +91,9 @@ urlpatterns = [
  #parent dashaboard...
   path('parent/',views.parentdashboard,name='parentdashboard'),
   path('view_attendance/', views.view_student_attendance, name='view_attendance'),
+  path('download_resource/<int:resource_id>/', views.download_resource, name='download_resource'),
+  path('view_resources/', views.view_resources, name='view_resources'),
+
 
   
 ]

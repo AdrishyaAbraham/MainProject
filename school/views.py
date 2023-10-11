@@ -1152,7 +1152,7 @@ def parentdashboard(request):
     context = {
         'students': students,
         'attendance': student_attendance,
-        # 'resources': student_resources,  # You need to add a ForeignKey from Resource to PersonalInfo
+        'resources': student_resources,  # You need to add a ForeignKey from Resource to PersonalInfo
         'unread_count': unread_count,
         'latest_notices': unread_notices[:5] # display only the 5 latest unread notices
     }
@@ -1175,3 +1175,28 @@ def view_student_attendance(request):
     attendance_by_student = {student: AttendanceReport.objects.filter(student_id=student.id) for student in students}
 
     return render(request, 'parent/viewattendace.html', {'attendance_by_student': attendance_by_student})
+
+@login_required
+def view_resources(request):
+    # Fetch students associated with the logged-in parent
+    students = PersonalInfo.objects.filter(guardian__user=request.user)
+    student_ids = students.values_list('id', flat=True)
+
+    # Fetch resources associated with the students
+    student_resources = Resource.objects.filter(class_info__in=student_ids)
+    
+    return render(request, 'parent/downloadresource.html', {'student_resources': student_resources})
+
+@login_required
+def download_resource(request, resource_id):
+    resource = get_object_or_404(Resource, id=resource_id)
+    # Check if the user trying to download the resource is indeed the parent of the student the resource is for.
+    student = PersonalInfo.objects.filter(guardian__user=request.user, id=resource.class_info_id)
+    if not student.exists():
+        messages.error(request, "You don't have permission to access this resource.")
+        return redirect('parentdashboard')
+    
+    file_path = resource.resource_file.path
+    response = FileResponse(open(file_path, 'rb'))
+    response['Content-Disposition'] = f'attachment; filename="{resource.resource_title}"'
+    return response

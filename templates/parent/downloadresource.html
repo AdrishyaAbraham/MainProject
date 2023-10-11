@@ -1,0 +1,21 @@
+{% extends 'hod/base_class.html' %}
+
+{% block content %}
+<div class="container">
+<h2>Your Children's Resources</h2>
+    <h2>Download Resources</h2>
+
+     <table class="table table-striped">
+
+
+{% for resource in student_resources %}
+    <div>
+        <h3>{{ resource.resource_title }}</h3>
+        <p>{{ resource.description }}</p>
+        <a href="{% url 'download_resource' resource.id %}" target="_blank" class="btn btn-primary">Download</a>
+    </div>
+    <hr>
+{% endfor %}
+
+    </table>
+{% endblock %}
