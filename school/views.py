@@ -324,6 +324,7 @@ def student_registration(request):
             student_email = personal_info_form.cleaned_data.get('email')
             parent_email = guardian_info_form.cleaned_data.get('parent_email')
 
+            father_name = guardian_info_form.cleaned_data.get('father_name')
             if CustomUser.objects.filter(email=student_email).exists():
                 messages.error(request, 'A user with this student email already exists.')
             elif CustomUser.objects.filter(email=parent_email).exists():
@@ -336,18 +337,19 @@ def student_registration(request):
                 name = personal_info_form.cleaned_data.get('name')
 
                 # Create parent user
-                parent_user = CustomUser.objects.create_user(name=name, email=parent_email, password=password, address=address, mobile=mobile, role='parent')
-                
+                parent_user = CustomUser.objects.create_user(name=father_name, email=parent_email, password=password, address=address, mobile=mobile, role='parent')
                 guardian = guardian_info_form.save(commit=False)
                 guardian.user = parent_user
                 guardian.save()
 
-                # Create student user and link to the parent
+                # Create student user
                 student_user = CustomUser.objects.create_user(name=name, email=student_email, password=password, address=address, mobile=mobile, role='student')
                 student_personal_info = personal_info_form.save(commit=False)
                 student_personal_info.user = student_user
+                student_personal_info.guardian = guardian  # Link the student to the guardian
                 student_personal_info.save()
-                
+
+                                
                 prev_academic_info = previous_academic_info_form.save()
                 prev_academic_cert = previous_academic_certificate_form.save()
 
@@ -1022,12 +1024,11 @@ def add_resource(request):
     if request.method == 'POST':
         form = ResourceForm(request.POST, request.FILES)  # Notice the request.FILES added
         if form.is_valid():
-            resource = form.save(commit=False)  # Don't commit/save yet
-
-            # Populate the excluded fields
+            resource = form.save(commit=False)
             resource.teacher_name = teacher
-            resource.class_registration = ClassRegistration.objects.get(guide_teacher=guide_teacher_instance)
-
+            # resource.class_info = teacher.class_info  # Assuming TeacherPersonalInfo has a ForeignKey to ClassInfo
+            # # or
+            resource.class_registration = teacher.class_registration
             resource.save()  # Now save the model instance
             return redirect('teacher/index_resource.html')
     else:
@@ -1096,15 +1097,18 @@ def editprofile(request):
 
 #------parent dashboard-----#
 from django.shortcuts import render, get_list_or_404, redirect
-
+@login_required
 def parentdashboard(request):
     if not request.user.is_authenticated:
         return redirect('login_page')  # Assuming you have a view called login_page
 
-    children = GuardianInfo.objects.filter(user=request.user).values_list('student', flat=True)
-    students = PersonalInfo.objects.filter(id__in=children)
-    student_attendance = AttendanceReport.objects.filter(student_id__in=children)
-    # student_resources = Resource.objects.filter(student__in=children)  # You need to add a ForeignKey from Resource to PersonalInfo
+    # Get students related to this guardian (parent).
+    students = PersonalInfo.objects.filter(guardian__user=request.user)
+    
+    # Fetching the IDs of the students.
+    student_ids = students.values_list('id', flat=True)
+    
+    student_attendance = AttendanceReport.objects.filter(student_id__in=student_ids)
 
     unread_notices = Notice.objects.filter(is_read=False) # Fetch unread notices
     unread_count = unread_notices.count()
@@ -1112,7 +1116,7 @@ def parentdashboard(request):
     context = {
         'students': students,
         'attendance': student_attendance,
-        # 'resources': student_resources,
+        # 'resources': student_resources,  # You need to add a ForeignKey from Resource to PersonalInfo
         'unread_count': unread_count,
         'latest_notices': unread_notices[:5] # display only the 5 latest unread notices
     }
@@ -1123,41 +1127,15 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 @login_required
 def view_student_attendance(request):
-    students_info = []
 
-    # Check if user is a student
-    if hasattr(request.user, 'personalinfo'):
-        students_info.append(request.user.personalinfo)
-    
-    # Check if user is a parent
-    elif hasattr(request.user, 'guardianinfo'):
-        guardian = GuardianInfo.objects.filter(user=request.user)
-        students_info.extend(list(guardian.values_list('student', flat=True)))
-
-    # If no related student info found, redirect
-    if not students_info:
-        messages.error(request, "You are neither a student nor a parent!")
+    # Check if user is a parent by getting their children
+    students = PersonalInfo.objects.filter(guardian__user=request.user)
+    if not students.exists():
+        messages.error(request, "You are not a parent or no students are associated with your account!")
         return redirect('/')  # Redirect to a suitable page
-    # Handle pagination
-    page = request.GET.get('page', 1)  # Default to page 1 if not specified
-    per_page = 10  # Number of attendance records per page, adjust as needed
 
-    paginated_data = {}
-
-    for student in students_info:
-        attendance_records = AttendanceReport.objects.filter(student_id=student)
-        paginator = Paginator(attendance_records, per_page)
-
-        try:
-            paginated_data[student] = paginator.page(page)
-        except PageNotAnInteger:
-            paginated_data[student] = paginator.page(1)
-        except EmptyPage:
-            paginated_data[student] = paginator.page(paginator.num_pages)
-
-    # Fetch attendance data for the related students
-    attendance_by_student = {student: AttendanceReport.objects.filter(student_id=student) for student in students_info}
+    # Fetch attendance data for the children
+    student_ids = students.values_list('id', flat=True)
+    attendance_by_student = {student: AttendanceReport.objects.filter(student_id=student.id) for student in students}
 
     return render(request, 'parent/viewattendace.html', {'attendance_by_student': attendance_by_student})
-
-

@@ -1,7 +1,8 @@
 // form visible
 $('#academic_info_btn').on('click', function(){
   $('.academic_info').hide();
-  $('.personal_info').show();
+  // $('.personal_info').show();
+  $('.gaurdian_info').show();
   $('#submit').show();
 });
 

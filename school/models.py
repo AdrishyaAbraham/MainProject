@@ -188,6 +188,7 @@ class ClassRegistration(models.Model):
 
 class Resource(models.Model):
     resource_id=models.PositiveBigIntegerField()
+    class_info = models.ForeignKey(ClassInfo, on_delete=models.CASCADE,null=True)
     teacher_name= models.ForeignKey(TeacherPersonalInfo, on_delete=models.CASCADE, null=True)
     class_registration = models.ForeignKey(ClassRegistration, on_delete=models.CASCADE,null=True)
     resource_title=models.CharField(max_length=60,null=True)
@@ -198,9 +199,33 @@ class Resource(models.Model):
     def __str__(self) -> str:
         return f'Resourse: {self.resource_title}'
 
+class GuardianInfo(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True)
+    father_name = models.CharField(max_length=100)
+    father_phone_no = models.CharField(max_length=10,unique=True)
+    mother_name = models.CharField(max_length=100)
+    mother_phone_no = models.CharField(max_length=10,unique=True)
+    guardian_name = models.CharField(max_length=100)
+    guardian_phone_no = models.CharField(max_length=10)
+    guardian_email = models.EmailField(blank=True, null=True)
+    relationship_choice = (
+        ('Father', 'Father'),
+        ('Mother', 'Mother'),
+        ('Brother', 'Brother'),
+        ('Uncle', 'Uncle'),
+        ('Aunt', 'Aunt'),
+    )
+    relationship_with_student = models.CharField(choices=relationship_choice, max_length=45)
+
+    def __str__(self):
+        return self.father_name
+
+
+
 class PersonalInfo(models.Model):
     
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE,blank=True, null=True)
+    guardian = models.ForeignKey(GuardianInfo, on_delete=models.CASCADE,null=True)
     blood_group_choice = (
         ('a+', 'A+'),
         ('o+', 'O+'),
@@ -231,29 +256,6 @@ class PersonalInfo(models.Model):
         return self.user.name
     
  
-
-class GuardianInfo(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True)
-    student = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE,null=True)
-    father_name = models.CharField(max_length=100)
-    father_phone_no = models.CharField(max_length=10,unique=True)
-    mother_name = models.CharField(max_length=100)
-    mother_phone_no = models.CharField(max_length=10,unique=True)
-    guardian_name = models.CharField(max_length=100)
-    guardian_phone_no = models.CharField(max_length=10)
-    guardian_email = models.EmailField(blank=True, null=True)
-    relationship_choice = (
-        ('Father', 'Father'),
-        ('Mother', 'Mother'),
-        ('Brother', 'Brother'),
-        ('Uncle', 'Uncle'),
-        ('Aunt', 'Aunt'),
-    )
-    relationship_with_student = models.CharField(choices=relationship_choice, max_length=45)
-
-    def __str__(self):
-        return self.guardian_name
-
 
 
 class PreviousAcademicInfo(models.Model):

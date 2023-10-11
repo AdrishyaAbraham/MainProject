@@ -7,7 +7,7 @@ urlpatterns = [
     path('admin_profile/<int:admin_id>/', views.admin_profile, name='admin_profile'),
     path('student_acprofile/<int:student_id>/', views.student_acprofile, name='student_acprofile'),
     path('teacher_acprofile/<int:teacher_id>/', views.teacher_acprofile, name='teacher_acprofile'),
-    path('parent_acprofile/<int:teacher_id>/', views.parent_acprofile, name='parent_acprofile'),
+    path('parent_acprofile/<int:parent_id>/', views.parent_acprofile, name='parent_acprofile'),
 
     
 

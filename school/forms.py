@@ -174,7 +174,7 @@ class PersonalInfoForm(forms.ModelForm):
     class Meta:
         model = PersonalInfo
         fields = '__all__'
-        exclude=['role','user']
+        exclude=['role','user','guardian']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'photo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
@@ -222,7 +222,8 @@ class GuardianInfoForm(forms.ModelForm):
     father_phone_no = forms.CharField(validators=[phone_regex], widget=forms.TextInput(attrs={'class': 'form-control'}))  # Use CharField
     mother_phone_no = forms.CharField(validators=[phone_regex], widget=forms.TextInput(attrs={'class': 'form-control'}))  # Use CharField
     guardian_phone_no = forms.CharField(validators=[phone_regex], widget=forms.TextInput(attrs={'class': 'form-control'}))  # Use CharField
-    
+    father_name=forms.CharField(validators=[phone_regex], widget=forms.TextInput(attrs={'class': 'form-control'}))  # Use CharField
+
     class Meta:
         model = GuardianInfo
         fields = '__all__'
@@ -244,7 +245,7 @@ class GuardianInfoForm(forms.ModelForm):
         validate_only_alphabets(father_name)
         validate_only_alphabets(mother_name)
 
-        return father_name and mother_name
+        return father_name 
     
  
 class PreviousAcademicInfoForm(forms.ModelForm):
