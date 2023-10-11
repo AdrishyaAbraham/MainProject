@@ -1,6 +1,6 @@
 {%extends "teacher/resource.html"%}
 {%load static %}
-
+{% load custom_filters %}
 {% block body %}
 <h3 class="m-4">Resource Material</h3>
 <div class="row">
@@ -31,7 +31,7 @@
                   <tr>
                     <td>{{ resource.resource_id }}</td>
                     <td>{{ resource.resource_title }}</td>
-                    <td>{{ resource.resource_file }}</td>
+                    <td>{{ resource.resource_file|basename }}</td>
                     <td>{{ resource.file_type}}</td>
                     <td>{{ resource.description }}</td>
                     <td>{{ resource.teacher_name }}</td>

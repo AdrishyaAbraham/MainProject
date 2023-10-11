@@ -1019,41 +1019,56 @@ def display_teacher_notices(request):
 def add_resource(request):
     # Assuming the teacher is the logged-in user
     teacher = TeacherPersonalInfo.objects.get(user=request.user)
+    
+    # First, get the GuideTeacher instance for the logged-in teacher
     guide_teacher_instance = GuideTeacher.objects.get(name=teacher)
+
+    # Next, get the ClassRegistration for the guide_teacher_instance
+    class_registration = ClassRegistration.objects.get(guide_teacher=guide_teacher_instance)
 
     if request.method == 'POST':
         form = ResourceForm(request.POST, request.FILES)  # Notice the request.FILES added
         if form.is_valid():
             resource = form.save(commit=False)
             resource.teacher_name = teacher
-            # resource.class_info = teacher.class_info  # Assuming TeacherPersonalInfo has a ForeignKey to ClassInfo
-            # # or
-            resource.class_registration = teacher.class_registration
+            resource.class_info = class_registration.class_name  # Set the class_info from the ClassRegistration instance
+            resource.class_registration = class_registration  # Set the class_registration
             resource.save()  # Now save the model instance
-            return redirect('teacher/index_resource.html')
+            return redirect('index_resource')
     else:
         form = ResourceForm()
     return render(request, 'teacher/add_resource.html', {'form': form})
 
+from django import template
+import os
+
+register = template.Library()
+
+@register.filter(name='basename')
+def basename(value):
+    return os.path.basename(value)
+
 def view_resource():
  return HttpResponseRedirect(reverse('index_resource'))
 
-def edit_resource(request):
+def edit_resource(request, id):  # Add the 'id' argument here
     if request.method == 'POST':
-      resource = Resource.objects.get(pk=id)
-      form = ResourceForm(request.POST, instance=resource)
-      if form.is_valid():
-        form.save()
-      return render(request, 'teacher/edit_resource.html', {
-        'form': form,
-        'success': True
-      })
+        resource = Resource.objects.get(pk=id)
+        form = ResourceForm(request.POST, instance=resource)
+        if form.is_valid():
+            form.save()
+            return render(request, 'teacher/edit_resource.html', {
+                'form': form,
+                'success': True
+            })
     else:
-      resource = Resource.objects.get(pk=id)
-      form = ResourceForm(instance=resource)
+        resource = Resource.objects.get(pk=id)
+        form = ResourceForm(instance=resource)
+
     return render(request, 'teacher/edit_resource.html', {
-    'form': form
-  })
+        'form': form
+    })
+
 
 
 
@@ -1067,9 +1082,12 @@ def delete_resource(request):
 def uploadresource(request):
    return render(request,'teacher/resource.html')
 
-
 def index_resource(request):
-   return render(request,'teacher/index_resource.html')
+    # Get the logged-in teacher's resources
+    teacher = TeacherPersonalInfo.objects.get(user=request.user)
+    resources = Resource.objects.filter(teacher_name=teacher)
+    
+    return render(request,'teacher/index_resource.html', {'resources': resources})
 
 
 #--------------student dashboard-------#
@@ -1081,14 +1099,32 @@ def studentdashboard(request):
     }
     return render(request,'student/student_dashboard.html',context)
 
+# def student_resources(request):
+#     student_class = EnrolledStudent.objects.get(student__user=request.user).class_name
+#     resources = Resource.objects.filter(class_registration=student_class)
+#     return render(request, 'student/resources.html', {'resources': resources})
 def student_resources(request):
-    student_class = EnrolledStudent.objects.get(student__user=request.user).class_name
-    resources = Resource.objects.filter(class_registration=student_class)
+    # Fetch the PersonalInfo for the logged-in user.
+    personal_info = PersonalInfo.objects.get(user=request.user)
+    
+    # Fetch the AcademicInfo using the PersonalInfo instance.
+    academic_info = AcademicInfo.objects.get(personal_info=personal_info)
+    
+    # Fetch the EnrolledStudent instance for that AcademicInfo.
+    enrolled_student = EnrolledStudent.objects.get(student=academic_info)
+    
+    # Fetch resources for that class.
+    resources = Resource.objects.filter(class_info=enrolled_student.class_name.class_name)
+    
     return render(request, 'student/resources.html', {'resources': resources})
+from django.http import FileResponse
 
-def downloadresource(request, resource_id):
-    resource = get_object_or_404(Resource, id=resource_id)
-    response = FileResponse(resource.resource_file)
+def downloadresource(request, id):
+    resource = Resource.objects.get(pk=id)
+    file_path = resource.resource_file.path
+    response = FileResponse(open(file_path, 'rb'))
+    # Additional headers to prompt user download
+    response['Content-Disposition'] = f'attachment; filename="{resource.resource_title}"'
     return response
 
 def editprofile(request):

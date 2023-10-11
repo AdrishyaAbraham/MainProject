@@ -66,7 +66,8 @@ urlpatterns = [
   #teacher...dashboard.....
   path('', views.uploadresource, name='uploadresource'),
   path('<int:id>', views.view_resource, name='view_resource'),
-  path('add_resource/', views.add_resource, name='add_resource'),
+  path('s/add_resource/', views.add_resource, name='add_resource'),
+  # path('add_resource/', views.add_resource, name='add_resource'),
   path('index_resource/', views.index_resource, name='index_resource'),
 
   path('edit_resource/<int:id>/', views.edit_resource, name='edit_resource'),
@@ -81,6 +82,9 @@ urlpatterns = [
 
  #student dashboard
   path('d/<int:id>/',views.downloadresource,name='downloadresource'),
+  path('student_resources/',views.student_resources,name='student_resource'),
+
+  
   path('student_leave/',views.student_leave_view,name='student_leave_view'),
   path('view_attendance/', views.view_student_attendance, name='view_student_attendance'),
 

@@ -1,9 +1,10 @@
 {% extends 'hod/base_class.html' %}
 
 {% block content %}
+<div class="container">
     <h2>Download Resources</h2>
 
-    <table>
+     <table class="table table-striped">
         <thead>
             <tr>
                 <th>ID</th>
@@ -20,13 +21,13 @@
             <tr>
                 <td>{{ resource.resource_id }}</td>
                 <td>{{ resource.resource_title }}</td>
-                <td>{{ resource.teacher_name.name }}</td>
+                <td>{{ resource.teacher_name.user.name }}</td>
                 <td>{{ resource.file_type }}</td>
                 <td>{{ resource.description }}</td>
                 <td>{{ resource.uploaded_date }}</td>
                 <td>
-                    <a href="{% url 'download_resource' resource.id %}" class="btn btn-primary">Download</a>
-                </td>
+                    <a href="{% url 'downloadresource' resource.id %}" class="btn btn-primary">
+        Download </td>
             </tr>
             {% endfor %}
         </tbody>
