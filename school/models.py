@@ -101,7 +101,17 @@ class ExperienceInfo(models.Model):
 
 
 #Attendance................#
+class PreistPersonalInfo(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE,blank=True,null=True)
+    emergency_contact_phone = models.CharField(max_length=15)
+    ordination_date = models.DateField()
+    diocese = models.CharField(max_length=255)
+    previous_parish = models.TextField(blank=True, null=True)
+    availability = models.TextField(blank=True, null=True)
 
+    def __str__(self):
+        return f"{self.user.name}"
+    
 class TeacherPersonalInfo(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE,blank=True,null=True)
     date_of_birth=models.DateField(null=True)

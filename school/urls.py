@@ -8,8 +8,8 @@ urlpatterns = [
     path('student_acprofile/<int:student_id>/', views.student_acprofile, name='student_acprofile'),
     path('teacher_acprofile/<int:teacher_id>/', views.teacher_acprofile, name='teacher_acprofile'),
     path('parent_acprofile/<int:parent_id>/', views.parent_acprofile, name='parent_acprofile'),
+    path('profile/<int:priest_id>/', views.priest_acprofile, name='priest-profile'),
 
-    
 
 
 
@@ -30,6 +30,9 @@ urlpatterns = [
     path('update_notice/<int:notice_id>/', views.update_notice, name='update_notice'),
     path('add_teacher_notice/', views.add_teacher_notice, name='add_teacher_notice'),
     path('display_teacher_notices/', views.display_teacher_notices, name='display_teacher_notices'),
+  #preist registeration..
+    path('priest-registration', views.register_priest, name='register_priest'),
+    path('view_priests/', views.view_priests, name='view_priests'),
 
   #hod---class allotment---
   path('create-class', views.add_class, name='add_class'),
@@ -78,7 +81,7 @@ urlpatterns = [
   path('teacher/review_leave/', views.teacher_review_leave_applications, name='teacher_review_leave_applications'),
   path('approved_leave/', views.student_leave_approve, name='student_leave_approve'),
   path('staff/leave/apply/', views.staff_leave_apply, name='staff_leave_apply'),
-   path('view_class_attendance/', views.view_class_attendance, name='view_class_attendance'),
+  path('view_class_attendance/', views.view_class_attendance, name='view_class_attendance'),
 
  #student dashboard
   path('d/<int:id>/',views.downloadresource,name='downloadresource'),
@@ -94,6 +97,8 @@ urlpatterns = [
   path('download_resource/<int:resource_id>/', views.download_resource, name='download_resource'),
   path('view_resources/', views.view_resources, name='view_resources'),
 
+  #priest dashboard...
+  path('priest/',views.priestdashboard,name='priestdashboard'),
 
   
 ]

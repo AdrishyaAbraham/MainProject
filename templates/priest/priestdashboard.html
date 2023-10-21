@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Hod Dashboard</title>
+    <title>Priest Dashboard</title>
 
     <!-- Montserrat Font -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -94,7 +94,7 @@
     <div class="dropdown-container">
         <span class="material-icons-outlined dropdown-toggle">account_circle</span>
         <div class="dropdown-content-info">
-             <a href="{% url 'admin_profile' user.id  %}"><p>Profile</p></a>
+             <a href="{% url 'priest-profile' user.id  %}"><p>Profile</p></a>
             <p>Settings</p>
             <a href="{% url 'logout' %}"><p>Logout</p></a>
         </div>
@@ -119,17 +119,6 @@
             </a>
         </li>
         
-        <li class="sidebar-list-item dropdown">
-            <span class="dropdown-title">
-                <span class="material-icons-outlined">person</span> Priest
-                <span class="material-icons-outlined">expand_more</span>
-            </span>
-            <div class="dropdown-content">
-                <a href="{% url 'register_priest' %}">Add Priest</a>
-                <a href="{% url 'view_priests' %}">view Priest</a>
-
-            </div>
-        </li>
 
         <li class="sidebar-list-item dropdown">
             <span class="dropdown-title">
@@ -137,8 +126,7 @@
                 <span class="material-icons-outlined">expand_more</span>
             </span>
             <div class="dropdown-content">
-                <a href="{% url 'designation' %}">Add Designation</a>
-                <a href="{% url 'teacher-registration' %}" target="_blank">Teacher registration</a>
+            
                 <a href="{% url 'teacher-list' %}" target="_blank">Teacher List</a>
                 <a href="{% url 'admin_review_leaves' %}" target="_blank">Teacher Leave List</a>
 
@@ -151,11 +139,6 @@
                 <span class="material-icons-outlined">expand_more</span>
             </span>
             <div class="dropdown-content">
-                <a href="{% url 'add_class' %}" target="_blank">Add Class </a>
-                <a href="{% url 'create-section' %}" target="_blank">Add Class Section</a>
-                <a href="{% url 'guide-teacher' %}" target="_blank">Teachers Allotment</a>
-                <a href="{% url 'create-session' %}" target="_blank">Add Session</a>
-                <a href="{% url 'class-registration' %}" target="_blank">Register Class</a>
                 <a href="{% url 'class-list' %}" target="_blank">Class Details</a>
             </div>
         </li>
@@ -166,12 +149,10 @@
                 <span class="material-icons-outlined">expand_more</span>
             </span>
             <div class="dropdown-content" >
-                <a href="{% url 'student-registration' %}" target="_blank">Student Registration</a>
+
                 <a href="{% url 'student-list' %}" target="_blank">Student List</a>
                 <a href="{% url 'student-search' %}" target="_self">Search Student</a>
-                <a href="{% url 'enrolled-student' %}" target="_blank" >Enrolled Student</a>
                 <a href="{% url 'enrolled-student-list' %}" target="_blank">Enrolled Student List</a>
-                <a href="" target="_blank">Student Attendance </a>
 
             </div>
         </li>
@@ -183,8 +164,6 @@
             </span>
             <div class="dropdown-content" >
                 <a href="{% url 'attendance' %}" target="_blank">Student Attendance</a>
-                
-
             </div>
         </li>
                     <li class="sidebar-list-item">

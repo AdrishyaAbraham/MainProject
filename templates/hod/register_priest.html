@@ -1,0 +1,96 @@
+{% extends 'hod/base_class.html' %}  <!-- Assuming you have a base.html for common layout -->
+
+{% block title %}Register Priest{% endblock %}
+
+{% block content %}
+{% if form.errors %}
+<div class="alert alert-danger">
+    <ul>
+        {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+        
+        {% for field in form %}
+            {% for error in field.errors %}
+            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+ <div class="card">
+    <div class="card-header"> Registration Form</div>
+    <div class="card-body">
+            <!-- Displaying Django Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Personal Details -->
+                <h5>Personal Details</h5>
+                <div class="mb-3">
+                    {{ form.name.label }} 
+                    {{ form.name }}
+                </div>
+                <div class="mb-3">
+                    {{ form.email.label }}
+                    {{ form.email }}
+                </div>
+                <div class="mb-3">
+                    {{ form.password.label }}
+                    {{ form.password }}
+                </div>
+                <div class="mb-3">
+                    {{ form.address.label }}
+                    {{ form.address }}
+                </div>
+                <div class="mb-3">
+                    {{ form.mobile.label }}
+                    {{ form.mobile }}
+                </div>
+                <div class="mb-3">
+                    {{ form.photo.label }}
+                    {{ form.photo }}
+                </div>
+
+                <!-- Priest Info -->
+                <h5 class="mt-4">Priest Information</h5>
+                <div class="mb-3">
+                    {{ form.emergency_contact_phone.label }}
+                    {{ form.emergency_contact_phone }}
+                </div>
+                <div class="mb-3">
+                    {{ form.ordination_date.label }}
+                    {{ form.ordination_date }}
+                </div>
+                <div class="mb-3">
+                    {{ form.diocese.label }}
+                    {{ form.diocese }}
+                </div>
+                <div class="mb-3">
+                    {{ form.previous_parish.label }}
+                    {{ form.previous_parish }}
+                </div>
+                <div class="mb-3">
+                    {{ form.availability.label }}
+                    {{ form.availability }}
+                </div>
+
+                <!-- Submit button -->
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

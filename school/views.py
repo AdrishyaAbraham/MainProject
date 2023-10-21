@@ -35,6 +35,8 @@ def login_page(request):
                     return redirect('studentdashboard')
                 elif user.role=='parent':
                     return redirect('parentdashboard')
+                elif user.role=='priest':
+                    return redirect('priestdashboard')
                 else:
                    messages.error(request, 'Account is deactivated')
         else: 
@@ -88,6 +90,16 @@ def parent_acprofile(request, parent_id):
     
     # Render the template with the context data
     return render(request, 'parent/parentprofile.html', context)
+
+def priest_acprofile(request, priest_id):
+    priest_user = get_object_or_404(CustomUser, pk=priest_id, role='priest')
+    
+    context = {
+        'user': priest_user
+    }
+    
+    # Render the template with the context data
+    return render(request, 'priest/priestprofile.html', context)
 
 def logout_user(request):
     print('Logged Out')
@@ -528,6 +540,44 @@ def staff_take_attendance(request):
 def user_logout(request):
     logout(request)
     return redirect('/')
+
+def register_priest(request):
+    form = PreistPersonalInfoForm(request.POST or None, request.FILES or None)
+
+    if request.method == 'POST':
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            name = form.cleaned_data['name']
+            address = form.cleaned_data['address']
+            mobile = form.cleaned_data['mobile']
+            photo = form.cleaned_data['photo']
+
+            if CustomUser.objects.filter(email=email).exists():
+                messages.error(request, 'A user with this email already exists.')
+            else:
+                # Directly set the role to 'priest' here
+                user = CustomUser.objects.create_user(email=email, password=password, name=name, address=address, mobile=mobile, role='priest')
+                user.photo = photo  # Assuming your CustomUser model has a photo field
+                user.save()
+
+                priest_info = form.save(commit=False)
+                priest_info.user = user
+                priest_info.save()
+                messages.success(request, 'Priest registered successfully!')
+                return redirect('hoddashboard')  # You can replace 'dashboard' with the desired redirect URL
+
+    context = {'form': form}
+    return render(request, 'hod/register_priest.html', context)
+
+
+
+def view_priests(request):
+    priests = PreistPersonalInfo.objects.all()
+    context = {
+        'priests': priests
+    }
+    return render(request, 'hod/view_priest.html', context)
 
 def teacher_registration(request):
     form = TeacherPersonalInfoForm(request.POST or None, request.FILES or None)
@@ -1090,6 +1140,16 @@ def index_resource(request):
     return render(request,'teacher/index_resource.html', {'resources': resources})
 
 
+def priestdashboard(request):
+    notices = Notice.objects.all().order_by('-date_created')[:5]  # Fetch the latest 5 notices
+    context = {
+        
+        'notices': notices,
+    }
+    return render(request,'priest/priestdashboard.html',context)
+
+
+
 #--------------student dashboard-------#
 def studentdashboard(request):
     notices = Notice.objects.all().order_by('-date_created')[:5]  # Fetch the latest 5 notices
@@ -1156,10 +1216,8 @@ def parentdashboard(request):
         'unread_count': unread_count,
         'latest_notices': unread_notices[:5] # display only the 5 latest unread notices
     }
-
     return render(request, 'parent/parentdashboard.html', context)
 
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 @login_required
 def view_student_attendance(request):

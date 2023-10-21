@@ -298,6 +298,66 @@ class SearchEnrolledStudentForm(forms.Form):
     reg_class = forms.ModelChoiceField(queryset=ClassRegistration.objects.all())
 
 
+class PreistPersonalInfoForm(forms.ModelForm):
+    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), label='Name')
+    email = forms.CharField(widget=forms.EmailInput(attrs={'class': 'form-control'}), label='Email')
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Password')
+    address = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), label='Address')
+    mobile = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), label='Phone')
+    photo = forms.ImageField(widget=forms.ClearableFileInput(attrs={'class': 'form-control'}), label='Photo')
+
+    def __init__(self, *args, **kwargs):
+      super(PreistPersonalInfoForm, self).__init__(*args, **kwargs)
+
+    # Check if the instance has been saved and associated with a user before setting initial data
+      if self.instance.pk and self.instance.user:
+        self.fields['name'].initial = self.instance.user.name
+        self.fields['email'].initial = self.instance.user.email
+        # Don't set the initial password for security reasons
+        self.fields['address'].initial = self.instance.user.address
+        self.fields['mobile'].initial = self.instance.user.mobile
+
+    class Meta:
+        model = PreistPersonalInfo
+        fields = [
+            'user', 
+            'emergency_contact_phone', 
+            'ordination_date',
+            'diocese', 
+            'previous_parish', 
+            'availability'
+        ]
+
+        widgets={'ordination_date': forms.DateInput(attrs={'type': 'date'}),} 
+def save(self, commit=True):
+    priest = super(PreistPersonalInfoForm, self).save(commit=False)
+
+    # Create or update the associated user
+    user_email = self.cleaned_data['email']
+    user_password = self.cleaned_data['password']
+
+    # Since email is unique, you should check if a user with that email already exists
+    try:
+        user = CustomUser.objects.get(email=user_email)
+    except CustomUser.DoesNotExist:
+        user = CustomUser.objects.create_user(username=user_email, email=user_email, password=user_password)
+
+    user.role = 'priest'  # Set the role directly
+    priest.user = user
+
+    if commit:
+        user.save()
+        priest.save()
+
+    return priest
+
+
+    # If you want to customize any of the form fields, you can do so here. 
+    # For example, if you want to set a custom queryset for the 'user' field:
+    # def __init__(self, *args, **kwargs):
+    #     super(PreistPersonalInfoForm, self).__init__(*args, **kwargs)
+    #     self.fields['user'].queryset = CustomUser.objects.filter(role='priest')
+
 class TeacherPersonalInfoForm(forms.ModelForm):
   
     role = forms.ChoiceField(choices=CustomUser.USER_ROLES, initial='teacher')
