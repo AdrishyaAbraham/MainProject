@@ -207,22 +207,36 @@ class PersonalInfoForm(forms.ModelForm):
         if password and password_confirm and password != password_confirm:
            self.add_error('password_confirm', "Passwords don't match")
         return cleaned_data
+    def clean_date_of_birth(self):
+        dob = self.cleaned_data.get('date_of_birth')
+        today = dob.today()
+        
+        # Check if DOB is from this year
+        if dob.year == today.year:
+            raise forms.ValidationError('Date of birth cannot be from this year.')
+        
+        # Check if the age is less than or equal to 1
+        age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+        if age <= 1:
+            raise forms.ValidationError('Age must be greater than 1 year.')
+        
+        return dob
     
 class GuardianInfoForm(forms.ModelForm):
 
     role = forms.ChoiceField(choices=CustomUser.USER_ROLES, initial='parent')
-    phone_regex = RegexValidator(
-        regex=r'^\+?1?\d{9,15}$', 
-        message="Phone number must be entered in the format: '+999999999'. Up to 10 digits allowed."
-    )
+    # phone_regex = RegexValidator(
+    #     regex=r'^\+?1?\d{9,15}$', 
+    #     message="Phone number must be entered in the format: '+999999999'. Up to 10 digits allowed."
+    # )
     parent_email = forms.CharField(widget=forms.EmailInput(attrs={'class': 'form-control'}), label='Email')
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Passwprd')
     address = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), label='Address')
     mobile = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), label='Phone')
-    father_phone_no = forms.CharField(validators=[phone_regex], widget=forms.TextInput(attrs={'class': 'form-control'}))  # Use CharField
-    mother_phone_no = forms.CharField(validators=[phone_regex], widget=forms.TextInput(attrs={'class': 'form-control'}))  # Use CharField
-    guardian_phone_no = forms.CharField(validators=[phone_regex], widget=forms.TextInput(attrs={'class': 'form-control'}))  # Use CharField
-    father_name=forms.CharField(validators=[phone_regex], widget=forms.TextInput(attrs={'class': 'form-control'}))  # Use CharField
+    father_phone_no = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))  # Use CharField
+    mother_phone_no = forms.CharField( widget=forms.TextInput(attrs={'class': 'form-control'}))  # Use CharField
+    guardian_phone_no = forms.CharField( widget=forms.TextInput(attrs={'class': 'form-control'}))  # Use CharField
+    father_name=forms.CharField( widget=forms.TextInput(attrs={'class': 'form-control'}))  # Use CharField
 
     class Meta:
         model = GuardianInfo
@@ -420,6 +434,15 @@ class TeacherPersonalInfoForm(forms.ModelForm):
             raise ValidationError("Name should only contain alphabets and spaces.")
 
         return name
+    def clean_date_of_birth(self):
+        date_of_birth = self.cleaned_data.get('date_of_birth')
+        today = date_of_birth.today()
+        age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
+
+        if age < 18:
+            raise forms.ValidationError('Age must be greater than 18 years.')
+        
+        return date_of_birth
     def save(self, commit=True):
         teacher = super(TeacherPersonalInfoForm, self).save(commit=False)
 

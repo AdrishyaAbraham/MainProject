@@ -42,8 +42,63 @@
             {{ experience_form.as_p }}
           </div>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+      <button type="submit" class="btn btn-primary" id="submitButton">Submit</button>
       </form>
+      <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const teacherForm = document.getElementById('TeacherRegistrationForm');
+        const submitButton = document.getElementById('submitButton');
+
+        submitButton.addEventListener('click', function(event) {
+            let hasError = false;
+
+            // Validate Name
+            const nameField = document.querySelector('[name="name"]');
+            if (!/^[A-Za-z\s]+$/.test(nameField.value)) {
+                alert('Name should only contain alphabets and spaces.');
+                hasError = true;
+            }
+
+            // Validate Email
+            const emailField = document.querySelector('[name="email"]');
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!emailPattern.test(emailField.value)) {
+                alert('Please enter a valid email.');
+                hasError = true;
+            }
+
+            // Validate Mobile
+            const mobileField = document.querySelector('[name="mobile"]');
+            const mobilePattern = /^(?:\+91-?)?\d{10}$/;
+            if (!mobilePattern.test(mobileField.value)) {
+                alert('Enter mobile number in the format: 9999999999 or +91-9999999999.');
+                hasError = true;
+            }
+
+            // Validate Photo
+            const photoField = document.querySelector('[name="photo"]');
+            if (photoField.files.length) {
+                const fileName = photoField.files[0].name.toLowerCase();
+                if (!(fileName.endsWith('.jpg') || fileName.endsWith('.jpeg'))) {
+                    alert('Supported photo formats are: .jpg, .jpeg');
+                    hasError = true;
+                }
+            }
+
+            // Validate Passwords
+            const passwordField = document.querySelector('[name="password"]');
+            const passwordConfirmField = document.querySelector('[name="password_confirm"]');
+            if (passwordField.value !== passwordConfirmField.value) {
+                alert("Passwords don't match.");
+                hasError = true;
+            }
+
+            if (hasError) {
+                event.preventDefault();  // Prevent form submission if there's an error
+            }
+        });
+    });
+</script>
       <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     
     </div>

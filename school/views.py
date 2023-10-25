@@ -15,6 +15,8 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 import csv
 import logging
+from django.contrib.auth.decorators import login_required
+
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +48,7 @@ def login_page(request):
 
     return render(request, 'login/index.html')
 
+@login_required
 def admin_profile(request, admin_id):
     # Fetch the CustomUser object for the given admin_id
     admin_user = get_object_or_404(CustomUser, pk=admin_id, role='admin')
@@ -58,6 +61,7 @@ def admin_profile(request, admin_id):
     # Render the template with the context data
     return render(request, 'hod/hodprofile.html', context)
 
+@login_required
 def student_acprofile(request, student_id):
     # Fetch the CustomUser object for the given admin_id
     student_user = get_object_or_404(CustomUser, pk=student_id, role='student')
@@ -69,7 +73,7 @@ def student_acprofile(request, student_id):
     
     # Render the template with the context data
     return render(request, 'student/studentprofile.html', context)
-
+@login_required
 def teacher_acprofile(request, teacher_id):
     teacher_user = get_object_or_404(CustomUser, pk=teacher_id, role='teacher')
     
@@ -80,7 +84,7 @@ def teacher_acprofile(request, teacher_id):
     # Render the template with the context data
     return render(request, 'teacher/teacherprofile.html', context)
 
-
+@login_required
 def parent_acprofile(request, parent_id):
     parent_user = get_object_or_404(CustomUser, pk=parent_id, role='parent')
     
@@ -91,6 +95,7 @@ def parent_acprofile(request, parent_id):
     # Render the template with the context data
     return render(request, 'parent/parentprofile.html', context)
 
+@login_required
 def priest_acprofile(request, priest_id):
     priest_user = get_object_or_404(CustomUser, pk=priest_id, role='priest')
     
@@ -101,6 +106,7 @@ def priest_acprofile(request, priest_id):
     # Render the template with the context data
     return render(request, 'priest/priestprofile.html', context)
 
+@login_required
 def logout_user(request):
     print('Logged Out')
     logout(request)
@@ -128,6 +134,7 @@ def bulk_register(request):
         form = BulkRegistrationForm()
     return render(request, 'registration/bulk_register.html', {'form': form})
 
+@login_required
 def studentdashboard(request):
     user=request.user
     print(user)
@@ -145,6 +152,7 @@ from django.contrib.auth import authenticate, login
 
 #----------------HOD-dashboard-----------#
 
+@login_required
 def hoddashboard(request):
     context = {
         'admin': request.user,
@@ -152,7 +160,7 @@ def hoddashboard(request):
     return render(request, 'hod/hoddashboard.html', context)
 
 
-
+@login_required
 def add_class(request):
     forms = ClassInfoForm()  # Initialize the form here
     class_obj = ClassInfo.objects.all()  # You can fetch all classes outside the POST block as well
@@ -178,7 +186,7 @@ def add_class(request):
 
     return render(request, 'hod/create_class.html', context)
 
-
+@login_required
 def update_class(request, class_id):
     class_instance = get_object_or_404(ClassInfo, id=class_id)
     form = ClassInfoForm(instance=class_instance)
@@ -194,6 +202,7 @@ def update_class(request, class_id):
     }
     return render(request, 'hod/update_classsection.html', context)
 
+@login_required
 def delete_class(request, class_id):
     class_instance = get_object_or_404(ClassInfo, id=class_id)
     if request.method == 'POST':
@@ -207,6 +216,7 @@ def delete_class(request, class_id):
     
     return render(request, 'hod/create_class.html', context)
 
+@login_required
 def create_section(request):
     forms = SectionForm()
     error_message = None  # Initializing the error message
@@ -228,6 +238,7 @@ def create_section(request):
     }
     return render(request, 'hod/create_classsection.html', context)
 
+@login_required
 def update_section(request, section_id):
     section_instance = get_object_or_404(Section, id=section_id)
     if request.method == "POST":
@@ -239,11 +250,13 @@ def update_section(request, section_id):
         form = SectionForm(instance=section_instance)
     return render(request, 'hod/update_classsection.html', {'form': form})
 
+@login_required
 def delete_section(request, section_id):
     section_instance = get_object_or_404(Section, id=section_id)
     section_instance.delete()
     return redirect('create-section')
 
+@login_required
 def create_guide_teacher(request):
     forms = GuideTeacherForm()
     if request.method == 'POST':
@@ -258,6 +271,7 @@ def create_guide_teacher(request):
     }
     return render(request, 'hod/create_guideteacher.html', context)    
 
+@login_required
 def create_session(request):
     forms = SessionForm()
     if request.method == 'POST':
@@ -271,12 +285,14 @@ def create_session(request):
         'session': session
     }
     return render(request, 'hod/create_session.html', context)
+@login_required
 def delete_session(request, session_id):
     session = get_object_or_404(Session, id=session_id)
     session.is_deleted = True
     session.save()
     return redirect('create-session')
 
+@login_required
 def update_session(request, session_id):
     session_instance = get_object_or_404(Session, id=session_id)
     
@@ -299,6 +315,7 @@ def update_session(request, session_id):
 
     return render(request, 'hod/create_session.html', context)
 
+@login_required
 def class_registration(request):
     forms = ClassRegistrationForm()
     if request.method == 'POST':
@@ -309,6 +326,7 @@ def class_registration(request):
     context = {'forms': forms}
     return render(request, 'hod/class_registration.html', context)
 
+@login_required
 def class_list(request):
     register_class = ClassRegistration.objects.all()
     context = {'register_class': register_class}
@@ -316,12 +334,13 @@ def class_list(request):
 
 
 
-
+@login_required
 def class_wise_student_registration(request):
     register_class = ClassRegistration.objects.all()
     context = {'register_class': register_class}
     return render(request, 'hod/hod_student/class-wise-student-registration.html', context)
 
+@login_required
 def student_registration(request):
     academic_info_form = AcademicInfoForm(request.POST or None)
     personal_info_form = PersonalInfoForm(request.POST or None, request.FILES or None)
@@ -384,12 +403,14 @@ def student_registration(request):
     return render(request, 'hod/hod_student/student-registration.html', context)
 
 
+@login_required
 def student_list(request):
     # Use select_related to prefetch related data
     student = AcademicInfo.objects.select_related('personal_info__user').filter(is_delete=False).order_by('-id')
     context = {'student': student}
     return render(request, 'hod/hod_student/student-list.html', context)
 
+@login_required
 def student_profile(request, reg_no):
     student = AcademicInfo.objects.get(registration_no=reg_no)
     context = {
@@ -397,6 +418,9 @@ def student_profile(request, reg_no):
     }
     return render(request, 'hod/hod_student/student-profile.html', context)
 
+
+
+@login_required
 def student_edit(request, reg_no):
     student = AcademicInfo.objects.get(registration_no=reg_no)
     academic_info_form = AcademicInfoForm(instance=student)
@@ -433,12 +457,16 @@ def student_edit(request, reg_no):
     }
     return render(request, 'hod/hod_student/student-edit.html', context)
 
+
+@login_required
 def student_delete(request, reg_no):
     student = AcademicInfo.objects.get(registration_no=reg_no)
     student.is_delete = True
     student.save()
     return redirect('student-list')
 
+
+@login_required
 def student_search(request):
     forms = StudentSearchForm()
     cls_name = request.GET.get('class_info', None)
@@ -462,6 +490,7 @@ def student_search(request):
     
 
 
+@login_required
 def enrolled_student(request):
     forms = EnrolledStudentForm()
     cls = request.GET.get('class_name', None)
@@ -472,6 +501,8 @@ def enrolled_student(request):
     }
     return render(request, 'hod/hod_student/enrolled.html', context)
 
+
+@login_required
 def student_enrolled(request, reg):
     student = AcademicInfo.objects.get(registration_no=reg)
     forms = StudentEnrollForm()
@@ -490,6 +521,8 @@ def student_enrolled(request, reg):
     }
     return render(request, 'hod/hod_student/student-enrolled.html', context)
 
+
+@login_required
 def enrolled_student_list(request):
     student = EnrolledStudent.objects.all()
     forms = SearchEnrolledStudentForm()
@@ -510,6 +543,7 @@ def enrolled_student_list(request):
 
 
 
+@login_required
 def teacherdashboard(request):
 
     latest_notices = TeacherNotice.objects.all().order_by('-date_created')[:5]
@@ -524,7 +558,9 @@ def teacherdashboard(request):
     }
     return render(request,'teacher/teacher_dashboard.html',context)
 
- 
+
+
+@login_required
 def staff_take_attendance(request):
     subjects = ClassRegistration.objects.filter(staff_id=request.user.id)
     session_years = Session.objects.all()
@@ -537,10 +573,14 @@ def staff_take_attendance(request):
  
 
 
+@login_required
 def user_logout(request):
     logout(request)
     return redirect('/')
+from datetime import datetime, timedelta
 
+
+@login_required
 def register_priest(request):
     form = PreistPersonalInfoForm(request.POST or None, request.FILES or None)
 
@@ -552,26 +592,38 @@ def register_priest(request):
             address = form.cleaned_data['address']
             mobile = form.cleaned_data['mobile']
             photo = form.cleaned_data['photo']
+            ordination_date = form.cleaned_data['ordination_date']
 
+            # Check if a priest already exists
+            existing_priest = PreistPersonalInfo.objects.first()
+
+            # If priest exists, check the ordination date
+            if existing_priest:
+                three_years_from_ordination = existing_priest.ordination_date + timedelta(days=3*365)  # approximately 3 years
+                if datetime.now().date() <= three_years_from_ordination:
+                    messages.error(request, 'A priest has already been added. You cannot add another priest for the next 3 years.')
+                    return render(request, 'hod/register_priest.html', {'form': form})
+
+            # Check if the email already exists
             if CustomUser.objects.filter(email=email).exists():
                 messages.error(request, 'A user with this email already exists.')
             else:
-                # Directly set the role to 'priest' here
                 user = CustomUser.objects.create_user(email=email, password=password, name=name, address=address, mobile=mobile, role='priest')
-                user.photo = photo  # Assuming your CustomUser model has a photo field
+                user.photo = photo
                 user.save()
 
                 priest_info = form.save(commit=False)
                 priest_info.user = user
                 priest_info.save()
                 messages.success(request, 'Priest registered successfully!')
-                return redirect('hoddashboard')  # You can replace 'dashboard' with the desired redirect URL
+                return redirect('hoddashboard')
 
     context = {'form': form}
     return render(request, 'hod/register_priest.html', context)
 
 
 
+@login_required
 def view_priests(request):
     priests = PreistPersonalInfo.objects.all()
     context = {
@@ -579,6 +631,8 @@ def view_priests(request):
     }
     return render(request, 'hod/view_priest.html', context)
 
+
+@login_required
 def teacher_registration(request):
     form = TeacherPersonalInfoForm(request.POST or None, request.FILES or None)
     education_form = EducationInfoForm(request.POST or None)
@@ -592,11 +646,13 @@ def teacher_registration(request):
             address = form.cleaned_data.get('address')
             mobile = form.cleaned_data.get('phone_no')
             name = form.cleaned_data.get('name')
+            photo = form.cleaned_data['photo']
             if CustomUser.objects.filter(email=email, role='teacher').exists():
-                messages.error(request, 'A student with this email already exists.')
+                messages.error(request, 'A teacher with this email already exists.')
             else:
                 user = CustomUser.objects.create_user(name=name, email=email, password=password, address=address, mobile=mobile, role='teacher')
-
+                user.photo = photo
+                user.save()
                 # Associate the user with the TeacherPersonalInfo instance before saving it.
                 personal_info = form.save(commit=False)
                 personal_info.user = user
@@ -623,12 +679,15 @@ def teacher_registration(request):
 
 
 
+@login_required
 def teacher_list(request):
     teacher = TeacherPersonalInfo.objects.filter(is_delete=False)
   
     context = {'teacher': teacher}
     return render(request, 'hod/teacher-list.html', context)
 
+
+@login_required
 def teacher_profile(request, teacher_id):
     teacher = get_object_or_404(TeacherPersonalInfo, id=teacher_id)
     context = {
@@ -636,12 +695,15 @@ def teacher_profile(request, teacher_id):
     }
     return render(request, 'hod/teacher-profile.html', context)
 
+
+@login_required
 def teacher_delete(request, teacher_id):
     teacher = TeacherPersonalInfo.objects.get(id=teacher_id)
     teacher.is_delete = True
     teacher.save()
     return redirect('teacher-list')
 
+@login_required
 def teacher_edit(request, teacher_id):
     teacher = TeacherPersonalInfo.objects.get(id=teacher_id)
     form = TeacherPersonalInfoForm(instance=teacher)
@@ -672,6 +734,8 @@ def teacher_edit(request, teacher_id):
     return render(request, 'hod/teacher-edit.html', context)
 
 
+
+@login_required
 def add_designation(request):
     forms = AddDesignationForm()
     if request.method == 'POST':
@@ -683,6 +747,8 @@ def add_designation(request):
     context = {'forms': forms, 'designation': designation}
     return render(request, 'hod/designation.html', context)
 
+
+@login_required
 def update_designation(request, designation_id):
     instance = get_object_or_404(Designation, id=designation_id)
     forms = AddDesignationForm(request.POST or None, instance=instance)
@@ -789,6 +855,7 @@ def view_student_attendance(request):
 
 
 
+@login_required
 def student_leave_view(request):
     if request.method == "POST":
         form = LeaveReportStudentForm(request.POST)
@@ -826,6 +893,7 @@ def student_leave_view(request):
 
 
 
+@login_required
 def student_leave_approve(request):
     
     leave = LeaveReportStudent.objects.get(id=leave_id)
@@ -852,12 +920,16 @@ def student_leave_approve(request):
     }
     return render(request, 'teacher/attendance/approved_leave.html', context)
  
+
+@login_required
 def student_leave_reject(request, leave_id):
     leave = LeaveReportStudent.objects.get(id=leave_id)
     leave.leave_status = 2
     leave.save()
     return redirect('student_leave_view')
 
+
+@login_required
 def teacher_review_leave_applications(request):
     # Fetch all leave applications that are pending
     pending_leaves = LeaveReportStudent.objects.filter(leave_status=LeaveReportStudent.PENDING)
@@ -885,6 +957,8 @@ def teacher_review_leave_applications(request):
     }
     return render(request, 'teacher/attendance/teacher_leave_review.html', context)
 
+
+@login_required
 def staff_leave_apply(request):
     staff_user = request.user
     staff_personal_info = TeacherPersonalInfo.objects.get(user=staff_user)
@@ -915,6 +989,8 @@ def staff_leave_apply(request):
 
     return render(request, 'teacher/attendance/staff_leave_view.html', context)
 
+
+@login_required
 def admin_review_leaves(request):
     # Fetch all leave applications that are pending
     pending_leaves = LeaveReportStaff.objects.filter(leave_status=LeaveReportStaff.PENDING).select_related('staff_id')
@@ -948,21 +1024,24 @@ def admin_review_leaves(request):
     }
     return render(request, 'hod/teacher_leave_review.html', context)
 
- 
+
+@login_required
 def staff_leave_approve(request, leave_id):
     leave = LeaveReportStaff.objects.get(id=leave_id)
     leave.leave_status = 1
     leave.save()
     return redirect('staff_leave_view')
  
- 
+
+@login_required
 def staff_leave_reject(request, leave_id):
     leave = LeaveReportStaff.objects.get(id=leave_id)
     leave.leave_status = 2
     leave.save()
     return redirect('staff_leave_view')
  
- 
+
+@login_required
 def admin_view_attendance(request):
     subjects = ClassInfo.objects.all()
     session_years = Session.objects.all()
@@ -975,9 +1054,10 @@ def admin_view_attendance(request):
  
 #--------------cicrculars and notfications----#
 
-from django.contrib.auth.decorators import login_required
 
 
+
+@login_required
 def addNotice(request):    
     if request.user.is_authenticated:
         form=addNoticeform()
@@ -992,6 +1072,7 @@ def addNotice(request):
         return redirect('hoddashboard') 
 
 
+@login_required
 def display_notices(request):
     if request.user.is_authenticated:
         notices = Notice.objects.all().order_by('-date_created') # To fetch the latest notices first
@@ -1000,7 +1081,8 @@ def display_notices(request):
         return render(request, 'hod/circular_view.html', context)
     else:
         return redirect('hoddashboard')
-    
+
+@login_required    
 def update_notice(request, notice_id):
     notice_instance = get_object_or_404(Notice, id=notice_id)
 
@@ -1041,6 +1123,7 @@ def class_student(request):
     return render(request, 'teacher/class_student.html', context)
 
 
+@login_required
 def add_teacher_notice(request):    
     if request.user.is_authenticated:
         form = TeacherNoticeForm()
@@ -1053,7 +1136,8 @@ def add_teacher_notice(request):
         return render(request, 'hod/hod_student/add_notice.html', context)
     else: 
         return redirect('hoddashboard')
-    
+
+@login_required   
 def display_teacher_notices(request):
     if request.user.is_authenticated:
         notice = TeacherNotice.objects.all().order_by('-date_created')
@@ -1098,9 +1182,12 @@ register = template.Library()
 def basename(value):
     return os.path.basename(value)
 
+@login_required
 def view_resource():
  return HttpResponseRedirect(reverse('index_resource'))
 
+
+@login_required
 def edit_resource(request, id):  # Add the 'id' argument here
     if request.method == 'POST':
         resource = Resource.objects.get(pk=id)
@@ -1122,6 +1209,7 @@ def edit_resource(request, id):  # Add the 'id' argument here
 
 
 
+@login_required
 def delete_resource(request):
     if request.method == 'POST':
      resource = Resource.objects.get(pk=id)
@@ -1129,9 +1217,12 @@ def delete_resource(request):
     return HttpResponseRedirect(reverse('index_resource'))
 
 
+@login_required
 def uploadresource(request):
    return render(request,'teacher/resource.html')
 
+
+@login_required
 def index_resource(request):
     # Get the logged-in teacher's resources
     teacher = TeacherPersonalInfo.objects.get(user=request.user)
@@ -1140,6 +1231,7 @@ def index_resource(request):
     return render(request,'teacher/index_resource.html', {'resources': resources})
 
 
+@login_required
 def priestdashboard(request):
     notices = Notice.objects.all().order_by('-date_created')[:5]  # Fetch the latest 5 notices
     context = {
@@ -1151,6 +1243,8 @@ def priestdashboard(request):
 
 
 #--------------student dashboard-------#
+
+@login_required
 def studentdashboard(request):
     notices = Notice.objects.all().order_by('-date_created')[:5]  # Fetch the latest 5 notices
     context = {
@@ -1163,6 +1257,9 @@ def studentdashboard(request):
 #     student_class = EnrolledStudent.objects.get(student__user=request.user).class_name
 #     resources = Resource.objects.filter(class_registration=student_class)
 #     return render(request, 'student/resources.html', {'resources': resources})
+
+
+@login_required
 def student_resources(request):
     # Fetch the PersonalInfo for the logged-in user.
     personal_info = PersonalInfo.objects.get(user=request.user)
@@ -1179,6 +1276,8 @@ def student_resources(request):
     return render(request, 'student/resources.html', {'resources': resources})
 from django.http import FileResponse
 
+
+@login_required
 def downloadresource(request, id):
     resource = Resource.objects.get(pk=id)
     file_path = resource.resource_file.path
@@ -1187,6 +1286,8 @@ def downloadresource(request, id):
     response['Content-Disposition'] = f'attachment; filename="{resource.resource_title}"'
     return response
 
+
+@login_required
 def editprofile(request):
    return render(request,'student/edit-profile.html')
 
