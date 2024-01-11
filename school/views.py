@@ -16,7 +16,7 @@ from django.contrib.auth import authenticate, login
 import csv
 import logging
 from django.contrib.auth.decorators import login_required
-
+from django.views.decorators.cache import never_cache
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +48,8 @@ def login_page(request):
 
     return render(request, 'login/index.html')
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def admin_profile(request, admin_id):
     # Fetch the CustomUser object for the given admin_id
     admin_user = get_object_or_404(CustomUser, pk=admin_id, role='admin')
@@ -61,7 +62,9 @@ def admin_profile(request, admin_id):
     # Render the template with the context data
     return render(request, 'hod/hodprofile.html', context)
 
-@login_required
+
+@never_cache
+@login_required(login_url='login_page')
 def student_acprofile(request, student_id):
     # Fetch the CustomUser object for the given admin_id
     student_user = get_object_or_404(CustomUser, pk=student_id, role='student')
@@ -73,7 +76,9 @@ def student_acprofile(request, student_id):
     
     # Render the template with the context data
     return render(request, 'student/studentprofile.html', context)
-@login_required
+
+@never_cache
+@login_required(login_url='login_page')
 def teacher_acprofile(request, teacher_id):
     teacher_user = get_object_or_404(CustomUser, pk=teacher_id, role='teacher')
     
@@ -84,7 +89,8 @@ def teacher_acprofile(request, teacher_id):
     # Render the template with the context data
     return render(request, 'teacher/teacherprofile.html', context)
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def parent_acprofile(request, parent_id):
     parent_user = get_object_or_404(CustomUser, pk=parent_id, role='parent')
     
@@ -95,7 +101,8 @@ def parent_acprofile(request, parent_id):
     # Render the template with the context data
     return render(request, 'parent/parentprofile.html', context)
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def priest_acprofile(request, priest_id):
     priest_user = get_object_or_404(CustomUser, pk=priest_id, role='priest')
     
@@ -106,7 +113,8 @@ def priest_acprofile(request, priest_id):
     # Render the template with the context data
     return render(request, 'priest/priestprofile.html', context)
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def logout_user(request):
     print('Logged Out')
     logout(request)
@@ -134,7 +142,8 @@ def bulk_register(request):
         form = BulkRegistrationForm()
     return render(request, 'registration/bulk_register.html', {'form': form})
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def studentdashboard(request):
     user=request.user
     print(user)
@@ -151,8 +160,8 @@ from django.contrib.auth import authenticate, login
 
 
 #----------------HOD-dashboard-----------#
-
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def hoddashboard(request):
     context = {
         'admin': request.user,
@@ -160,7 +169,8 @@ def hoddashboard(request):
     return render(request, 'hod/hoddashboard.html', context)
 
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def add_class(request):
     forms = ClassInfoForm()  # Initialize the form here
     class_obj = ClassInfo.objects.all()  # You can fetch all classes outside the POST block as well
@@ -541,23 +551,27 @@ def enrolled_student_list(request):
     }
     return render(request, 'hod/hod_student/enrolled-student-list.html', context)
 
-
+from django.shortcuts import render
+from .models import TeacherNotice, Notice, EnrolledStudent, TeacherPersonalInfo
 
 @login_required
 def teacherdashboard(request):
-
     latest_notices = TeacherNotice.objects.all().order_by('-date_created')[:5]
     notices = Notice.objects.all().order_by('-date_created')[:5]  # Fetch the latest 5 notices
-    # user=request.user
-    # print(user)
+    enrolled_student = EnrolledStudent.objects.first()
+
+    # Ensure enrolled_student is not None before accessing its ID
+    student_id = enrolled_student.id if enrolled_student else None
+
     teacher = TeacherPersonalInfo.objects.all()
     context = {
         'teacher': teacher,
         'latest_notices': latest_notices,
         'notices': notices,
+        'enrolled_student': enrolled_student,
+        'student_id': student_id,  # Add student_id to the context
     }
-    return render(request,'teacher/teacher_dashboard.html',context)
-
+    return render(request, 'teacher/teacher_dashboard.html', context)
 
 
 @login_required
@@ -1188,7 +1202,7 @@ def view_resource():
 
 
 @login_required
-def edit_resource(request, id):  # Add the 'id' argument here
+def edit_resource(request, id):  
     if request.method == 'POST':
         resource = Resource.objects.get(pk=id)
         form = ResourceForm(request.POST, instance=resource)
@@ -1230,8 +1244,42 @@ def index_resource(request):
     
     return render(request,'teacher/index_resource.html', {'resources': resources})
 
-
 @login_required
+def update_student_marks(request, student_id):
+    # Get the logged-in teacher
+    teacher = TeacherPersonalInfo.objects.get(user=request.user)
+    
+    try:
+        # Get the student
+        student = EnrolledStudent.objects.get(id=student_id)
+        
+        # Ensure that the teacher is the class teacher for the student
+        if student.class_name.guide_teacher.name != teacher:
+            messages.error(request, 'You are not the class teacher for this student.')
+            return redirect('class_student')
+        
+        # Check if marks already exist for the student
+        mark_instance, created = Mark.objects.get_or_create(student=student)
+        
+        if request.method == 'POST':
+            form = MarkUpdateForm(request.POST, instance=mark_instance)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Student marks updated successfully.')
+                return redirect('class_student')
+        else:
+            form = MarkUpdateForm(instance=mark_instance)
+        
+        context = {'form': form, 'student': student}
+        return render(request, 'teacher/mark_updation.html', {'student': student})
+    
+    except EnrolledStudent.DoesNotExist:
+        messages.error(request, 'Student not found.')
+        return redirect('class_student')
+
+#-------------priest dashboard----------------------#
+@never_cache
+@login_required(login_url='login_page')
 def priestdashboard(request):
     notices = Notice.objects.all().order_by('-date_created')[:5]  # Fetch the latest 5 notices
     context = {
@@ -1244,7 +1292,8 @@ def priestdashboard(request):
 
 #--------------student dashboard-------#
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def studentdashboard(request):
     notices = Notice.objects.all().order_by('-date_created')[:5]  # Fetch the latest 5 notices
     context = {
@@ -1294,7 +1343,8 @@ def editprofile(request):
 
 #------parent dashboard-----#
 from django.shortcuts import render, get_list_or_404, redirect
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def parentdashboard(request):
     if not request.user.is_authenticated:
         return redirect('login_page')  # Assuming you have a view called login_page

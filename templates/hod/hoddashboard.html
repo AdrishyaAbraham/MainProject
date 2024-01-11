@@ -147,16 +147,16 @@
         </li>
          <li class="sidebar-list-item dropdown">
             <span class="dropdown-title">
-                <span class="material-icons-outlined">class</span> Class 
+                <span id="class" class="material-icons-outlined">class</span> Class 
                 <span class="material-icons-outlined">expand_more</span>
             </span>
             <div class="dropdown-content">
-                <a href="{% url 'add_class' %}" target="_blank">Add Class </a>
+                <a href="{% url 'add_class' %}" id="addclass" target="_self">Add Class </a>
                 <a href="{% url 'create-section' %}" target="_blank">Add Class Section</a>
                 <a href="{% url 'guide-teacher' %}" target="_blank">Teachers Allotment</a>
                 <a href="{% url 'create-session' %}" target="_blank">Add Session</a>
                 <a href="{% url 'class-registration' %}" target="_blank">Register Class</a>
-                <a href="{% url 'class-list' %}" target="_blank">Class Details</a>
+                <a href="{% url 'class-list' %}" id="classlist" target="_self">Class Details</a>
             </div>
         </li>
 

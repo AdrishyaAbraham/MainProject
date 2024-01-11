@@ -1,0 +1,11 @@
+<!-- Create a new HTML file mark_updation.html in your templates folder -->
+{% extends 'hod/base_class.html' %}  <!-- Use your base template if you have one -->
+
+{% block content %}
+  <h2>Update Marks for {{ student.name }}</h2>
+  <form method="post" action="">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update Marks</button>
+  </form>
+{% endblock %}

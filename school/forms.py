@@ -626,3 +626,13 @@ class TeacherNoticeForm(forms.ModelForm):
     class Meta:
         model = TeacherNotice
         fields = "__all__"
+
+class MarkUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Mark
+        fields = ['subject1']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # Add any custom validation here if needed
+        return cleaned_data

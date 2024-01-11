@@ -153,17 +153,18 @@
                 <a href="{% url 'staff_leave_apply' %}" target="_blank">Apply Leave</a>
             </div>
         </li>
-          
+  
+
 		   <li class="sidebar-list-item">
-            <a href="" target="_blank">
-            <span class="material-icons-outlined">star_half</span> Mark Updation
-            </a>
+            <a href="{% url 'update_student_marks' student_id %}" target="_blank">
+            <span class="material-icons-outlined">star_half</span> Mark Updation</a>
+
           </li>
 		 
 		
           <li class="sidebar-list-item dropdown">
             <span class="dropdown-title">
-                        <span class="material-icons-outlined">upload_file</span> Upload Resources
+                        <span class="material-icons-outlined">upload_file</span>Upload Resources
                 <span class="material-icons-outlined">expand_more</span>
             </span>
             <div class="dropdown-content">

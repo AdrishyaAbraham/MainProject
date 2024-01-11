@@ -53,7 +53,7 @@ urlpatterns = [
   path('designation/<int:designation_id>/', views.update_designation, name='update_designation'),
   path('admin_review_leaves/', views.admin_review_leaves, name='admin_review_leaves'),
   path('mark_attendance/', views.mark_attendance, name='mark_attendance'),
-
+  path('update_marks/<int:student_id>/', views.update_student_marks, name='update_student_marks'),
 
      
   #class session------------

@@ -402,3 +402,10 @@ class TeacherNotice(models.Model):
     is_read = models.BooleanField(default=False)
     def __str__(self):
         return self.message
+
+
+class Mark(models.Model):
+    student = models.OneToOneField(EnrolledStudent, on_delete=models.CASCADE)
+    subject1 = models.PositiveIntegerField(null=True, blank=True)
+    def __str__(self):
+        return f"{self.student} - Marks"
