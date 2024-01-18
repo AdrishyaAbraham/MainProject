@@ -1,0 +1,119 @@
+<!-- templates/scheduled_class_form.html -->
+{% extends 'hod/base_class.html' %}
+
+{% block content %}
+  <div class="schedule-class-container">
+    <h2>Schedule Online Class</h2>
+
+    <!-- Button to view scheduled class details -->
+    <div class="view-scheduled-classes-btn">
+      <a href="{% url 'scheduled_classes' %}">
+        <button>View Scheduled Classes</button>
+      </a>
+    </div>
+
+    <form method="post" action="{% url 'schedule_class' %}">
+      {% csrf_token %}
+      
+      <div class="form-group">
+        <label for="enrolled_class">Enrolled Class:</label>
+        <select name="enrolled_class" required>
+          {% for class_registration in class_registrations %}
+            <option value="{{ class_registration.id }}">{{ class_registration.class_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="teacher">Teacher:</label>
+        <select name="teacher" required>
+          {% for guide_teacher in guide_teachers %}
+            <option value="{{ guide_teacher.id }}">{{ guide_teacher.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="date">Date:</label>
+        <input type="date" name="date" required>
+      </div>
+
+      <div class="form-group">
+        <label for="time">Time:</label>
+        <input type="time" name="time" required>
+      </div>
+
+      <div class="form-group">
+        <label for="platform_link">Platform Link:</label>
+        <input type="url" name="platform_link" required>
+      </div>
+
+      <div class="form-group">
+        <button type="submit">Schedule Class</button>
+      </div>
+    </form>
+  </div>
+
+  <style>
+    /* Add this CSS to your existing styles or create a new CSS file */
+
+    .schedule-class-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f7f7f7;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    select,
+    input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    /* Style for the view scheduled classes button */
+    .view-scheduled-classes-btn {
+      text-align: right;
+      margin-bottom: 15px;
+    }
+
+    .view-scheduled-classes-btn button {
+      background-color: #2196F3;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .view-scheduled-classes-btn button:hover {
+      background-color: #0b7dda;
+    }
+  </style>
+{% endblock %}

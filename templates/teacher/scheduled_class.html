@@ -1,0 +1,90 @@
+<!-- templates/teacher/scheduled_classes.html -->
+{% extends 'hod/base_class.html' %}
+
+{% block content %}
+  <h2>Scheduled Classes</h2>
+
+  <div class="table-container">
+    <table class="styled-table">
+          
+  {% if scheduled_classes %}
+      <thead>
+        <tr>
+          <th>Enrolled Class</th>
+          <th>Teacher</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Platform Link</th>
+        </tr>
+      </thead>
+      <tbody>
+
+    <!-- Display scheduled classes in a table -->
+    
+      <tbody>
+        {% for scheduled_class in scheduled_classes %}
+          <tr>
+            <td>{{ scheduled_class.enrolled_class.class_name }}</td>
+            <td>{{ scheduled_class.teacher.name }}</td>
+            <td>{{ scheduled_class.date }}</td>
+            <td>{{ scheduled_class.time }}</td>
+            <td>{{ scheduled_class.platform_link }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <!-- Display "No Classes for Today" message -->
+    <div class="no-classes-container">
+      <h2>No Classes for Today</h2>
+      <p class="animated-message">There are no scheduled classes for the classes you are assigned to today.</p>
+    </div>
+  {% endif %}
+
+      </tbody>
+    </table>
+    
+<style>
+  /* Add this CSS to your existing styles or create a new CSS file */
+
+  .table-container {
+    max-width: 800px;
+    margin: 20px auto;
+    overflow-x: auto;
+  }
+
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 18px;
+    text-align: left;
+  }
+
+  .styled-table th,
+  .styled-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .styled-table th {
+    background-color: #4CAF50;
+    color: white;
+  }
+
+  .styled-table tbody tr:hover {
+    background-color: #f5f5f5;
+  }
+  
+    .no-classes-container {
+      background-color: #f44336;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      animation: slide-up 0.5s ease-in-out;
+    }
+
+</style>
+  </div>
+{% endblock %}
+

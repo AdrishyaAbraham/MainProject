@@ -54,6 +54,7 @@ urlpatterns = [
   path('admin_review_leaves/', views.admin_review_leaves, name='admin_review_leaves'),
   path('mark_attendance/', views.mark_attendance, name='mark_attendance'),
   path('update_marks/<int:student_id>/', views.update_student_marks, name='update_student_marks'),
+  path('scheduled-classes/', views.scheduled_classes, name='scheduled_classes'),
 
      
   #class session------------
@@ -82,10 +83,12 @@ urlpatterns = [
   path('approved_leave/', views.student_leave_approve, name='student_leave_approve'),
   path('staff/leave/apply/', views.staff_leave_apply, name='staff_leave_apply'),
   path('view_class_attendance/', views.view_class_attendance, name='view_class_attendance'),
-
+  path('schedule_class/', views.schedule_class, name='schedule_class'),
  #student dashboard
   path('d/<int:id>/',views.downloadresource,name='downloadresource'),
   path('student_resources/',views.student_resources,name='student_resource'),
+  path('online-classes/', views.online_classes, name='online-classes'),
+ path('attend-class/<int:class_id>/', views.attend_class, name='attend-class'),
 
   
   path('student_leave/',views.student_leave_view,name='student_leave_view'),

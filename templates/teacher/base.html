@@ -1,0 +1,247 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+
+    <!-- Montserrat Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+    .header-right {
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-container {
+    position: relative;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.dropdown-toggle:hover + .dropdown-content-info,
+.dropdown-content-info:hover {
+    display: block;
+}
+
+.dropdown-content-info {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 180px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-content-info p {
+    color: black;
+    padding: 10px 14px;
+    text-decoration: none;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.dropdown-content-info p:last-child {
+    border-bottom: none;
+}
+
+.dropdown-content-info p:hover {
+    background-color: #f1f1f1;
+}
+</style>
+</head>
+<body>
+    <div class="grid-container">
+       
+      <!-- Header -->
+      <header class="header">
+        <div class="menu-icon" onclick="openSidebar()">
+          <span class="material-icons-outlined">menu</span>
+        </div>
+        <div class="header-left">
+          <span class="material-icons-outlined">search</span>
+        </div>
+        <div class="header-right">
+        <div class="dropdown-container">
+        <span class="material-icons-outlined dropdown-toggle">notifications</span>
+        {% if unread_count > 0 %}
+        <span class="notification-count">{{ unread_count }}</span>
+       {% endif %}
+</span>
+
+        <div class="dropdown-content-info">
+            {% for notice in latest_notices %}
+            <p class="{% if not notice.is_read %}unread{% endif %}">{{ notice.title }}</p>
+            {% endfor %}
+            <p>Notification 2</p>
+            <p>Notification 3</p>
+        </div>
+        </div>
+    
+    <div class="dropdown-container">
+        <span class="material-icons-outlined dropdown-toggle">email</span>
+        <div class="dropdown-content-info">
+            <p style="color:black;">{{ request.user.email }}</p>
+            
+        </div>
+    </div>
+
+    <div class="dropdown-container">
+        <span class="material-icons-outlined dropdown-toggle">account_circle</span>
+        <div class="dropdown-content-info">
+             <a href="{% url 'teacher_acprofile' user.id  %}"><p>Profile</p></a>
+            <p>Settings</p>
+            <a href="{% url 'logout' %}"><p>Logout</p></a>
+        </div>
+    </div>
+
+
+      </header>
+      <!-- End Header -->
+
+      <!-- Sidebar -->
+      <aside id="sidebar">
+        <div class="sidebar-title">
+          <div class="sidebar-brand">
+            <span class="material-icons-outlined"></span> LightedtoLighten
+          </div>
+          <span class="material-icons-outlined" onclick="closeSidebar()">close</span>
+        </div>
+
+        <ul class="sidebar-list">
+          <li class="sidebar-list-item">
+            <a href="{% url 'teacherdashboard' %}"  target="_self">
+            <span class="material-icons-outlined">dashboard</span> Dashboard
+            </a>
+          </li>
+		  
+           <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+               <span class="material-icons-outlined">groups</span> Students 
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content">
+                <a href="{% url 'class_student' %}" target="_blank">Students Details</a>
+
+                <a href="{% url 'mark_attendance'  %}" target="_blank">Student Attendance</a>
+                <a href="{% url 'view_class_attendance'  %}" target="_blank">View All Attendance</a>
+                <a href="{% url 'teacher_review_leave_applications' %}" target="_blank">Student Leave List</a>
+                <a href="{% url 'student_leave_approve' %}" target="_blank">Approved Leaves</a>
+
+
+            </div>
+        </li>
+         
+        <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                <span class="material-icons-outlined">class</span> Attendance 
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content">
+                <a href="">My Attendance</a>
+                <a href="{% url 'staff_leave_apply' %}" target="_blank">Apply Leave</a>
+            </div>
+        </li>
+  
+<li class="sidebar-list-item">
+    <a href="{% url 'update_student_marks' %}" target="_self">
+        <span class="material-icons-outlined">star_half</span> Mark Updation
+    </a>
+</li>
+
+		 
+		
+          <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                        <span class="material-icons-outlined">upload_file</span>Upload Resources
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content">
+                <a href="{% url 'add_resource' %}">Add Resources</a>
+                {% comment %} <a href="" target="_blank">Apply Leave</a> {% endcomment %}
+            </div>
+        </li>
+		   <li class="sidebar-list-item">
+            <a href="" target="_blank">
+            <span class="material-icons-outlined">forum</span> Feedback
+            </a>
+          </li>
+          <li class="sidebar-list-item">
+            <a href="#" target="_blank">
+            <span class="material-icons-outlined">campaign</span> Activities
+            </a>
+          </li>
+        
+          <li class="sidebar-list-item">
+            <a href="#" target="_blank">
+              <span class="material-icons-outlined">poll</span> Reports
+            </a>
+          </li>
+          <li class="sidebar-list-item">
+            <a href="#" target="_blank">
+              <span class="material-icons-outlined">settings</span> Settings
+            </a>
+          </li>
+        </ul>
+      </aside>
+        <main class="main-container">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+<script src="{% static 'js/scripts.js' %} "></script>
+</body>
+<!-- Add this style block in your HTML file or link to an external CSS file -->
+<style>
+  h2 {
+    color: white; /* Header color */
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #566573; /* Header background color */
+  }
+
+  input {
+    width: 80px;
+    padding: 5px;
+    box-sizing: border-box;
+  }
+
+  button {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #45a049;
+  }
+</style>
+
+
+</html>

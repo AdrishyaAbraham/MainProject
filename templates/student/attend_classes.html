@@ -1,0 +1,9 @@
+<!-- attend_class.html -->
+
+{% extends 'sidebar.html' %}
+
+{% block content %}
+  <h2>Attend Online Class</h2>
+  <p>{{ online_class.class_name }} - {{ online_class.date_time }}</p>
+  <iframe src="{{ online_class.link }}" width="800" height="600"></iframe>
+{% endblock %}

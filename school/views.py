@@ -196,6 +196,7 @@ def add_class(request):
 
     return render(request, 'hod/create_class.html', context)
 
+@never_cache
 @login_required
 def update_class(request, class_id):
     class_instance = get_object_or_404(ClassInfo, id=class_id)
@@ -212,6 +213,7 @@ def update_class(request, class_id):
     }
     return render(request, 'hod/update_classsection.html', context)
 
+@never_cache
 @login_required
 def delete_class(request, class_id):
     class_instance = get_object_or_404(ClassInfo, id=class_id)
@@ -226,6 +228,7 @@ def delete_class(request, class_id):
     
     return render(request, 'hod/create_class.html', context)
 
+@never_cache
 @login_required
 def create_section(request):
     forms = SectionForm()
@@ -248,6 +251,7 @@ def create_section(request):
     }
     return render(request, 'hod/create_classsection.html', context)
 
+@never_cache
 @login_required
 def update_section(request, section_id):
     section_instance = get_object_or_404(Section, id=section_id)
@@ -1256,7 +1260,7 @@ def update_student_marks(request, student_id):
         # Ensure that the teacher is the class teacher for the student
         if student.class_name.guide_teacher.name != teacher:
             messages.error(request, 'You are not the class teacher for this student.')
-            return redirect('class_student')
+            return redirect('class_student_list')
         
         # Check if marks already exist for the student
         mark_instance, created = Mark.objects.get_or_create(student=student)
@@ -1266,16 +1270,66 @@ def update_student_marks(request, student_id):
             if form.is_valid():
                 form.save()
                 messages.success(request, 'Student marks updated successfully.')
-                return redirect('class_student')
+                return redirect('class_student_list')
         else:
             form = MarkUpdateForm(instance=mark_instance)
         
         context = {'form': form, 'student': student}
-        return render(request, 'teacher/mark_updation.html', {'student': student})
+        return render(request, 'teacher/mark_updation.html', context)
     
     except EnrolledStudent.DoesNotExist:
         messages.error(request, 'Student not found.')
-        return redirect('class_student')
+        return redirect('class_student_list')
+
+@login_required(login_url='login_page')
+# views.py
+@login_required(login_url='login_page')
+def schedule_class(request):
+    try:
+        guide_teacher = GuideTeacher.objects.get(name=request.user.teacherpersonalinfo)
+    except GuideTeacher.DoesNotExist:
+        return render(request, 'error.html', {'message': 'You are not a guide teacher!'})
+
+    class_registrations = ClassRegistration.objects.filter(guide_teacher=guide_teacher)
+
+    if request.method == 'POST':
+        form = ScheduledClassForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('scheduled_classes')
+    else:
+        form = ScheduledClassForm()
+
+    context = {
+        'form': form,
+        'class_registrations': class_registrations,
+        'guide_teachers': GuideTeacher.objects.all(),
+    }
+    return render(request, 'teacher/schedule_online_class.html', context)
+
+
+
+# views.py
+@login_required(login_url='login_page')
+def scheduled_classes(request):
+    try:
+        guide_teacher = GuideTeacher.objects.get(name=request.user.teacherpersonalinfo)
+    except GuideTeacher.DoesNotExist:
+        return render(request, 'error.html', {'message': 'You are not a guide teacher!'})
+
+    # Filter scheduled classes based on the classes assigned to the logged-in teacher
+    scheduled_classes = ScheduledClass.objects.filter(enrolled_class__guide_teacher=guide_teacher)
+
+    context = {
+        'scheduled_classes': scheduled_classes,
+    }
+    return render(request, 'teacher/scheduled_class.html', context)
+    # if scheduled_classes.exists():
+    #     return render(request, 'teacher/scheduled_classes.html', context)
+    # # else:
+    # #     return render(request, 'teacher/no_classes.html')
+
+
 
 #-------------priest dashboard----------------------#
 @never_cache
@@ -1325,7 +1379,7 @@ def student_resources(request):
     return render(request, 'student/resources.html', {'resources': resources})
 from django.http import FileResponse
 
-
+@never_cache
 @login_required
 def downloadresource(request, id):
     resource = Resource.objects.get(pk=id)
@@ -1335,11 +1389,35 @@ def downloadresource(request, id):
     response['Content-Disposition'] = f'attachment; filename="{resource.resource_title}"'
     return response
 
-
+@never_cache
 @login_required
 def editprofile(request):
    return render(request,'student/edit-profile.html')
 
+@never_cache
+@login_required
+def online_classes(request):
+    # Retrieve upcoming online classes from the database
+    classes = OnlineClass.objects.all()
+
+    # Handle form submission
+    if request.method == 'POST':
+        form = OnlineClassForm(request.POST)
+        if form.is_valid():
+            # Save the form data to the database
+            form.save()
+
+    else:
+        form = OnlineClassForm()
+
+    return render(request, 'student/online_classes.html', {'classes': classes, 'form': form})
+
+@never_cache
+@login_required
+def attend_class(request, class_id):
+    online_class = get_object_or_404(OnlineClass, pk=class_id)
+    # Additional logic to check if the student is assigned to the class
+    return render(request, 'student/attend_class.html', {'online_class': online_class})
 
 #------parent dashboard-----#
 from django.shortcuts import render, get_list_or_404, redirect

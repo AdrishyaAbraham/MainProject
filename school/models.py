@@ -409,3 +409,19 @@ class Mark(models.Model):
     subject1 = models.PositiveIntegerField(null=True, blank=True)
     def __str__(self):
         return f"{self.student} - Marks"
+    
+class ScheduledClass(models.Model):
+    enrolled_class = models.ForeignKey(ClassRegistration, on_delete=models.CASCADE)
+    teacher = models.ForeignKey(GuideTeacher, on_delete=models.CASCADE)
+    date = models.DateField()
+    time = models.TimeField()
+    platform_link = models.URLField()
+
+
+class OnlineClass(models.Model):
+    teacher = models.ForeignKey(GuideTeacher, on_delete=models.CASCADE,null=True, blank=True)
+    class_name = models.ForeignKey(ClassRegistration, on_delete=models.CASCADE,null=True, blank=True)
+    date = models.DateField(null=True, blank=True)
+    time = models.TimeField(null=True, blank=True)
+    link = models.URLField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)

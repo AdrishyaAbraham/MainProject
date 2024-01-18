@@ -1,0 +1,30 @@
+<!-- online_classes.html -->
+
+{% extends 'student/sidebar.html' %}
+
+{% block content %}
+  <h2>Upcoming Online Classes</h2>
+  
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Class Name</th>
+        <th>Date</th> 
+        <th>Time</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for online_class in classes %}
+        <tr>
+          <td>{{ online_class.class_name }}</td>
+          <td>{{ online_class.date_time }}</td>
+          <td>
+            <a class="btn btn-primary" href="{% url 'attend-class' class_id=online_class.id %}">Attend Class</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}

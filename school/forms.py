@@ -636,3 +636,15 @@ class MarkUpdateForm(forms.ModelForm):
         cleaned_data = super().clean()
         # Add any custom validation here if needed
         return cleaned_data
+
+
+class ScheduledClassForm(forms.ModelForm):
+    class Meta:
+        model = ScheduledClass
+        fields = ['enrolled_class', 'teacher', 'date', 'time', 'platform_link']
+
+class OnlineClassForm(forms.ModelForm):
+    class Meta:
+        model = OnlineClass
+        fields = ['class_name','date','time','link','description']
+
