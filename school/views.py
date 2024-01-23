@@ -573,10 +573,9 @@ def teacherdashboard(request):
         'latest_notices': latest_notices,
         'notices': notices,
         'enrolled_student': enrolled_student,
-        'student_id': student_id,  # Add student_id to the context
+        'enrolled_student_id': student_id,  # Change to enrolled_student_id
     }
     return render(request, 'teacher/teacher_dashboard.html', context)
-
 
 @login_required
 def staff_take_attendance(request):
@@ -1248,6 +1247,40 @@ def index_resource(request):
     
     return render(request,'teacher/index_resource.html', {'resources': resources})
 
+
+
+@login_required(login_url='login_page')
+
+def add_marks(request, enrolled_student_id):
+    try:
+        # Get the enrolled student based on the provided ID
+        enrolled_student = EnrolledStudent.objects.get(id=enrolled_student_id)
+
+        # Check if the logged-in user is the guide teacher for the student's class
+        if request.user.teacherpersonalinfo != enrolled_student.class_name.guide_teacher.name:
+            return render(request, 'teacher/error.html', {'message': 'You are not the guide teacher for this class!'})
+
+        if request.method == 'POST':
+            form = MarkForm(request.POST)
+            if form.is_valid():
+                # Create a new mark instance
+                mark = form.save(commit=False)
+                mark.student = enrolled_student
+                mark.save()
+                messages.success(request, 'Marks added successfully!')
+                return redirect('teacherdashboard')  # Redirect to the dashboard or a specific page
+        else:
+            form = MarkForm()
+
+        context = {
+            'form': form,
+            'enrolled_student': enrolled_student,
+        }
+        return render(request, 'teacher/add_marks.html', context)
+
+    except EnrolledStudent.DoesNotExist:
+        return render(request, 'teacher/error.html', {'message': 'Enrolled student not found!'})
+
 @login_required
 def update_student_marks(request, student_id):
     # Get the logged-in teacher
@@ -1258,7 +1291,7 @@ def update_student_marks(request, student_id):
         student = EnrolledStudent.objects.get(id=student_id)
         
         # Ensure that the teacher is the class teacher for the student
-        if student.class_name.guide_teacher.name != teacher:
+        if student.class_name.guide_teacher.id != teacher.id:
             messages.error(request, 'You are not the class teacher for this student.')
             return redirect('class_student_list')
         
@@ -1281,7 +1314,6 @@ def update_student_marks(request, student_id):
         messages.error(request, 'Student not found.')
         return redirect('class_student_list')
 
-@login_required(login_url='login_page')
 # views.py
 @login_required(login_url='login_page')
 def schedule_class(request):
@@ -1295,7 +1327,10 @@ def schedule_class(request):
     if request.method == 'POST':
         form = ScheduledClassForm(request.POST)
         if form.is_valid():
-            form.save()
+            # Save the link along with other details
+            scheduled_class = form.save(commit=False)
+            scheduled_class.link = request.POST.get('link')  # Assuming link is added in the form
+            scheduled_class.save()
             return redirect('scheduled_classes')
     else:
         form = ScheduledClassForm()
@@ -1394,23 +1429,21 @@ def downloadresource(request, id):
 def editprofile(request):
    return render(request,'student/edit-profile.html')
 
-@never_cache
+
 @login_required
 def online_classes(request):
-    # Retrieve upcoming online classes from the database
-    classes = OnlineClass.objects.all()
+    # Get the enrolled student based on the logged-in user
+    student = EnrolledStudent.objects.get(student__personal_info__user=request.user)
 
-    # Handle form submission
-    if request.method == 'POST':
-        form = OnlineClassForm(request.POST)
-        if form.is_valid():
-            # Save the form data to the database
-            form.save()
+    # Get the scheduled classes for the student's class
+    scheduled_classes = ScheduledClass.objects.filter(enrolled_class=student.class_name)
 
-    else:
-        form = OnlineClassForm()
+    context = {
+        'scheduled_classes': scheduled_classes,
+    }
 
-    return render(request, 'student/online_classes.html', {'classes': classes, 'form': form})
+    return render(request, 'student/online_classes.html', context)
+
 
 @never_cache
 @login_required

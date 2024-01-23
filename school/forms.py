@@ -648,3 +648,12 @@ class OnlineClassForm(forms.ModelForm):
         model = OnlineClass
         fields = ['class_name','date','time','link','description']
 
+
+class MarkForm(forms.ModelForm):
+    class Meta:
+        model = Mark
+        fields = ['subject1']  # Add more fields as needed
+        widgets = {
+            'subject1': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter subject1 marks'}),
+            # Add more widgets for additional fields
+        }

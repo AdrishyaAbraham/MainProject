@@ -8,6 +8,7 @@
 
     <!-- Montserrat Font -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
@@ -153,11 +154,12 @@
             </div>
         </li>
   
-<li class="sidebar-list-item">
-    <a href="{% url 'update_student_marks' %}" target="_self">
-        <span class="material-icons-outlined">star_half</span> Mark Updation
-    </a>
-</li>
+          
+		     <li class="sidebar-list-item">
+            <a href="{% url 'add_marks' enrolled_student_id %}" target="_self">
+            <span class="material-icons-outlined">star_half</span> Mark Updation</a>
+
+          </li>
 
 		 
 		

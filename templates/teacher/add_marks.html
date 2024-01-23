@@ -1,0 +1,36 @@
+{% extends 'teacher/base.html' %}
+
+{% block content %}
+  <div class="container">
+    
+    <form method="post">
+      {% csrf_token %}
+
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Marks</th>
+            <!-- Add more headers for other information if needed -->
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ enrolled_student.student.personal_info.user.name }}</td>
+            <td>{{ form.subject1 }}</td>
+            <!-- Add more columns for other information if needed -->
+          </tr>
+          <!-- Example with multiple subjects:
+          <tr>
+            <td>Subject 2</td>
+            <td>{{ form.subject2 }}</td>
+          </tr>
+          -->
+
+        </tbody>
+      </table>
+
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+{% endblock %}

@@ -8,13 +8,14 @@
 
     <!-- Montserrat Font -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
   </head>
+  
   <body>
     <div class="grid-container">
 
@@ -45,53 +46,48 @@
 
         <ul class="sidebar-list">
           <li class="sidebar-list-item">
-            <a href="#" target="_self">
+            <a href="{% url 'studentdashboard' %}" target="_self">
             <span class="material-icons-outlined">dashboard</span> Dashboard
             </a>
           </li>
 		  <li class="sidebar-list-item">
-           {% comment %} <a href="{% url 'index1' %}" target="_blank">  {% endcomment %}
+          <a href="#" target="_self">
               <span class="material-icons-outlined">book</span> Academics
             </a>
-          </li>
-          <li class="sidebar-list-item">
-            <a href="" target="_blank">
-            <span class="material-icons-outlined">table_view</span> Leave
-            </a>
-          </li>
+          </li> 
+          <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                <span id="student_leave" class="material-icons-outlined">table_view</span> Attendance
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content" >
+                <a href="{% url 'student_leave_view' %}" target="_blank">Apply Leave</a>
+                <a href="{% url 'view_student_attendance' %}" target="_blank">View Attendance</a>
+        </div>
+        </li>
 		   <li class="sidebar-list-item">
-            <a href="" target="_blank">
+            <a href="" target="_self">
             <span class="material-icons-outlined">star_half</span> Talent Search
             </a>
           </li>
 		   <li class="sidebar-list-item">
-            <a href="" target="_blank">
+            <a href="" target="_self">
          <span class="material-icons-outlined">calendar_view_month</span> Resources
             </a>
           </li>
 		   <li class="sidebar-list-item">
-            {% comment %} <a href="{% url 'resource' %}" target="_blank"> {% endcomment %}
+            <a href="" target="_self">
             <span class="material-icons-outlined">upload_file</span> Certificate
             </a>
           </li>
 		   <li class="sidebar-list-item">
-            <a href="" target="_blank">
+            <a href="" target="_self">
             <span class="material-icons-outlined">forum</span> Feedback
             </a>
           </li>
           <li class="sidebar-list-item">
-            <a href="#" target="_blank">
+            <a href="#" target="_self">
             <span class="material-icons-outlined">campaign</span> Activities
-            </a>
-          </li>
-          <li class="sidebar-list-item">
-            <a href="#" target="_blank">
-              <span class="material-icons-outlined">fact_check</span> Inventory
-            </a>
-          </li>
-          <li class="sidebar-list-item">
-            <a href="#" target="_blank">
-              <span class="material-icons-outlined">poll</span> Reports
             </a>
           </li>
           <li class="sidebar-list-item">
@@ -107,5 +103,7 @@
     </div>
 
 <script src="{% static 'js/scripts.js' %} "></script>
+
 </body>
+
       <!-- End Sidebar -->

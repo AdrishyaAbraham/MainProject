@@ -84,6 +84,8 @@ urlpatterns = [
   path('staff/leave/apply/', views.staff_leave_apply, name='staff_leave_apply'),
   path('view_class_attendance/', views.view_class_attendance, name='view_class_attendance'),
   path('schedule_class/', views.schedule_class, name='schedule_class'),
+  path('add-marks/<int:enrolled_student_id>/', views.add_marks, name='add_marks'),
+
  #student dashboard
   path('d/<int:id>/',views.downloadresource,name='downloadresource'),
   path('student_resources/',views.student_resources,name='student_resource'),

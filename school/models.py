@@ -350,7 +350,7 @@ class LeaveReportStudent(models.Model):
      leave_status = models.IntegerField(choices=LEAVE_STATUS_CHOICES, default=PENDING)
      student_id = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE)
      leave_date = models.DateField(null=True)
-     leave_message = models.TextField()
+     leave_message = models.CharField(max_length=255)
      created_at = models.DateTimeField(auto_now_add=True)
      updated_at = models.DateTimeField(auto_now=True)
      objects = models.Manager()
