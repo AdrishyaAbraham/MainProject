@@ -17,6 +17,8 @@ from django.contrib.auth.models import User, PermissionsMixin
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
 from django.db import models
+from django.conf import settings
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, name, password=None, mobile=None, address=None,role=None):
@@ -425,3 +427,34 @@ class OnlineClass(models.Model):
     time = models.TimeField(null=True, blank=True)
     link = models.URLField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+
+
+class TalentProgram(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField()
+
+
+    def __str__(self):
+        return self.name
+    
+class Registration(models.Model):
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    program = models.ForeignKey(TalentProgram, on_delete=models.CASCADE)
+    registration_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('student', 'program')
+
+    def __str__(self):
+        return f"{self.student.username} - {self.program.name}"
+    
+
+
+class CounselingSession(models.Model):
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='student_sessions', on_delete=models.CASCADE)
+    teacher = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='teacher_sessions', on_delete=models.CASCADE)
+    chat_room_link = models.CharField(max_length=255, unique=True)
+    date = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.student.username} - {self.teacher.username} Counseling"

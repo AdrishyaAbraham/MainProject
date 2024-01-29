@@ -1,0 +1,52 @@
+{% extends 'teacher/base.html' %}
+{% load static %}
+
+{% block content %}
+<body>
+
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+            <h3 id="username">Username: </h3>
+                <input id="username" class="form-control"><button id="btn-join">Join Room</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div id="video-container">
+                    <button id="startButton" class="btn btn-primary">Start Video Chat</button>
+                    <div class="mt-2">
+                        <video id="local-video" style="float:left;" autoplay playsinline class="img-fluid"></video>
+                    </div>
+                    <button id="btn-toggle-audio" class="btn btn-secondary">Audio Mute</button>
+                    <button id="btn-toggle-video" class="btn btn-secondary">Video Off</button>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div id="chat">
+                    <h3>Chat</h3>
+                    <div id="messages">
+                        <ul id="message-list" class="list-group"></ul>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <input id="msg" class="form-control">
+                    <button id="btn-send-msg" class="btn btn-primary mt-2">Send messages</button>
+                    <button id="btn-share-screen" class="btn btn-secondary mt-2">Share screen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="{% static 'js/webrtc.js' %}"></script>
+    <script src="{% static 'js/webrtc.js' %}"></script>
+
+</body>
+</html>
+
+{% endblock %}

@@ -557,7 +557,6 @@ def enrolled_student_list(request):
 
 from django.shortcuts import render
 from .models import TeacherNotice, Notice, EnrolledStudent, TeacherPersonalInfo
-
 @login_required
 def teacherdashboard(request):
     latest_notices = TeacherNotice.objects.all().order_by('-date_created')[:5]
@@ -573,9 +572,11 @@ def teacherdashboard(request):
         'latest_notices': latest_notices,
         'notices': notices,
         'enrolled_student': enrolled_student,
-        'enrolled_student_id': student_id,  # Change to enrolled_student_id
+        'student_id': student_id,  # Add student_id to the context
+        'enrolled_student_id': student_id,  # Add enrolled_student_id to the context
     }
     return render(request, 'teacher/teacher_dashboard.html', context)
+
 
 @login_required
 def staff_take_attendance(request):
@@ -1247,17 +1248,14 @@ def index_resource(request):
     
     return render(request,'teacher/index_resource.html', {'resources': resources})
 
-
-
 @login_required(login_url='login_page')
-
 def add_marks(request, enrolled_student_id):
     try:
         # Get the enrolled student based on the provided ID
         enrolled_student = EnrolledStudent.objects.get(id=enrolled_student_id)
 
         # Check if the logged-in user is the guide teacher for the student's class
-        if request.user.teacherpersonalinfo != enrolled_student.class_name.guide_teacher.name:
+        if request.user.teacherpersonalinfo != enrolled_student.class_name.guide_teacher:
             return render(request, 'teacher/error.html', {'message': 'You are not the guide teacher for this class!'})
 
         if request.method == 'POST':
@@ -1275,6 +1273,7 @@ def add_marks(request, enrolled_student_id):
         context = {
             'form': form,
             'enrolled_student': enrolled_student,
+            'enrolled_student_id': enrolled_student_id,
         }
         return render(request, 'teacher/add_marks.html', context)
 
@@ -1451,6 +1450,40 @@ def attend_class(request, class_id):
     online_class = get_object_or_404(OnlineClass, pk=class_id)
     # Additional logic to check if the student is assigned to the class
     return render(request, 'student/attend_class.html', {'online_class': online_class})
+
+
+def video_chat(request):
+    context= {}
+    return render(request, 'chatroom/counselling.html', context=context)
+
+
+#-----register for talent search------#
+
+@login_required(login_url='login_page')
+def talent_programs(request):
+    programs = TalentProgram.objects.all()
+    registrations = Registration.objects.filter(student=request.user)
+
+    if request.method == 'POST':
+        program_id = request.POST.get('program_id')
+        program = TalentProgram.objects.get(id=program_id)
+
+        # Check if the student is already registered for the program
+        existing_registration = Registration.objects.filter(student=request.user, program=program)
+        if existing_registration.exists():
+            messages.error(request, 'You are already registered for this program!')
+        else:
+            # Register the student for the program
+            registration = Registration(student=request.user, program=program)
+            registration.save()
+            messages.success(request, 'Registration successful!')
+
+    context = {
+        'programs': programs,
+        'registrations': registrations,
+    }
+    return render(request, 'talentsearch/programs.html', context)
+
 
 #------parent dashboard-----#
 from django.shortcuts import render, get_list_or_404, redirect

@@ -15,8 +15,7 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <style>
-    .header-right {
+    <style> .header-right {
     display: flex;
     align-items: center;
 }
@@ -63,7 +62,7 @@
 </head>
 <body>
     <div class="grid-container">
-       
+     
       <!-- Header -->
       <header class="header">
         <div class="menu-icon" onclick="openSidebar()">
@@ -105,7 +104,6 @@
             <a href="{% url 'logout' %}"><p>Logout</p></a>
         </div>
     </div>
-
 
       </header>
       <!-- End Header -->
@@ -155,11 +153,11 @@
         </li>
   
           
-		     <li class="sidebar-list-item">
+		     {% comment %} <li class="sidebar-list-item">
             <a href="{% url 'add_marks' enrolled_student_id %}" target="_self">
             <span class="material-icons-outlined">star_half</span> Mark Updation</a>
 
-          </li>
+          </li> {% endcomment %}
 
 		 
 		
@@ -197,7 +195,9 @@
         </ul>
       </aside>
         <main class="main-container">
-            {% block content %}{% endblock %}
+            {% block content %}
+            
+            {% endblock %}
         </main>
     </div>
 

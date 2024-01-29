@@ -1,0 +1,27 @@
+
+{% extends 'student/sidebar.html' %}
+
+{% block content %}
+  <div class="container">
+    <h2>Talent Search Programs</h2>
+
+    {% for program in programs %}
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ program.name }}</h5>
+          <p class="card-text">{{ program.description }}</p>
+
+          {% if program in registrations %}
+            <p class="text-success">Registered</p>
+          {% else %}
+            <form method="post" action="{% url 'talent_programs' %}">
+              {% csrf_token %}
+              <input type="hidden" name="program_id" value="{{ program.id }}">
+              <button type="submit" class="btn btn-primary">Register</button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

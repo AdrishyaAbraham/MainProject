@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'school',
     'widget_tweaks',
+    'channels',
    
     
 ]
@@ -131,6 +132,8 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # settings.py
+
+ASGI_APPLICATION = "Project.asgi.application"
 
 AUTHENTICATION_BACKENDS = (
 
