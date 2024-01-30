@@ -1457,6 +1457,24 @@ def video_chat(request):
     return render(request, 'chatroom/counselling.html', context=context)
 
 
+def request_certificate(request):
+    if request.method == 'POST':
+        form = CertificateForm(request.POST)
+        if form.is_valid():
+            certificate_request = form.save(commit=False)
+            # Assuming you have a foreign key to the Student model in CertificateRequest
+            certificate_request.student = request.user.student  # Adjust this based on your model
+            certificate_request.save()
+
+            messages.success(request, 'Certificate request submitted successfully!')
+            return redirect('dashboard')  # Redirect to the student's dashboard or profile page
+        else:
+            messages.error(request, 'Certificate request form is not valid. Please check your inputs.')
+    else:
+        form = CertificateForm()
+
+    return render(request, 'student/request_certificate.html', {'form': form})
+
 #-----register for talent search------#
 
 @login_required(login_url='login_page')

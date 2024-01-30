@@ -458,3 +458,16 @@ class CounselingSession(models.Model):
 
     def __str__(self):
         return f"{self.student.username} - {self.teacher.username} Counseling"
+    
+
+
+class Certificate(models.Model):
+    enrolled_student = models.ForeignKey(EnrolledStudent, on_delete=models.CASCADE)
+    class_associated = models.ForeignKey(ClassRegistration, on_delete=models.CASCADE)
+    certificate_file = models.FileField(upload_to='certificates/')
+    issue_date = models.DateField()
+    is_previous_class = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Certificate for {self.enrolled_student} - {'Previous Class' if self.is_previous_class else 'Current Class'}"
+

@@ -135,6 +135,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ASGI_APPLICATION = "Project.asgi.application"
 
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
+
+
 AUTHENTICATION_BACKENDS = (
 
     'django.contrib.auth.backends.ModelBackend',
@@ -147,5 +155,4 @@ EMAIL_HOST = 'smptp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'adrishyamariaabraham2024@mca.ajce.in'
 EMAIL_HOST_PASSWORD = 'adrishyaabraham1234'
-
 

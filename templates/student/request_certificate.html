@@ -1,0 +1,13 @@
+<!-- templates/request_certificate.html -->
+{% extends 'student/sidebar.html' %}
+
+{% block content %}
+  <h2>Request Certificate</h2>
+  <p>Requesting certificate for {{ enrolled_student }}</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <!-- Add your form fields here -->
+    <button type="submit">Submit Request</button>
+  </form>
+{% endblock %}

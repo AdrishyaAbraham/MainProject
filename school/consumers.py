@@ -1,11 +1,12 @@
 # your_app_name/consumers.py
 
 import json
-from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.generic.WebSocket import AsyncWebsocketConsumer
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_group_name='Test-Room'
+        self.room_group_name = 'Test-Room'
+
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
@@ -18,11 +19,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         print ('Disconnected')
-        pass
+    
 
     async def receive(self, text_data):
-        recive_dict = json.loads(text_data)
-        message = recive_dict['message']
+        receive_dict = json.loads(text_data)
+        message = receive_dict['message']
 
         await self.channel_layer.group_send(
         self.room_group_name,

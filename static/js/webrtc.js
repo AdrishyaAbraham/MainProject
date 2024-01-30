@@ -1,50 +1,74 @@
 
 console.log('In main.js!');
 
-var usernameinput = document.getElementById('#username')
+var usernameInput = document.querySelector('#username')
 
-// const localVideo = document.getElementById('local-Video');
-// const remoteVideo = document.getElementById('remoteVideo');
-// const startButton = document.getElementById('startButton');
+// // const localVideo = document.getElementById('local-Video');
+// // const remoteVideo = document.getElementById('remoteVideo');
+// // const startButton = document.getElementById('startButton');
 
-var btnJoin = document.getElementById('#btn-join');
+var btnJoin = document.querySelector('#btn-join');
 
 var username;
-let localStream;
-let remoteStream;
-let peerConnection;
+var webSocket;
+
+function WebSocketOnMessage(event){
+   var parsedData = JSON.parse(event.data);
+   var message = parsedData['message'];
+
+   console.log('message',message);
+}
+// let localStream;
+// let remoteStream;
+// let peerConnection;
 
 btnJoin.addEventListener('click',() => {
-    username=usernameinput.value;
+     username=usernameInput.value;
 
+      console.log('username',username);
     
      if (username=='')
      {
         return;
      }
-     usernameinput.value='';
-     usernameinput.disabled= true;
-     usernameinput.style.visibility='hidden';
+     usernameInput.value='';
+     usernameInput.disabled= true;
+     usernameInput.style.visibility='hidden';
 
      btnJoin.disabled = true;
      btnJoin.style.visibility='hidden';
 
-     var labelUsername = document.querySelector('#h3-username');
+     var labelUsername = document.querySelector('#label-username');
      labelUsername.innerHTML = username;
      
      
      var loc = window.location;
-     var wsstart='wss://';
 
-     if(loc.protocol== 'https:'){
-        wsstart = 'wss://';
-     }
-    
-     var endPoint = wsstart + loc.host + loc.pathname;
+     var wsStart = 'ws://';
+
+     if (loc.protocol == 'https:') {
+         wsStart = 'wss://';
+      }
+
+     var endPoint = wsStart + window.location.host + '/';
+
+
 
      console.log('endPoint : ',endPoint); 
 
+     webSocket = new WebSocket(endPoint);
 
+     webSocket.addEventListener('open',(e) => {
+         console.log('connection opened!');
+     });
+
+     webSocket.addEventListener('message',WebSocketOnMessage);
+     webSocket.addEventListener('close',(e)=>{
+      console.log('connection closed!');
+  });
+     webSocket.addEventListener('error',(e)=>{
+      console.log('connection error!');
+  });
 
 });
 

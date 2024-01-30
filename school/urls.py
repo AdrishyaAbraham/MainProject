@@ -96,6 +96,8 @@ urlpatterns = [
   
   path('student_leave/',views.student_leave_view,name='student_leave_view'),
   path('view_attendance/', views.view_student_attendance, name='view_student_attendance'),
+  path('request_certificate/',views.request_certificate,name='request_certificate'),
+
 
  #parent dashaboard...
   path('parent/',views.parentdashboard,name='parentdashboard'),

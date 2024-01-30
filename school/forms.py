@@ -657,3 +657,19 @@ class MarkForm(forms.ModelForm):
             'subject1': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter subject1 marks'}),
             # Add more widgets for additional fields
         }
+
+
+
+class CertificateForm(forms.ModelForm):
+    class Meta:
+        model = Certificate
+        fields = ['enrolled_student', 'class_associated', 'certificate_file', 'issue_date', 'is_previous_class']
+
+    def __init__(self, *args, **kwargs):
+        super(CertificateForm, self).__init__(*args, **kwargs)
+        # Customize the form if needed, for example, add placeholders or additional attributes
+        self.fields['enrolled_student'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Enrolled Student'})
+        self.fields['class_associated'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Class Associated'})
+        self.fields['certificate_file'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Certificate File'})
+        self.fields['issue_date'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Issue Date'})
+        self.fields['is_previous_class'].widget.attrs.update({'class': 'form-check-input'})
