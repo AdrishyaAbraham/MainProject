@@ -808,6 +808,7 @@ def mark_attendance(request):
 
     # Get the current session (assuming session name corresponds to the year)
     current_year = datetime.now().year
+    print(f"DEBUG: Current year: {current_year}")
     try:
         current_session = Session.objects.get(name=current_year)
     except Session.DoesNotExist:
@@ -1452,18 +1453,28 @@ def attend_class(request, class_id):
     return render(request, 'student/attend_class.html', {'online_class': online_class})
 
 
-def video_chat(request):
-    context= {}
-    return render(request, 'chatroom/counselling.html', context=context)
 
 
-def request_certificate(request):
+@login_required(login_url='login_page')
+def request_certificate(request, reg):
+    # Assuming the user is logged in
+    student = AcademicInfo.objects.get(registration_no=reg)
+    
+
+    try:
+        # Retrieve the enrolled student information associated with the logged-in user
+      enrolled_student = EnrolledStudent.objects.get(student=student)
+
+    except EnrolledStudent.DoesNotExist:
+        # Handle the case where the user is not associated with any enrolled student information
+        messages.error(request, 'You are not associated with any student account.')
+        return redirect('dashboard')  # Redirect to the dashboard or profile page
+
     if request.method == 'POST':
-        form = CertificateForm(request.POST)
+        form = CertificateForm(request.POST, request.FILES)
         if form.is_valid():
             certificate_request = form.save(commit=False)
-            # Assuming you have a foreign key to the Student model in CertificateRequest
-            certificate_request.student = request.user.student  # Adjust this based on your model
+            certificate_request.enrolled_student = enrolled_student
             certificate_request.save()
 
             messages.success(request, 'Certificate request submitted successfully!')
@@ -1473,7 +1484,20 @@ def request_certificate(request):
     else:
         form = CertificateForm()
 
-    return render(request, 'student/request_certificate.html', {'form': form})
+    # Get the current class of the enrolled student
+    current_class = enrolled_student.class_name
+
+    # Get the list of classes for the dropdown
+    available_classes = EnrolledStudent.objects.filter(student__user=student)
+
+
+    context = {
+        'form': form,
+        'current_class': current_class,
+        'available_classes': available_classes,
+    }
+
+    return render(request, 'student/request_certificate.html', context)
 
 #-----register for talent search------#
 

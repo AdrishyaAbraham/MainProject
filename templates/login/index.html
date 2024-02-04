@@ -29,6 +29,7 @@
 
         <div class="input-box">
           <input id="password" name="password" type="password" placeholder="Enter Your Password" required />
+          <i class="fas fa-eye" id="togglePassword"></i> <!-- Eye icon -->
           <div class="underline"></div>
         </div>
 
@@ -47,43 +48,24 @@
     </div>
 
     <script>
-        document.getElementById('emailInput').addEventListener('input', function(e) {
-            const email = e.target.value;
-            const periodCount = (email.match(/\./g) || []).length;
-            const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/;
+      const passwordField = document.getElementById('password');
+      const togglePassword = document.getElementById('togglePassword');
 
-            if (!emailRegex.test(email)) {
-                document.getElementById('emailError').textContent = "Invalid email format.";
-            } else if (periodCount > 3) {
-                document.getElementById('emailError').textContent = "Email can't have more than 3 periods.";
-            } else {
-                document.getElementById('emailError').textContent = '';
-            }
-        });
+      togglePassword.addEventListener('click', function () {
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+        this.classList.toggle('fa-eye-slash');
+      });
     </script>
     <style>
-    a:link {
-    /* Styles for regular, unvisited links */
-    color: inherit;
-    text-decoration: none;
-}
-
-a:visited {
-    /* Styles for visited links */
-    color: inherit; 
-}
-
-a:hover {
-    /* Styles for links on mouse-over */
-    color: #555;  /* Example gray color, you can change this */
-    text-decoration: none; /* Add underline back on hover, if desired */
-}
-
-a:active {
-    /* Styles for active (being clicked) links */
-    color: inherit;
-}
-
+      /* Add this style to hide the eye icon by default */
+      #togglePassword {
+        display: none;
+      }
+      
+      .input-box:hover #togglePassword {
+        display: block;
+      }
     </style>
   </body>
 </html>

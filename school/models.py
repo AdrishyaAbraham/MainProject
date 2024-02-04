@@ -168,11 +168,13 @@ class GuideTeacher(models.Model):
         return str(self.name)
     
 class Session(models.Model):
-    name = models.IntegerField(unique=True)
+    name = models.CharField(unique=True, max_length=4)  # Assuming the year is a 4-digit number
     date = models.DateField(auto_now_add=True)
-    is_deleted = models.BooleanField(default=False) 
+    is_deleted = models.BooleanField(default=False)
+
     def __str__(self):
         return str(self.name)
+
     
 class ClassInfo(models.Model):
     name = models.CharField(max_length=45, unique=True)

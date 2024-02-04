@@ -1,13 +1,50 @@
-<!-- templates/request_certificate.html -->
 {% extends 'student/sidebar.html' %}
 
 {% block content %}
-  <h2>Request Certificate</h2>
-  <p>Requesting certificate for {{ enrolled_student }}</p>
+  <div class="container mt-5">
+    <h2>Request Certificate</h2>
+    <p>Requesting certificate for {{ student }} in {{ current_class.class_name }}</p>
+      
+  <script>
+    {% if messages %}
+      {% for message in messages %}
+        alert("{{ message }}");
+      {% endfor %}
+    {% endif %}
+  </script>
 
-  <form method="post">
-    {% csrf_token %}
-    <!-- Add your form fields here -->
-    <button type="submit">Submit Request</button>
-  </form>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <!-- Display the current class of the student at the top of the dropdown -->
+      <div class="form-group">
+        <label for="current_class">Current Class:</label>
+        <input type="text" class="form-control" id="current_class" value="{{ current_class.class_name }}" readonly>
+      </div>
+
+      <!-- Dropdown for selecting the class associated with the certificate -->
+      <div class="form-group">
+        <label for="class_associated">Select Class:</label>
+        <select class="form-control" id="class_associated" name="class_associated">
+          {% for class_option in available_classes %}
+            <option value="{{ class_option.id }}">{{ class_option.class_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Add other form fields here (certificate file, issue date, etc.) -->
+      <!-- For example:
+        <div class="form-group">
+          <label for="certificate_file">Certificate File:</label>
+          <input type="file" class="form-control" id="certificate_file" name="certificate_file">
+        </div>
+        <div class="form-group">
+          <label for="issue_date">Issue Date:</label>
+          <input type="date" class="form-control" id="issue_date" name="issue_date">
+        </div>
+      -->
+
+      <button type="submit" class="btn btn-primary">Submit Request</button>
+    </form>
+  </div>
 {% endblock %}

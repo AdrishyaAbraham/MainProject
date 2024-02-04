@@ -85,7 +85,7 @@ urlpatterns = [
   path('view_class_attendance/', views.view_class_attendance, name='view_class_attendance'),
   path('schedule_class/', views.schedule_class, name='schedule_class'),
   path('add-marks/<int:enrolled_student_id>/', views.add_marks, name='add_marks'),
-  path('video_chat/', views.video_chat, name='video_chat'),
+  
 
  #student dashboard
   path('d/<int:id>/',views.downloadresource,name='downloadresource'),
@@ -96,7 +96,7 @@ urlpatterns = [
   
   path('student_leave/',views.student_leave_view,name='student_leave_view'),
   path('view_attendance/', views.view_student_attendance, name='view_student_attendance'),
-  path('request_certificate/',views.request_certificate,name='request_certificate'),
+  path('request_certificate/<reg>',views.request_certificate,name='request_certificate'),
 
 
  #parent dashaboard...

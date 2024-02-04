@@ -4,23 +4,19 @@
 {% block content %}
 <body>
     <div class="container">
-        <div class="row">
             <div class="col-md-6">
             <h3 id="label-username">Username</h3>
             <div>
                 <input id="username" class="form-control"><button id="btn-join">Join Room</button>
-
-            </div>
             </div>
         </div>
     </div>
-
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-6">
                 <div id="video-container">
                     <button id="startButton" class="btn btn-primary">Start Video Chat</button>
-                    <div class="">
+                    <div>
                         <video id="local-video" style="float:left;" autoplay playsinline ></video>
                     </div>
                     <button id="btn-toggle-audio" class="btn btn-secondary">Audio Mute</button>
@@ -45,7 +41,19 @@
     </div>
 
     <script type="text/javascript" src="{% static 'js/webrtc.js' %}"></script>
-    
+<style>
+
+.video-grid-container{
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    background-color: black;
+}
+video{
+    border-radius: 25%;
+    background-color: black;
+}
+
+</style>
 
 </body>
 </html>

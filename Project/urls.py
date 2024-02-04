@@ -25,6 +25,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('s/', include('school.urls')),
+    path('c/', include('chatroom.urls')),
+
     path('logout/',user_logout,name='logout'),
     path('t/',teacherdashboard, name='teacherdashboard'),
     path('',login_page, name='login_page'),

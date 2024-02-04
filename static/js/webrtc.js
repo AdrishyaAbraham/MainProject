@@ -1,80 +1,63 @@
-
 console.log('In main.js!');
 
-var usernameInput = document.querySelector('#username')
-
-// // const localVideo = document.getElementById('local-Video');
-// // const remoteVideo = document.getElementById('remoteVideo');
-// // const startButton = document.getElementById('startButton');
-
+var usernameInput = document.querySelector('#username');
 var btnJoin = document.querySelector('#btn-join');
-
 var username;
 var webSocket;
 
-function WebSocketOnMessage(event){
-   var parsedData = JSON.parse(event.data);
-   var message = parsedData['message'];
-
-   console.log('message',message);
+function webSocketOnMessage(event) {
+    var parsedData = JSON.parse(event.data);
+    var message = parsedData['message'];
+    console.log('message', message);
 }
-// let localStream;
-// let remoteStream;
-// let peerConnection;
 
-btnJoin.addEventListener('click',() => {
-     username=usernameInput.value;
+btnJoin.addEventListener('click', () => {
+    username = usernameInput.value;
+    console.log('username', username);
 
-      console.log('username',username);
-    
-     if (username=='')
-     {
+    if (username === '') {
         return;
-     }
-     usernameInput.value='';
-     usernameInput.disabled= true;
-     usernameInput.style.visibility='hidden';
+    }
 
-     btnJoin.disabled = true;
-     btnJoin.style.visibility='hidden';
+    usernameInput.value = '';
+    usernameInput.disabled = true;
+    usernameInput.style.visibility = 'hidden';
 
-     var labelUsername = document.querySelector('#label-username');
-     labelUsername.innerHTML = username;
-     
-     
-     var loc = window.location;
+    btnJoin.disabled = true;
+    btnJoin.style.visibility = 'hidden';
 
-     var wsStart = 'ws://';
+    var labelUsername = document.querySelector('#label-username');
+    labelUsername.innerHTML = username;
 
-     if (loc.protocol == 'https:') {
-         wsStart = 'wss://';
-      }
+    var loc = window.location;
+    var wsStart = 'ws://';
 
-     var endPoint = wsStart + window.location.host + '/';
+    if (loc.protocol === 'https:') {
+        wsStart = 'wss://';
+    }
 
+    var endPoint = wsStart + window.location.host + '/c/video_chat/';
 
+    console.log('endPoint : ', endPoint);
 
-     console.log('endPoint : ',endPoint); 
+    webSocket = new WebSocket(endPoint);
 
-     webSocket = new WebSocket(endPoint);
+    webSocket.addEventListener('open', (e) => {
+        console.log('connection opened!');
+        var jsonstr = JSON.stringify({
+            'message': 'This is a message',
+        });
+        webSocket.send(jsonstr);
+        console.log(e)
+    });
 
-     webSocket.addEventListener('open',(e) => {
-         console.log('connection opened!');
-     });
+    webSocket.addEventListener('message', webSocketOnMessage);
 
-     webSocket.addEventListener('message',WebSocketOnMessage);
-     webSocket.addEventListener('close',(e)=>{
-      console.log('connection closed!');
-  });
-     webSocket.addEventListener('error',(e)=>{
-      console.log('connection error!');
-  });
+    webSocket.addEventListener('close', (e) => {
+        console.log(e);
+    });
 
+    webSocket.addEventListener('error', (e) => {
+        console.log(e);
+    });
 });
-
-// async function startButton() {
-//     localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-//     localVideo.srcObject = localStream;
-
-//     // Implement WebRTC peer connection and signaling here
-// }

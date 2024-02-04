@@ -1,10 +1,11 @@
 # your_app_name/consumers.py
 
 import json
-from channels.generic.WebSocket import AsyncWebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        print("Connected")
         self.room_group_name = 'Test-Room'
 
         await self.channel_layer.group_add(
@@ -29,7 +30,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_group_name,
         {
             'type': 'send.message',
-            'message':message
+            'message': message
         }
         )
     async def send_message(self,event):
