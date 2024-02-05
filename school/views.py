@@ -1278,38 +1278,8 @@ def index_resource(request):
     
     return render(request,'teacher/index_resource.html', {'resources': resources})
 
+
 @login_required(login_url='login_page')
-def add_mark(request, student_id):
-
-    student = get_object_or_404(EnrolledStudent, id=student_id)
-
-    try:
-        guide_teacher = GuideTeacher.objects.get(name=request.user.teacherpersonalinfo)
-    except GuideTeacher.DoesNotExist:
-        return render(request, 'error.html', {'message': 'You are not a guide teacher!'})
-
-    class_registrations = ClassRegistration.objects.filter(guide_teacher=guide_teacher)
-    students = EnrolledStudent.objects.filter(class_name__in=class_registrations)
-
-    # Ensure that the teacher is the guide teacher for the student's class
-    # Fetch all students in the same class
-    # class_students = EnrolledStudent.objects.filter(class_name=students.class_name)
-
-    if request.method == 'POST':
-        form = MarkForm(request.POST)
-        if form.is_valid():
-            mark = form.save(commit=False)
-            mark.student = student  # Assuming 'student' is the EnrolledStudent instance
-            mark.class_name = student.class_name  # Set the class_name field
-            mark.save()
-            return redirect('teacherdashboard')  # Redirect to the teacher's dashboard or a specific page
-    else:
-        form = MarkForm()
-
-    context = {'form': form, 'students': students, 'student': student}
-    return render(request, 'teacher/mark_updation.html', context)
-
-
 def view_marks(request, student_id):
     
     student = get_object_or_404(EnrolledStudent, id=student_id)
@@ -1321,11 +1291,45 @@ def view_marks(request, student_id):
 
     class_registrations = ClassRegistration.objects.filter(guide_teacher=guide_teacher)
     students = EnrolledStudent.objects.filter(class_name__in=class_registrations)
-    
+
     marks = Mark.objects.filter(student=student)
     
     context = {'student': student, 'marks': marks}
     return render(request, 'teacher/view_mark.html', context)
+
+
+@login_required(login_url='login_page')
+def add_mark(request, student_id):
+    student = get_object_or_404(EnrolledStudent, id=student_id)
+    
+    try:
+        guide_teacher = GuideTeacher.objects.get(name=request.user.teacherpersonalinfo)
+    except GuideTeacher.DoesNotExist:
+        return render(request, 'error.html', {'message': 'You are not a guide teacher!'})
+
+    class_registrations = ClassRegistration.objects.filter(guide_teacher=guide_teacher)
+    students = EnrolledStudent.objects.filter(class_name__in=class_registrations)
+
+    # Check if a mark already exists for the student and class
+    existing_mark = Mark.objects.filter(student=student, class_name=student.class_name).first()
+
+    if existing_mark:
+        # A mark already exists, redirect to a page indicating that a mark has already been added
+        return render(request, 'teacher/mark_already_added.html', {'student': student, 'existing_mark': existing_mark})
+
+    if request.method == 'POST':
+        form = MarkForm(request.POST)
+        if form.is_valid():
+            mark = form.save(commit=False)
+            mark.student = student
+            mark.class_name = student.class_name
+            mark.save()
+            return redirect(reverse('view_marks', kwargs={'student_id': student_id}))
+    else:
+        form = MarkForm()
+
+    context = {'form': form, 'students': students, 'student': student}
+    return render(request, 'teacher/mark_updation.html', context)
 
 @login_required
 def update_student_marks(request, student_id):
@@ -1409,10 +1413,13 @@ def scheduled_classes(request):
         'scheduled_classes': scheduled_classes,
     }
     return render(request, 'teacher/scheduled_class.html', context)
+    
     # if scheduled_classes.exists():
-    #     return render(request, 'teacher/scheduled_classes.html', context)
-    # # else:
-    # #     return render(request, 'teacher/no_classes.html')
+    #         return render(request, 'teacher/scheduled_classes.html', context)
+    # else:
+    #         return render(request, 'teacher/no_classes.html')
+
+#create online class----
 
 
 

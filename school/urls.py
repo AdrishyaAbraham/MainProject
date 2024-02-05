@@ -90,7 +90,6 @@ urlpatterns = [
   path('schedule_class/', views.schedule_class, name='schedule_class'),
   path('add_mark/<int:student_id>/', views.add_mark, name='add_mark'),
   path('view_marks/<int:student_id>/', views.view_marks, name='view_marks'),
- 
   
 
  #student dashboard

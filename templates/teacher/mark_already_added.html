@@ -1,0 +1,16 @@
+<!-- mark_already_added.html -->
+
+{% extends 'teacher/base.html' %}  <!-- Assuming you have a base template -->
+
+{% block content %}
+  <div class="container mt-5">
+    <h2>Mark Already Added</h2>
+    <p>A mark has already been added for {{ student.student.personal_info.user.name }} in the current session.</p>
+    <p>Mark Details:</p>
+    <ul>
+      <li>Subject 1: {{ existing_mark.subject1 }}</li>
+      <!-- Add other mark fields as needed -->
+    </ul>
+    <a href="{% url 'view_marks' student_id=student.id %}" class="btn btn-primary">View Marks</a>
+  </div>
+{% endblock %}

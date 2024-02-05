@@ -478,3 +478,23 @@ class Certificate(models.Model):
     def __str__(self):
         return f"Certificate for {self.enrolled_student} - {'Previous Class' if self.is_previous_class else 'Current Class'}"
 
+
+
+#online exams.........
+    
+class OnlineExam(models.Model):
+    teacher = models.ForeignKey(GuideTeacher, on_delete=models.CASCADE)
+    class_name = models.ForeignKey(ClassInfo, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=50)
+    date = models.DateField()
+    is_open = models.BooleanField(default=False)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    min_age = models.IntegerField()
+    max_age = models.IntegerField()
+    academic_session = models.ForeignKey(Session, on_delete=models.CASCADE)
+    is_published = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.subject} - Class {self.class_name} - {self.date}"
+    
