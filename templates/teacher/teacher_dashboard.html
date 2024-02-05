@@ -156,9 +156,11 @@
   
 
 		   <li class="sidebar-list-item">
-            <a href="{% url 'add_marks' enrolled_student_id %}" target="_self">
+           <a href="{% url 'add_mark' student_id %}" target="_self">
             <span class="material-icons-outlined">star_half</span> Mark Updation</a>
-
+               <div class="dropdown-content">
+                
+               </div>
           </li>
 		 
 		
@@ -169,7 +171,7 @@
             </span>
             <div class="dropdown-content">
                 <a href="{% url 'add_resource' %}">Add Resources</a>
-                {% comment %} <a href="" target="_blank">Apply Leave</a> {% endcomment %}
+                
             </div>
         </li>
 		   <li class="sidebar-list-item">

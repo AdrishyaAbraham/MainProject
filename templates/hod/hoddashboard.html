@@ -187,12 +187,20 @@
 
             </div>
         </li>
-                    <li class="sidebar-list-item">
-                      <a href="#" target="_blank">
-                      <span class="material-icons-outlined">campaign</span> Activities
-                      </a>
-                    </li>
-                      <li class="sidebar-list-item dropdown">
+
+             <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                <span class="material-icons-outlined">campaign</span> Activities                 
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content" >
+                 <a href="{% url 'add_talent_program' %}" target="_blank">Add Program</a>
+                 <a href="{% url 'talent_program_list' %}" target="_blank"> Program list</a>
+
+            </div>
+            </li>
+            
+            <li class="sidebar-list-item dropdown">
             <span class="dropdown-title">
                 <span class="material-icons-outlined">fact_check</span> Circulars                 
                 <span class="material-icons-outlined">expand_more</span>
@@ -201,9 +209,8 @@
                  <a href="{% url 'addNotice' %}" target="_blank">Add notice
                  <a href="{% url 'display_notices' %}" target="_blank">View notice
                  <a href="{% url 'add_teacher_notice' %}" target="_blank">Add teacher notice
-               
             </div>
-        </li>
+            </li>
       
                     <li class="sidebar-list-item">
                       <a href="#" target="_blank">

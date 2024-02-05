@@ -26,6 +26,11 @@ admin.site.register(LeaveReportStudent),
 admin.site.register(LeaveReportStaff),
 admin.site.register(Attendance),
 admin.site.register(AttendanceReport),
+admin.site.register(Mark),
+admin.site.register(OnlineClass),
+
+
+
 
 
 

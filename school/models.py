@@ -408,11 +408,16 @@ class TeacherNotice(models.Model):
         return self.message
 
 
+# models.py
+
 class Mark(models.Model):
-    student = models.OneToOneField(EnrolledStudent, on_delete=models.CASCADE)
+    student = models.ForeignKey(EnrolledStudent, on_delete=models.CASCADE)
     subject1 = models.PositiveIntegerField(null=True, blank=True)
+    class_name = models.ForeignKey(ClassRegistration, on_delete=models.CASCADE,null=True)
+    
     def __str__(self):
-        return f"{self.student} - Marks"
+        return f"{self.student.student.personal_info.user.name} - Marks"
+
     
 class ScheduledClass(models.Model):
     enrolled_class = models.ForeignKey(ClassRegistration, on_delete=models.CASCADE)

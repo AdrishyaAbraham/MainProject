@@ -1,31 +1,37 @@
-{% extends 'teacher/base.html' %}  <!-- Use your base template if you have one -->
+<!-- mark_updation.html -->
+{% extends 'teacher/base.html' %}
 
 {% block content %}
   <h2>Update Marks for Class</h2>
   <form method="post" action="">
     {% csrf_token %}
+   
     <table>
       <thead>
         <tr>
           <th>Student Name</th>
           <th>Registration Number</th>
           <th>Roll Number</th>
+          <th>Class Name</th>
           <th>Marks</th>
         </tr>
       </thead>
       <tbody>
-        {% for student in students %}
+        {% for student_item in students %}
           <tr>
-            <td>{{ student.student.personal_info.user.name }}</td>
-            <td>{{ student.student.registration_no }}</td>
-            <td>{{ student.roll }}</td>
-            <td>
-              <input type="number" name="marks_{{ student.id }}" placeholder="Enter marks" required>
-            </td>
+            <td>{{ student_item.student.personal_info.user.name }}</td>
+            <td>{{ student_item.student.registration_no }}</td>
+            <td>({{ student_item.roll }})</td>
+            <td>{{ student_item.class_name }}</td>
+            <td>{{ form.as_p }}</td>
+             <td><a class="btn btn-success" href="{% url 'view_marks' student.id %}">
+                                                <i class="fa fa-search-plus"></i>View
+                                            </a>   
+                                        </td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
-    <button type="submit">Update Marks</button>
+    <button type="submit">Add Marks</button>
   </form>
 {% endblock %}

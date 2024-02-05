@@ -140,18 +140,27 @@
                 <a href="{% url 'view_student_attendance' %}" target="_self">View Attendance</a>
         </div>
         </li>
-		   <li class="sidebar-list-item">
-            <a href="{% url 'talent_programs' %}" target="_self">
-            <span class="material-icons-outlined">star_half</span> Talent Search
-            </a>
-          </li>
+
+        <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+               <span class="material-icons-outlined">star_half</span> Talent Search
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content" >
+                <a href="{% url 'talent_programs' %}" target="_self">Register</a>
+                {% comment %} <a href="{% url 'registration_details' registration_id %}">View Details</a> {% endcomment %}
+
+               
+        </div>
+        </li>
+		  
 		   <li class="sidebar-list-item">
             <a href="{% url 'student_resource' %}" target="_self">
          <span class="material-icons-outlined">calendar_view_month</span> Resources
             </a>
           </li>
 		  <li class="sidebar-list-item">
-          <a href="{% url 'request_certificate' %}" target="_self">
+          {% comment %} <a href="{% url 'request_certificate' %}" target="_self"> {% endcomment %}
             <span class="material-icons-outlined">upload_file</span> Certificate
             </a> 
           </li>

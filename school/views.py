@@ -157,8 +157,6 @@ from django.contrib.auth import authenticate, login
 
 
 
-
-
 #----------------HOD-dashboard-----------#
 @never_cache
 @login_required(login_url='login_page')
@@ -554,6 +552,37 @@ def enrolled_student_list(request):
         'student': student
     }
     return render(request, 'hod/hod_student/enrolled-student-list.html', context)
+
+#talent programs------------
+
+@never_cache
+@login_required(login_url='login_page')
+def add_talent_program(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+
+        # Validate the input data
+        if not name or not description:
+            return render(request, 'talent_program_form.html', {'error': 'Please fill in all fields'})
+
+        # Create a new TalentProgram instance
+        TalentProgram.objects.create(name=name, description=description)
+
+        # You can add a success message if needed
+        return redirect('talent_program_list')  # Redirect to the list of talent programs or any other appropriate page
+
+    return render(request, 'hod/talent_program/talent_program_form.html')
+
+
+@login_required(login_url='login_page')
+def talent_program_list(request):
+    talent_programs = TalentProgram.objects.all()
+    return render(request, 'hod/talent_program/talent_program_list.html', {'talent_programs': talent_programs})
+
+
+
+
 
 from django.shortcuts import render
 from .models import TeacherNotice, Notice, EnrolledStudent, TeacherPersonalInfo
@@ -1250,42 +1279,59 @@ def index_resource(request):
     return render(request,'teacher/index_resource.html', {'resources': resources})
 
 @login_required(login_url='login_page')
-def add_marks(request, enrolled_student_id):
+def add_mark(request, student_id):
+
+    student = get_object_or_404(EnrolledStudent, id=student_id)
+
     try:
-        # Get the enrolled student based on the provided ID
-        enrolled_student = EnrolledStudent.objects.get(id=enrolled_student_id)
+        guide_teacher = GuideTeacher.objects.get(name=request.user.teacherpersonalinfo)
+    except GuideTeacher.DoesNotExist:
+        return render(request, 'error.html', {'message': 'You are not a guide teacher!'})
 
-        # Check if the logged-in user is the guide teacher for the student's class
-        if request.user.teacherpersonalinfo != enrolled_student.class_name.guide_teacher:
-            return render(request, 'teacher/error.html', {'message': 'You are not the guide teacher for this class!'})
+    class_registrations = ClassRegistration.objects.filter(guide_teacher=guide_teacher)
+    students = EnrolledStudent.objects.filter(class_name__in=class_registrations)
 
-        if request.method == 'POST':
-            form = MarkForm(request.POST)
-            if form.is_valid():
-                # Create a new mark instance
-                mark = form.save(commit=False)
-                mark.student = enrolled_student
-                mark.save()
-                messages.success(request, 'Marks added successfully!')
-                return redirect('teacherdashboard')  # Redirect to the dashboard or a specific page
-        else:
-            form = MarkForm()
+    # Ensure that the teacher is the guide teacher for the student's class
+    # Fetch all students in the same class
+    # class_students = EnrolledStudent.objects.filter(class_name=students.class_name)
 
-        context = {
-            'form': form,
-            'enrolled_student': enrolled_student,
-            'enrolled_student_id': enrolled_student_id,
-        }
-        return render(request, 'teacher/add_marks.html', context)
+    if request.method == 'POST':
+        form = MarkForm(request.POST)
+        if form.is_valid():
+            mark = form.save(commit=False)
+            mark.student = student  # Assuming 'student' is the EnrolledStudent instance
+            mark.class_name = student.class_name  # Set the class_name field
+            mark.save()
+            return redirect('teacherdashboard')  # Redirect to the teacher's dashboard or a specific page
+    else:
+        form = MarkForm()
 
-    except EnrolledStudent.DoesNotExist:
-        return render(request, 'teacher/error.html', {'message': 'Enrolled student not found!'})
+    context = {'form': form, 'students': students, 'student': student}
+    return render(request, 'teacher/mark_updation.html', context)
+
+
+def view_marks(request, student_id):
+    
+    student = get_object_or_404(EnrolledStudent, id=student_id)
+
+    try:
+        guide_teacher = GuideTeacher.objects.get(name=request.user.teacherpersonalinfo)
+    except GuideTeacher.DoesNotExist:
+        return render(request, 'error.html', {'message': 'You are not a guide teacher!'})
+
+    class_registrations = ClassRegistration.objects.filter(guide_teacher=guide_teacher)
+    students = EnrolledStudent.objects.filter(class_name__in=class_registrations)
+    
+    marks = Mark.objects.filter(student=student)
+    
+    context = {'student': student, 'marks': marks}
+    return render(request, 'teacher/view_mark.html', context)
 
 @login_required
 def update_student_marks(request, student_id):
     # Get the logged-in teacher
     teacher = TeacherPersonalInfo.objects.get(user=request.user)
-    
+ 
     try:
         # Get the student
         student = EnrolledStudent.objects.get(id=student_id)
@@ -1307,7 +1353,11 @@ def update_student_marks(request, student_id):
         else:
             form = MarkUpdateForm(instance=mark_instance)
         
-        context = {'form': form, 'student': student}
+        context = {'form': form, 
+                   'students': student, 
+                   'student_id' : student_id
+                   }
+
         return render(request, 'teacher/mark_updation.html', context)
     
     except EnrolledStudent.DoesNotExist:
@@ -1506,6 +1556,8 @@ def talent_programs(request):
     programs = TalentProgram.objects.all()
     registrations = Registration.objects.filter(student=request.user)
 
+    registration = None  # Initialize registration variable
+
     if request.method == 'POST':
         program_id = request.POST.get('program_id')
         program = TalentProgram.objects.get(id=program_id)
@@ -1523,9 +1575,22 @@ def talent_programs(request):
     context = {
         'programs': programs,
         'registrations': registrations,
+        'registration': registration,  # Include the registration variable in the context
     }
+
     return render(request, 'talentsearch/programs.html', context)
 
+
+
+@login_required(login_url='login_page')
+def registration_details(request, registration_id):
+    registration = get_object_or_404(Registration, id=registration_id, student=request.user)
+    talent_program = registration.program  # Access the associated TalentProgram
+    return render(request, 'talentsearch/registration_details.html', {
+        'registration': registration,
+        'registration_id': registration_id,
+        'talent_program': talent_program,  # Include the TalentProgram in the context
+    })
 
 #------parent dashboard-----#
 from django.shortcuts import render, get_list_or_404, redirect

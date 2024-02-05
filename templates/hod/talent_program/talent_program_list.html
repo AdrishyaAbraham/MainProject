@@ -1,0 +1,15 @@
+{% extends 'hod/base_class.html' %}
+
+{% block content %}
+  <div class="container mt-4">
+    <h2 class="mb-4">Talent Programs List</h2>
+    <ul class="list-group">
+      {% for program in talent_programs %}
+        <li class="list-group-item">
+          <h5 class="mb-0">{{ program.name }}</h5>
+          <p class="mb-1">{{ program.description }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}

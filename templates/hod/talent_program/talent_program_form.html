@@ -1,0 +1,62 @@
+{% extends 'hod/base_class.html' %}
+
+{% block content %}
+  <div class="container mt-4">
+    <h2>Add Talent Program</h2>
+    <form method="post" action="{% url 'add_talent_program' %}" onsubmit="return validateForm()">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="name" class="form-label">Program Name:</label>
+        <input type="text" name="name" id="name" class="form-control col-sm-6" required oninput="validateName()">
+        <span id="nameError" style="color: red;"></span>
+      </div>
+      <div class="mb-3">
+        <label for="description" class="form-label">Description:</label>
+        <textarea name="description" id="description" rows="4" class="form-control col-sm-6" required oninput="validateDescription()"></textarea>
+        <span id="descriptionError" style="color: red;"></span>
+      </div>
+      <button type="submit" class="btn btn-primary">Add Program</button>
+    </form>
+  </div>
+
+  <script>
+    function validateName() {
+      var nameInput = document.getElementById('name');
+      var nameError = document.getElementById('nameError');
+      var nameValue = nameInput.value.trim();
+      
+      if (!/^[a-zA-Z]+$/.test(nameValue)) {
+        nameError.textContent = 'Program name should contain only alphabets.';
+      } else {
+        nameError.textContent = '';
+      }
+    }
+
+    function validateDescription() {
+      var descriptionInput = document.getElementById('description');
+      var descriptionError = document.getElementById('descriptionError');
+      var descriptionValue = descriptionInput.value.trim();
+      
+      if (/(.)\1{2,}/.test(descriptionValue)) {
+        descriptionError.textContent = 'Description should not have more than 2 consecutive repeated letters.';
+      } else {
+        descriptionError.textContent = '';
+      }
+    }
+
+    function validateForm() {
+      validateName();
+      validateDescription();
+
+      // Check if any error messages are present
+      var nameError = document.getElementById('nameError').textContent;
+      var descriptionError = document.getElementById('descriptionError').textContent;
+
+      if (nameError || descriptionError) {
+        return false;
+      }
+
+      return true;
+    }
+  </script>
+{% endblock %}

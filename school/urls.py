@@ -30,6 +30,10 @@ urlpatterns = [
     path('update_notice/<int:notice_id>/', views.update_notice, name='update_notice'),
     path('add_teacher_notice/', views.add_teacher_notice, name='add_teacher_notice'),
     path('display_teacher_notices/', views.display_teacher_notices, name='display_teacher_notices'),
+
+  #-----talent program..
+    path('add_talent_program/', views.add_talent_program, name='add_talent_program'),
+    path('talent_program_list/', views.talent_program_list, name='talent_program_list'),
   #preist registeration..
     path('priest-registration', views.register_priest, name='register_priest'),
     path('view_priests/', views.view_priests, name='view_priests'),
@@ -84,7 +88,9 @@ urlpatterns = [
   path('staff/leave/apply/', views.staff_leave_apply, name='staff_leave_apply'),
   path('view_class_attendance/', views.view_class_attendance, name='view_class_attendance'),
   path('schedule_class/', views.schedule_class, name='schedule_class'),
-  path('add-marks/<int:enrolled_student_id>/', views.add_marks, name='add_marks'),
+  path('add_mark/<int:student_id>/', views.add_mark, name='add_mark'),
+  path('view_marks/<int:student_id>/', views.view_marks, name='view_marks'),
+ 
   
 
  #student dashboard
@@ -110,5 +116,6 @@ urlpatterns = [
 
   #talent search
   path('talent-programs/', views.talent_programs, name='talent_programs'),
+  path('registration_details/<int:registration_id>/', views.registration_details, name='registration_details'),
   
 ]

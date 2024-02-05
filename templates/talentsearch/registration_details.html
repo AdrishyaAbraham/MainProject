@@ -1,0 +1,15 @@
+{% extends 'student/sidebar.html' %}
+
+{% block content %}
+  <div class="container">
+    <h2>Registration Details</h2>
+
+    <p><strong>Registration ID:</strong> {{ registration_id }}</p>
+    <p><strong>Program Name:</strong> {{ registration.program.name }}</p>
+    <p><strong>Program Description:</strong> {{ registration.program.description }}</p>
+    <p><strong>Registration Date:</strong> {{ registration.registration_date }}</p>
+
+    <!-- Add a button for paying the registration fee -->
+    {% comment %} <a href="{% url 'pay_registration_fee' registration_id=registration.id %}" class="btn btn-primary">Pay Registration Fee</a> {% endcomment %}
+  </div>
+{% endblock %}
