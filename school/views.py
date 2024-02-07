@@ -1419,7 +1419,97 @@ def scheduled_classes(request):
     # else:
     #         return render(request, 'teacher/no_classes.html')
 
-#create online class----
+
+
+def online_exam(request):
+    if request.method == 'POST':
+        # Get exam details from the form
+        date = request.POST.get('date')
+        start_time = request.POST.get('time')  # Use 'time' input field
+        duration_hours = request.POST.get('duration')  # Use 'duration' input field
+        
+        # Create the ExamSchedule instance
+        exam_schedule = ExamSchedule.objects.create(date=date, start_time=start_time, duration_hours=duration_hours)
+        
+        # Get the number of questions dynamically added to the form
+        question_count = int(request.POST.get('question_count'))
+        
+        # Loop through each question and its options
+        for i in range(1, question_count + 1):
+            question_text = request.POST.get(f'question{i}')
+            correct_option_index = int(request.POST.get(f'question{i}_answer'))
+            
+            # Create the Question instance
+            question = Question.objects.create(exam_schedule=exam_schedule, question_text=question_text)
+            
+            # Loop through each option for the current question
+            for j in range(1, 5):  # Assuming there are always 4 options
+                option_text = request.POST.get(f'question{i}_option{j}')
+                
+                # Determine if the current option is correct based on its index
+                is_correct = (j == correct_option_index)
+                
+                # Create the Option instance
+                Option.objects.create(question=question, option_text=option_text, is_correct=is_correct)
+        
+        # Redirect to a success page or another view
+        return redirect('exam_schedule_detail', pk=exam_schedule.pk)
+    else:
+        # Render the form template
+        return render(request, 'teacher/onlineexam/set_questions.html')
+
+   
+
+
+from django.shortcuts import render, redirect
+from .models import ClassInfo
+
+def schedule_exam(request):
+    if request.method == 'POST':
+        # Handle form submission to schedule an exam
+        hod = request.user  # Assuming the current user is the HOD
+        class_name_id = request.POST.get('class_name')
+        class_name = ClassInfo.objects.get(id=class_name_id)
+        subject = request.POST.get('subject')
+        date = request.POST.get('date')
+        start_time = request.POST.get('start_time')
+        duration_hours = request.POST.get('duration_hours')
+        exam_schedule = ExamSchedule.objects.create(hod=hod, class_name=class_name, subject=subject, date=date, start_time=start_time, duration_hours=duration_hours)
+        return redirect('exam_schedule_detail', pk=exam_schedule.pk)
+    else:
+        # Fetch all classes
+        class_list = ClassInfo.objects.all()
+        # Render a template with a form to schedule an exam along with the list of classes
+        return render(request, 'hod/schedule_exam.html', {'class_list': class_list})
+
+def exam_schedule_detail(request, pk):
+    exam_schedule = ExamSchedule.objects.get(pk=pk)
+    questions = Question.objects.filter(exam_schedule=exam_schedule)
+    return render(request, 'hod/exam_schedule_detail.html', {'exam_schedule': exam_schedule, 'questions': questions})
+
+
+   
+def submit_exam(request, exam_schedule_pk):
+    if request.method == 'POST':
+        # Process exam submission
+        exam_schedule = ExamSchedule.objects.get(pk=exam_schedule_pk)
+        student = request.user
+        submission = StudentExamSubmission.objects.create(exam_schedule=exam_schedule, student=student)
+        questions = Question.objects.filter(exam_schedule=exam_schedule)
+        for question in questions:
+            selected_option_id = request.POST.get(f'question_{question.pk}_option')
+            if selected_option_id:
+                selected_option = Option.objects.get(pk=selected_option_id)
+                StudentAnswer.objects.create(submission=submission, question=question, selected_option=selected_option)
+        return redirect('exam_submission_confirmation')
+    else:
+        # Render a template with a form to submit an exam (if needed)
+        exam_schedule = ExamSchedule.objects.get(pk=exam_schedule_pk)
+        questions = Question.objects.filter(exam_schedule=exam_schedule)
+        return render(request, 'submit_exam.html', {'exam_schedule': exam_schedule, 'questions': questions})
+
+def exam_submission_confirmation(request):
+    return render(request, 'exam_submission_confirmation.html')
 
 
 

@@ -482,19 +482,51 @@ class Certificate(models.Model):
 
 #online exams.........
     
-class OnlineExam(models.Model):
-    teacher = models.ForeignKey(GuideTeacher, on_delete=models.CASCADE)
+class ExamSchedule(models.Model):
+    hod = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     class_name = models.ForeignKey(ClassInfo, on_delete=models.CASCADE)
     subject = models.CharField(max_length=50)
     date = models.DateField()
-    is_open = models.BooleanField(default=False)
     start_time = models.TimeField()
-    end_time = models.TimeField()
-    min_age = models.IntegerField()
-    max_age = models.IntegerField()
-    academic_session = models.ForeignKey(Session, on_delete=models.CASCADE)
+    duration_hours = models.IntegerField(default=1)  # Duration in hours
     is_published = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.subject} - Class {self.class_name} - {self.date}"
+
+
+class Question(models.Model):
+    exam_schedule = models.ForeignKey(ExamSchedule, on_delete=models.CASCADE)
+    question_text = models.CharField(max_length=500)
+
+    def __str__(self):
+        return self.question_text
+
+
+class Option(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    option_text = models.CharField(max_length=200)
+    is_correct = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.option_text
+
+
+class StudentExamSubmission(models.Model):
+    student = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    exam_schedule = models.ForeignKey(ExamSchedule, on_delete=models.CASCADE)
+    submission_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.student} - {self.exam_schedule.subject} - {self.submission_time}"
+
+
+class StudentAnswer(models.Model):
+    submission = models.ForeignKey(StudentExamSubmission, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    selected_option = models.ForeignKey(Option, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.submission.student} - {self.question} - {self.selected_option}"
+
     

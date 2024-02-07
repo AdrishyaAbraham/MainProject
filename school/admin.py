@@ -28,6 +28,10 @@ admin.site.register(Attendance),
 admin.site.register(AttendanceReport),
 admin.site.register(Mark),
 admin.site.register(OnlineClass),
+admin.site.register(ExamSchedule),
+admin.site.register(Question),
+
+
 
 
 

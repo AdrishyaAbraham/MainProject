@@ -90,6 +90,14 @@ urlpatterns = [
   path('schedule_class/', views.schedule_class, name='schedule_class'),
   path('add_mark/<int:student_id>/', views.add_mark, name='add_mark'),
   path('view_marks/<int:student_id>/', views.view_marks, name='view_marks'),
+ 
+ 
+ #online exam-----------
+  path('s/online_exam/', views.online_exam, name='online_exam'),
+    path('schedule-exam/', views.schedule_exam, name='schedule_exam'),
+    path('exam-schedule-detail/<int:pk>/', views.exam_schedule_detail, name='exam_schedule_detail'),
+   
+    # Other URL patterns...
   
 
  #student dashboard

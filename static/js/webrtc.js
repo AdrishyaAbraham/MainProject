@@ -36,7 +36,7 @@ btnJoin.addEventListener('click', () => {
         wsStart = 'wss://';
     }
 
-    var endPoint = wsStart + window.location.host + '/c/video_chat/';
+    var endPoint = 'ws://127.0.0.1:8000/c/video_chat/';
 
     console.log('endPoint : ', endPoint);
 
@@ -61,3 +61,36 @@ btnJoin.addEventListener('click', () => {
         console.log(e);
     });
 });
+
+var localStream = new MediaStream();
+
+const contraints = {
+    'video' : true,
+    'audio' : true
+};
+
+const localVideo = document.querySelector('#local-video');
+
+var userMedia = navigator.mediaDevices.getUserMedia(contraints)
+
+.them(stream => {
+    localStream = stream;
+    localVideo.srcObject = localStream;
+    localVideo.muted = true
+})
+
+    .catch(error => {
+        console.log('Error accessing media devices', error);
+    });
+
+function sendSignal(action, message)
+{
+    var jsonStr = JSON.stringify({
+        'peer': username,
+        'action': action,
+        'message' : message,
+    });
+
+    webSocket.send(jsonStr);
+     
+}

@@ -1,0 +1,53 @@
+{% extends "teacher/base.html" %}
+
+{% block content %}
+<main class="main-container">
+    <div class="container mt-5">
+        <h2>Create Online Exam</h2>
+
+        <form method="post" action="">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="date">Date:</label>
+                <select class="form-control" id="date" name="date" required>
+                    <option value="">Select Date</option>
+                    <!-- Add options dynamically using Django template tags -->
+                    {% for day in days %}
+                        <option value="{{ day }}">{{ day }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="time">Time:</label>
+                <select class="form-control" id="time" name="time" required>
+                    <option value="">Select Time</option>
+                    <!-- Add options dynamically using Django template tags -->
+                    {% for hour in hours %}
+                        <option value="{{ hour }}">{{ hour }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="duration">Exam Duration (in minutes):</label>
+                <input type="number" class="form-control" id="duration" name="duration" required>
+            </div>
+
+            <div id="questions-container">
+                <!-- Dynamic questions will be added here -->
+            </div>
+
+            <button type="button" class="btn btn-primary" onclick="addQuestion()">Add Question</button>
+            <button type="button" class="btn btn-secondary" onclick="removeQuestion()">Remove Question</button>
+            <button type="button" class="btn btn-warning" onclick="resetQuestions()">Reset Questions</button>
+            <button type="submit" class="btn btn-primary">Create Online Exam</button>
+        </form>
+    </div>
+
+    <script>
+        // JavaScript functions for adding, removing, and resetting questions...
+    </script>
+</main>
+{% endblock %}

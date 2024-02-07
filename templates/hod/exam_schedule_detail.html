@@ -1,0 +1,39 @@
+{% extends 'hod/base.html' %}
+
+{% block content %}
+<main class="container mt-5">
+    <div class="exam-details" style="background-color: #85adad; padding: 20px;">
+        <h1 class="exam-details__title">Exam Schedule Detail</h1>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th scope="row" style="width: 30%;">HOD:</th>
+                        <td>{{ exam_schedule.hod }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Class Name:</th>
+                        <td>{{ exam_schedule.class_name }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Subject:</th>
+                        <td>{{ exam_schedule.subject }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Date:</th>
+                        <td>{{ exam_schedule.date }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Start Time:</th>
+                        <td>{{ exam_schedule.start_time }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Duration Hours:</th>
+                        <td>{{ exam_schedule.duration_hours }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+{% endblock %}
