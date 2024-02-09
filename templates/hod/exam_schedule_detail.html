@@ -3,34 +3,41 @@
 {% block content %}
 <main class="container mt-5">
     <div class="exam-details" style="background-color: #85adad; padding: 20px;">
-        <h1 class="exam-details__title">Exam Schedule Detail</h1>
-        <div class="table-responsive">
+        <h1 class="exam-details__title">Exam Schedules</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="class_id">Select Class:</label>
+                <select class="form-control" id="class_id" name="class_id">
+                    <option value="">Select Class</option>
+                    {% for class_item in class_list %}
+                        <option value="{{ class_item.id }}">{{ class_item.class_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <div class="table-responsive mt-3">
             <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Class Name</th>
+                        <th>Subject</th>
+                        <th>Date</th>
+                        <th>Start Time</th>
+                        <th>Duration Hours</th>
+                    </tr>
+                </thead>
                 <tbody>
-                    <tr>
-                        <th scope="row" style="width: 30%;">HOD:</th>
-                        <td>{{ exam_schedule.hod }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Class Name:</th>
-                        <td>{{ exam_schedule.class_name }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Subject:</th>
-                        <td>{{ exam_schedule.subject }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Date:</th>
-                        <td>{{ exam_schedule.date }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Start Time:</th>
-                        <td>{{ exam_schedule.start_time }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Duration Hours:</th>
-                        <td>{{ exam_schedule.duration_hours }}</td>
-                    </tr>
+                    {% for schedule in exam_schedules %}
+                        <tr>
+                            <td>{{ schedule.class_name }}</td>
+                            <td>{{ schedule.subject }}</td>
+                            <td>{{ schedule.date }}</td>
+                            <td>{{ schedule.start_time }}</td>
+                            <td>{{ schedule.duration_hours }}</td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>

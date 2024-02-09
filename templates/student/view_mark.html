@@ -1,0 +1,24 @@
+{% extends 'student/sidebar.html' %}
+
+{% block content %}
+  <h2>Marks for {{ student.student.personal_info.user.name }}</h2>
+  
+  <div class="">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Class</th>
+          <th>Marks</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for mark in marks %}
+          <tr>
+            <td>{{ mark.class_name }}</td>
+            <td>{{ mark.subject1 }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

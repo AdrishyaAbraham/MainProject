@@ -62,7 +62,15 @@
       <div class="form-group text-center">
         <button type="submit" class="btn btn-success">Schedule Class</button>
       </div>
-    </form>
+    <div class="form-group text-center">
+    {% comment %} <form method="post" action="{% url 'delete_scheduled_class' scheduled_class.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete Scheduled Class</button>
+    </form> {% endcomment %}
+</div>
+
+      
+      </form>
   </div>
 
   <script>

@@ -13,18 +13,14 @@
           {% if program in registrations %}
             <p class="text-success">Registered</p>
           {% else %}
-            <form method="post" action="{% url 'talent_programs' %}">
-              {% csrf_token %}
-              <input type="hidden" name="program_id" value="{{ program.id }}">
-              <button type="submit" class="btn btn-primary">Register</button>
-              
-
-            </form>
-
-            {% if messages %}
-              {% for message in messages %}
-                <p class="text-warning">{{ message }}</p>
-              {% endfor %}
+            {% if program.id in existing_registration_ids %}
+              <p class="text-warning">You are already registered for this program!</p>
+            {% else %}
+              <form method="post" action="{% url 'talent_programs' %}">
+                {% csrf_token %}
+                <input type="hidden" name="program_id" value="{{ program.id }}">
+                <button type="submit" class="btn btn-primary">Register</button>
+              </form>
             {% endif %}
           {% endif %}
         </div>

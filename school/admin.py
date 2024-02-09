@@ -28,8 +28,14 @@ admin.site.register(Attendance),
 admin.site.register(AttendanceReport),
 admin.site.register(Mark),
 admin.site.register(OnlineClass),
+admin.site.register(ScheduledClass),
 admin.site.register(ExamSchedule),
 admin.site.register(Question),
+admin.site.register(Registration),
+admin.site.register(TalentProgram),
+
+
+
 
 
 

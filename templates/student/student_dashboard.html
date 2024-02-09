@@ -125,11 +125,18 @@
             <span class="material-icons-outlined">dashboard</span> Dashboard
             </a>
           </li>
-		  <li class="sidebar-list-item">
-           <a href="" target="_self"> 
-              <span class="material-icons-outlined">book</span> Academics
-            </a>
-          </li>
+        <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                 <span class="material-icons-outlined">book</span> Academics
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content" >
+                <a href="{% url 'view_own_marks' %}">View My Marks</a>
+        </div>
+        </li>
+
+
+
          <li class="sidebar-list-item dropdown">
             <span class="dropdown-title">
                 <span id="student_leave" class="material-icons-outlined">table_view</span> Attendance
@@ -199,7 +206,7 @@
               <h3>NOTIFICATIONS</h3>
               <span class="material-icons-outlined">inventory_2</span>
             </div>
-            <h1>1</h1>
+            <h1></h1>
           </div>
 
           <div class="card">
@@ -220,13 +227,15 @@
             <h1></h1>
           </div>
 
-          {% comment %} <div class="card">
+       <div class="card">
             <div class="card-inner">
-              <h3></h3>
+           <a href="{% url 'take_exam' exam_schedule_id=exam_schedule.pk %}" style="text-decoration: none; color: inherit;">
+
+              <h3>ONLINE EXAM</h3>
              <span class="material-icons-outlined">person</span> 
             </div>
             <h1></h1>
-          </div> {% endcomment %}
+          </div> 
 
         </div>
           <div class="main-notices">

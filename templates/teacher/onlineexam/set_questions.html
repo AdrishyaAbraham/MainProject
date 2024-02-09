@@ -10,29 +10,17 @@
 
             <div class="form-group">
                 <label for="date">Date:</label>
-                <select class="form-control" id="date" name="date" required>
-                    <option value="">Select Date</option>
-                    <!-- Add options dynamically using Django template tags -->
-                    {% for day in days %}
-                        <option value="{{ day }}">{{ day }}</option>
-                    {% endfor %}
-                </select>
+                <input type="date" class="form-control" id="date" name="date" required>
             </div>
 
             <div class="form-group">
-                <label for="time">Time:</label>
-                <select class="form-control" id="time" name="time" required>
-                    <option value="">Select Time</option>
-                    <!-- Add options dynamically using Django template tags -->
-                    {% for hour in hours %}
-                        <option value="{{ hour }}">{{ hour }}</option>
-                    {% endfor %}
-                </select>
+                <label for="start_time">Start Time:</label>
+                <input type="time" class="form-control" id="start_time" name="start_time" required>
             </div>
 
             <div class="form-group">
-                <label for="duration">Exam Duration (in minutes):</label>
-                <input type="number" class="form-control" id="duration" name="duration" required>
+                <label for="duration_hours">Exam Duration (in hours):</label>
+                <input type="number" class="form-control" id="duration_hours" name="duration_hours" required>
             </div>
 
             <div id="questions-container">
@@ -45,9 +33,68 @@
             <button type="submit" class="btn btn-primary">Create Online Exam</button>
         </form>
     </div>
-
     <script>
-        // JavaScript functions for adding, removing, and resetting questions...
+        function addQuestion() {
+            var container = document.getElementById("questions-container");
+            var questionNumber = container.childElementCount + 1;
+
+            var questionDiv = document.createElement("div");
+            questionDiv.className = "form-group";
+
+            var questionLabel = document.createElement("label");
+            questionLabel.textContent = "Question " + questionNumber + " (Malayalam):";
+            questionDiv.appendChild(questionLabel);
+
+            var questionInput = document.createElement("input");
+            questionInput.type = "text";
+            questionInput.className = "form-control";
+            questionInput.name = "question" + questionNumber;
+            questionInput.placeholder = "ചോദ്യം";
+            questionDiv.appendChild(questionInput);
+
+            for (var i = 1; i <= 4; i++) {
+                var optionInput = document.createElement("input");
+                optionInput.type = "text";
+                optionInput.className = "form-control";
+                optionInput.name = "question" + questionNumber + "_option" + i;
+                optionInput.placeholder = "Option " + i;
+                questionDiv.appendChild(optionInput);
+            }
+
+            var answerLabel = document.createElement("label");
+            answerLabel.textContent = "Correct Answer for Question " + questionNumber + ":";
+            questionDiv.appendChild(answerLabel);
+
+            var answerSelect = document.createElement("select");
+            answerSelect.className = "form-control";
+            answerSelect.name = "question" + questionNumber + "_answer";
+            answerSelect.required = true;
+
+            for (var j = 1; j <= 4; j++) {
+                var option = document.createElement("option");
+                option.value = j;
+                option.textContent = "Option " + j;
+                answerSelect.appendChild(option);
+            }
+
+            questionDiv.appendChild(answerSelect);
+
+            container.appendChild(questionDiv);
+        }
+
+        function removeQuestion() {
+            var container = document.getElementById("questions-container");
+            var questionCount = container.childElementCount;
+
+            if (questionCount > 0) {
+                container.removeChild(container.lastChild);
+            }
+        }
+
+        function resetQuestions() {
+            var container = document.getElementById("questions-container");
+            container.innerHTML = "";
+        }
     </script>
 </main>
 {% endblock %}

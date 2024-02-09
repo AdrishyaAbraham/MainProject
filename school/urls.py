@@ -90,13 +90,17 @@ urlpatterns = [
   path('schedule_class/', views.schedule_class, name='schedule_class'),
   path('add_mark/<int:student_id>/', views.add_mark, name='add_mark'),
   path('view_marks/<int:student_id>/', views.view_marks, name='view_marks'),
- 
+  path('delete_scheduled_class/<int:scheduled_class_id>/', views.delete_scheduled_class, name='delete_scheduled_class'),
  
  #online exam-----------
   path('s/online_exam/', views.online_exam, name='online_exam'),
-    path('schedule-exam/', views.schedule_exam, name='schedule_exam'),
-    path('exam-schedule-detail/<int:pk>/', views.exam_schedule_detail, name='exam_schedule_detail'),
-   
+  path('schedule-exam/', views.schedule_exam, name='schedule_exam'),
+   path('exam-schedule-detail/', views.exam_schedule_detail, name='exam_schedule_detail'),
+  path('submission_confirmation/', views.submission_confirmation, name='submission_confirmation'),
+  path('take_exam/<int:exam_schedule_id>/', views.take_exam, name='take_exam'),
+
+
+  
     # Other URL patterns...
   
 
@@ -105,8 +109,7 @@ urlpatterns = [
   path('student_resources/',views.student_resources,name='student_resource'),
   path('online-classes/', views.online_classes, name='online-classes'),
  path('attend-class/<int:class_id>/', views.attend_class, name='attend-class'),
-
-  
+   path('s/view-marks/', views.view_own_marks, name='view_own_marks'),
   path('student_leave/',views.student_leave_view,name='student_leave_view'),
   path('view_attendance/', views.view_student_attendance, name='view_student_attendance'),
   path('request_certificate/<reg>',views.request_certificate,name='request_certificate'),

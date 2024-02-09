@@ -1,5 +1,5 @@
 
-from django.http import HttpResponseRedirect,FileResponse 
+from django.http import HttpResponse, HttpResponseRedirect,FileResponse 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login,logout
 from django.shortcuts import render, redirect,get_object_or_404
@@ -161,11 +161,13 @@ from django.contrib.auth import authenticate, login
 @never_cache
 @login_required(login_url='login_page')
 def hoddashboard(request):
+    exam_schedule = ExamSchedule.objects.first()
+    
     context = {
+        'exam_schedule': exam_schedule,
         'admin': request.user,
     }
     return render(request, 'hod/hoddashboard.html', context)
-
 
 @never_cache
 @login_required(login_url='login_page')
@@ -624,7 +626,7 @@ def staff_take_attendance(request):
 def user_logout(request):
     logout(request)
     return redirect('/')
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 
 @login_required
@@ -1149,6 +1151,7 @@ def update_notice(request, notice_id):
     return render(request, 'hod/hod_student/update_notice.html', context)
 
         
+
 #------------teacher dashborad---#
 
 
@@ -1367,8 +1370,7 @@ def update_student_marks(request, student_id):
     except EnrolledStudent.DoesNotExist:
         messages.error(request, 'Student not found.')
         return redirect('class_student_list')
-
-# views.py
+    
 @login_required(login_url='login_page')
 def schedule_class(request):
     try:
@@ -1389,13 +1391,16 @@ def schedule_class(request):
     else:
         form = ScheduledClassForm()
 
+    # Fetch scheduled classes for the current guide teacher
+    scheduled_classes = ScheduledClass.objects.filter(enrolled_class__guide_teacher=guide_teacher)
+
     context = {
         'form': form,
         'class_registrations': class_registrations,
         'guide_teachers': GuideTeacher.objects.all(),
+        'scheduled_classes': scheduled_classes,  # Pass scheduled classes to the template context
     }
     return render(request, 'teacher/schedule_online_class.html', context)
-
 
 
 # views.py
@@ -1419,17 +1424,29 @@ def scheduled_classes(request):
     # else:
     #         return render(request, 'teacher/no_classes.html')
 
+def delete_scheduled_class(request, scheduled_class_id):
+    # Retrieve the scheduled class object
+    scheduled_class = get_object_or_404(ScheduledClass, pk=scheduled_class_id)
+    
+    if request.method == 'POST':
+        # Delete the scheduled class
+        scheduled_class.delete()
+        # Redirect to a success page or another view
+        return redirect('scheduled_classes')
+    
+    # If the request method is not POST, render a confirmation page
+    return render(request, 'teacher/delete_scheduled_class.html', {'scheduled_class': scheduled_class})
+
 
 
 def online_exam(request):
     if request.method == 'POST':
-        # Get exam details from the form
         date = request.POST.get('date')
-        start_time = request.POST.get('time')  # Use 'time' input field
-        duration_hours = request.POST.get('duration')  # Use 'duration' input field
+        start_time = request.POST.get('start_time')  # Updated to match the field name in the form
+        duration_hours = request.POST.get('duration_hours')  # Updated to match the field name in the form
         
         # Create the ExamSchedule instance
-        exam_schedule = ExamSchedule.objects.create(date=date, start_time=start_time, duration_hours=duration_hours)
+        exam_schedule = ExamSchedule.objects.create(date=date, start_time=start_time, duration_hours=duration_hours, hod=request.user)  # Assuming the current user is the HOD
         
         # Get the number of questions dynamically added to the form
         question_count = int(request.POST.get('question_count'))
@@ -1458,7 +1475,35 @@ def online_exam(request):
         # Render the form template
         return render(request, 'teacher/onlineexam/set_questions.html')
 
-   
+
+@login_required
+def take_exam(request, exam_schedule_id):
+    exam_schedule = ExamSchedule.objects.get(pk=exam_schedule_id)
+    questions = Question.objects.filter(exam_schedule=exam_schedule)
+    
+    if request.method == 'POST':
+        # Handle form submission
+        submission = StudentExamSubmission.objects.create(student=request.user, exam_schedule=exam_schedule)
+        
+        for question in questions:
+            selected_option_id = request.POST.get(f'question_{question.id}_option')
+            if selected_option_id:
+                selected_option = Option.objects.get(pk=selected_option_id)
+                StudentAnswer.objects.create(submission=submission, question=question, selected_option=selected_option)
+        
+        # Redirect to a submission confirmation page
+        return redirect('submission_confirmation')
+    
+    context = {
+        'exam_schedule': exam_schedule,
+        'questions': questions,
+    }
+    return render(request, 'student/take_exam.html', context)
+
+@login_required
+def submission_confirmation(request):
+    return render(request, 'submission_confirmation.html')
+
 
 
 from django.shortcuts import render, redirect
@@ -1482,13 +1527,24 @@ def schedule_exam(request):
         # Render a template with a form to schedule an exam along with the list of classes
         return render(request, 'hod/schedule_exam.html', {'class_list': class_list})
 
-def exam_schedule_detail(request, pk):
-    exam_schedule = ExamSchedule.objects.get(pk=pk)
-    questions = Question.objects.filter(exam_schedule=exam_schedule)
-    return render(request, 'hod/exam_schedule_detail.html', {'exam_schedule': exam_schedule, 'questions': questions})
 
 
-   
+def exam_schedule_detail(request):
+    if request.method == 'POST':
+        class_id = request.POST.get('class_id')
+        selected_class = get_object_or_404(ClassInfo, pk=class_id)
+        exam_schedules = ExamSchedule.objects.filter(class_name=selected_class)
+    else:
+        exam_schedules = ExamSchedule.objects.all()
+    
+    class_list = ClassInfo.objects.all()
+    
+    context = {
+        'exam_schedules': exam_schedules,
+        'class_list': class_list,
+    }
+    return render(request, 'hod/exam_schedule_detail.html', context)
+
 def submit_exam(request, exam_schedule_pk):
     if request.method == 'POST':
         # Process exam submission
@@ -1526,17 +1582,22 @@ def priestdashboard(request):
 
 
 
-#--------------student dashboard-------#
+#--------------studentdashboard-------#
+
 
 @never_cache
 @login_required(login_url='login_page')
 def studentdashboard(request):
     notices = Notice.objects.all().order_by('-date_created')[:5]  # Fetch the latest 5 notices
+    
+    # Fetch the exam schedule for the student (modify this according to your logic)
+    exam_schedule = ExamSchedule.objects.first()  # This fetches the first exam schedule, modify as needed
+    
     context = {
-        
         'notices': notices,
+        'exam_schedule': exam_schedule,  # Include exam_schedule in the context
     }
-    return render(request,'student/student_dashboard.html',context)
+    return render(request, 'student/student_dashboard.html', context)
 
 # def student_resources(request):
 #     student_class = EnrolledStudent.objects.get(student__user=request.user).class_name
@@ -1598,9 +1659,17 @@ def attend_class(request, class_id):
     online_class = get_object_or_404(OnlineClass, pk=class_id)
     # Additional logic to check if the student is assigned to the class
     return render(request, 'student/attend_class.html', {'online_class': online_class})
-
-
-
+# views.py
+@login_required(login_url='login_page')
+def view_own_marks(request):
+    try:
+        student = EnrolledStudent.objects.get(student__personal_info__user=request.user) 
+        marks = Mark.objects.filter(student=student)
+        context = {'student': student, 'marks': marks}
+        return render(request, 'student/view_mark.html', context)
+    except EnrolledStudent.DoesNotExist:
+        # Handle the case where EnrolledStudent does not exist for the user
+        return HttpResponse("EnrolledStudent does not exist for this user.")
 
 @login_required(login_url='login_page')
 def request_certificate(request, reg):
@@ -1647,36 +1716,37 @@ def request_certificate(request, reg):
     return render(request, 'student/request_certificate.html', context)
 
 #-----register for talent search------#
-
 @login_required(login_url='login_page')
 def talent_programs(request):
     programs = TalentProgram.objects.all()
     registrations = Registration.objects.filter(student=request.user)
+    existing_registration_ids = [registration.program.id for registration in registrations]
 
     registration = None  # Initialize registration variable
+    success_message = None  # Initialize success message variable
 
     if request.method == 'POST':
         program_id = request.POST.get('program_id')
         program = TalentProgram.objects.get(id=program_id)
 
-        # Check if the student is already registered for the program
-        existing_registration = Registration.objects.filter(student=request.user, program=program)
-        if existing_registration.exists():
+        # Check if the student is already registered for the selected program
+        if program.id in existing_registration_ids:
             messages.error(request, 'You are already registered for this program!')
         else:
             # Register the student for the program
             registration = Registration(student=request.user, program=program)
             registration.save()
-            messages.success(request, 'Registration successful!')
+            success_message = 'Registration successful for {}!'.format(program.name)
 
     context = {
         'programs': programs,
         'registrations': registrations,
         'registration': registration,  # Include the registration variable in the context
+        'success_message': success_message,  # Include the success message in the context
+        'existing_registration_ids': existing_registration_ids,  # Include existing registration IDs in the context
     }
 
     return render(request, 'talentsearch/programs.html', context)
-
 
 
 @login_required(login_url='login_page')
@@ -1695,7 +1765,7 @@ from django.shortcuts import render, get_list_or_404, redirect
 @login_required(login_url='login_page')
 def parentdashboard(request):
     if not request.user.is_authenticated:
-        return redirect('login_page')  # Assuming you have a view called login_page
+        return redirect('login_page')
 
     # Get students related to this guardian (parent).
     students = PersonalInfo.objects.filter(guardian__user=request.user)
@@ -1705,15 +1775,18 @@ def parentdashboard(request):
     
     student_attendance = AttendanceReport.objects.filter(student_id__in=student_ids)
 
-    unread_notices = Notice.objects.filter(is_read=False) # Fetch unread notices
+    # Fetch resources associated with the students
+    student_resources = Resource.objects.filter(class_info__in=student_ids)
+
+    unread_notices = Notice.objects.filter(is_read=False)
     unread_count = unread_notices.count()
 
     context = {
         'students': students,
         'attendance': student_attendance,
-        'resources': student_resources,  # You need to add a ForeignKey from Resource to PersonalInfo
+        'student_resources': student_resources,  # Updated variable name
         'unread_count': unread_count,
-        'latest_notices': unread_notices[:5] # display only the 5 latest unread notices
+        'latest_notices': unread_notices[:5]
     }
     return render(request, 'parent/parentdashboard.html', context)
 

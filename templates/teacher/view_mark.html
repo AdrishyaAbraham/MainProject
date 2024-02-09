@@ -1,22 +1,26 @@
 {% extends 'teacher/base.html' %}
 
 {% block content %}
-  <h2>Marks for {{ student.student.personal_info.user.name }}</h2>
+  <div class="container">
+    <h2>Marks for {{ student.student.personal_info.user.name }}</h2>
   
-  <table>
-    <thead>
-      <tr>
-        <th>Subject</th>
-        <th>Marks</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for mark in marks %}
-        <tr>
-          <td>{{ mark.class_name }}</td>
-          <td>{{ mark.subject1 }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <div class="table-responsive">
+      <table class="table table-striped" style="background-color: #f0f0f0;">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Marks</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for mark in marks %}
+            <tr>
+              <td>{{ mark.class_name }}</td>
+              <td>{{ mark.subject1 }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 {% endblock %}

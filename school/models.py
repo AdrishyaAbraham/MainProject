@@ -286,6 +286,7 @@ class PreviousAcademicCertificate(models.Model):
     other_certificate = models.FileField(upload_to='documents/', blank=True)
 
 class AcademicInfo(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='academic_info',null= True)
     class_info = models.ForeignKey(ClassInfo, on_delete=models.CASCADE)
     registration_no = models.IntegerField(unique=True, default=random.randint(000000, 999999))
     status_select = (

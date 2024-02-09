@@ -14,6 +14,8 @@
           <th>Roll Number</th>
           <th>Class Name</th>
           <th>Marks</th>
+          <th>Actions</th>
+
         </tr>
       </thead>
       <tbody>
@@ -24,14 +26,15 @@
             <td>({{ student_item.roll }})</td>
             <td>{{ student_item.class_name }}</td>
             <td>{{ form.as_p }}</td>
-             <td><a class="btn btn-success" href="{% url 'view_marks' student.id %}">
-                                                <i class="fa fa-search-plus"></i>View
-                                            </a>   
-                                        </td>
+             <td><button type="submit">Add Marks</button></td>
+                                        
           </tr>
         {% endfor %}
       </tbody>
     </table>
-    <button type="submit">Add Marks</button>
+     <td><a class="btn btn-success" href="{% url 'view_marks' student.id %}">
+          <i class="fa fa-search-plus"></i>View Mark
+                                            </a> 
+    
   </form>
 {% endblock %}
