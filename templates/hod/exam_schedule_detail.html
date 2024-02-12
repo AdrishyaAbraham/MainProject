@@ -9,7 +9,7 @@
             <div class="form-group">
                 <label for="class_id">Select Class:</label>
                 <select class="form-control" id="class_id" name="class_id">
-                    <option value="">Select Class</option>
+                    <option value="" class="class_value">Select Class</option>
                     {% for class_item in class_list %}
                         <option value="{{ class_item.id }}">{{ class_item.class_name }}</option>
                     {% endfor %}
@@ -43,4 +43,11 @@
         </div>
     </div>
 </main>
+
+<style>
+    /* Custom CSS for select option text color */
+    .class_value {
+        color: blue; /* Change the color to your desired color */
+    }
+</style>
 {% endblock %}
