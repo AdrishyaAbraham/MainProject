@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'channels',
     'chatroom',
-   
+    'progressreport',
+    'onlineexam',
     
 ]
 

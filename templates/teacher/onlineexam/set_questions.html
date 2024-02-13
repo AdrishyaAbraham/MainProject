@@ -30,6 +30,8 @@
             <button type="button" class="btn btn-primary" onclick="addQuestion()">Add Question</button>
             <button type="button" class="btn btn-secondary" onclick="removeQuestion()">Remove Question</button>
             <button type="button" class="btn btn-warning" onclick="resetQuestions()">Reset Questions</button>
+            <input type="hidden" name="question_count" id="question_count" value="0">
+
             <button type="submit" class="btn btn-primary">Create Online Exam</button>
         </form>
     </div>
@@ -80,6 +82,11 @@
             questionDiv.appendChild(answerSelect);
 
             container.appendChild(questionDiv);
+            // Inside the addQuestion() function
+document.getElementById('question_count').value = container.childElementCount;
+
+// Inside the removeQuestion() function
+
         }
 
         function removeQuestion() {
@@ -89,6 +96,8 @@
             if (questionCount > 0) {
                 container.removeChild(container.lastChild);
             }
+            
+document.getElementById('question_count').value = container.childElementCount;
         }
 
         function resetQuestions() {

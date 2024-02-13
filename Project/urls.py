@@ -26,6 +26,8 @@ urlpatterns = [
 
     path('s/', include('school.urls')),
     path('c/', include('chatroom.urls')),
+    path('report/', include('progressreport.urls')),
+
 
     path('logout/',user_logout,name='logout'),
     path('t/',teacherdashboard, name='teacherdashboard'),

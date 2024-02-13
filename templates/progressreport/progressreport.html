@@ -1,0 +1,116 @@
+
+
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Report Card</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom styles can be added here */
+        /* Adjust margins, paddings, font sizes, etc. */
+    </style>
+</head>
+<div class="container">
+    <!-- Progress Report Card -->
+    <div class="card mt-5">
+        <div class="card-header bg-primary text-white text-center">
+            <h2>Progress Report Card</h2>
+        </div>
+        <div class="card-body">
+            <!-- Student Information -->
+            <h4 class="mb-4">Student Information</h4>
+            <ul class="list-group mb-4">
+                <li class="list-group-item">Name: {{ student.name }}</li>
+                <li class="list-group-item">Student ID: {{ student.student_id }}</li>
+                <li class="list-group-item">Class: {{ student.class_name }}</li>
+                <li class="list-group-item">Academic Year: {{ student.academic_year }}</li>
+            </ul>
+            <!-- Subject-wise Grades/Assessment -->
+            <h4 class="mb-4">Subject-wise Grades/Assessment</h4>
+            <table class="table table-bordered mb-4">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Subject</th>
+                        <th>Grade</th>
+                        <th>Comments</th>
+                        <th>Attendance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subject in subjects %}
+                    <tr>
+                        <td>{{ subject.name }}</td>
+                        <td>{{ subject.grade }}</td>
+                        <td>{{ subject.comments }}</td>
+                        <td>{{ subject.attendance }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <!-- Overall Performance Summary -->
+            <h4 class="mb-4">Overall Performance Summary</h4>
+            <ul class="list-group mb-4">
+                <li class="list-group-item">Overall Grade: {{ overall_grade }}</li>
+                <li class="list-group-item">Summary: {{ performance_summary }}</li>
+                <li class="list-group-item">Remarks: {{ remarks }}</li>
+                <li class="list-group-item">Recommendations: {{ recommendations }}</li>
+            </ul>
+            <!-- Behavior and Conduct -->
+            <h4 class="mb-4">Behavior and Conduct</h4>
+            <ul class="list-group mb-4">
+                <li class="list-group-item">Behavior: {{ behavior }}</li>
+                <li class="list-group-item">Punctuality: {{ punctuality }}</li>
+                <li class="list-group-item">Cooperation: {{ cooperation }}</li>
+                <li class="list-group-item">Recommendations: {{ behavior_recommendations }}</li>
+            </ul>
+            <!-- Teacher's Comments -->
+            <h4 class="mb-4">Teacher's Comments</h4>
+            <p class="mb-4">{{ teacher_comments }}</p>
+            <!-- Parent/Guardian Feedback -->
+            <h4 class="mb-4">Parent/Guardian Feedback</h4>
+            <p class="mb-4">{{ parent_feedback }}</p>
+            <!-- School Information -->
+            <h4 class="mb-4">School Information</h4>
+            <p class="mb-4">School Name: {{ school_name }}</p>
+            <p class="mb-4">Contact Information: {{ contact_information }}</p>
+            <p class="mb-4">Principal's Signature: [Signature]</p>
+            <!-- Additional Information -->
+            <h4 class="mb-4">Additional Information</h4>
+            <p class="mb-4">{{ additional_information }}</p>
+            <!-- Grading Scale -->
+            <h4 class="mb-4">Grading Scale</h4>
+            <p class="mb-4">A: 90-100 (Excellent), B: 80-89 (Good), C: 70-79 (Satisfactory), D: 60-69 (Needs Improvement)</p>
+        </div>
+        <div class="card-footer bg-secondary text-white text-center">
+            Date of Issue: {{ date_of_issue }}
+        </div>
+    </div>
+    <!-- End Progress Report Card -->
+    <div class="text-center mt-3">
+        <!-- Button to download PDF -->
+        <button class="btn btn-primary" onclick="downloadPDF()">Download PDF</button>
+    </div>
+</div>
+
+<!-- Bootstrap JS and jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+<script>
+    function downloadPDF() {
+        const reportCard = document.querySelector('.card');
+        const pdf = new jsPDF();
+        // Generate PDF from HTML element
+        pdf.html(reportCard, {
+            callback: function (pdf) {
+                // Save PDF
+                pdf.save('progress_report_card.pdf');
+            }
+        });
+    }
+</script>
+
+{% endblock %}
