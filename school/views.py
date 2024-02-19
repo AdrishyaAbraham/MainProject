@@ -598,13 +598,18 @@ def teacherdashboard(request):
     student_id = enrolled_student.id if enrolled_student else None
 
     teacher = TeacherPersonalInfo.objects.all()
+    exam_schedule = ExamSchedule.objects.first()
+
+    # If exam_schedule exists, get its id, otherwise set exam_schedule_id to None
+    exam_schedule_id = exam_schedule.id if exam_schedule else None
     context = {
         'teacher': teacher,
         'latest_notices': latest_notices,
         'notices': notices,
         'enrolled_student': enrolled_student,
         'student_id': student_id,  # Add student_id to the context
-        'enrolled_student_id': student_id,  # Add enrolled_student_id to the context
+        'enrolled_student_id': student_id,
+        'exam_schedule_id': exam_schedule_id,  # Add enrolled_student_id to the context
     }
     return render(request, 'teacher/teacher_dashboard.html', context)
 
@@ -1101,7 +1106,77 @@ def admin_view_attendance(request):
     }
     return render(request, "hod/attendance/admin_view_attenndace.html", context)
  
- 
+#-------------grade promotion------#
+
+def determine_next_class(student):
+    current_class = student.class_name
+    # Logic to determine the next class based on your promotion criteria
+    # For example, you can increment the class number by 1 if the student meets the promotion criteria
+    next_class_number = current_class.class_number + 1
+    # Assuming you have a ClassInfo model with a field named class_number
+    next_class = ClassInfo.objects.get(class_number=next_class_number)
+    return next_class
+    
+def determine_next_academic_year_session():
+    current_year = datetime.now().year
+    current_session = Session.objects.get(name=str(current_year))
+    next_year = current_year + 1
+    next_session_name = str(next_year)
+    # Check if the next session already exists, otherwise create it
+    next_session, created = Session.objects.get_or_create(name=next_session_name)
+    return next_session
+
+def promote_students(request):
+    if request.method == 'POST':
+        student_ids = request.POST.getlist('student_ids')  # Assuming you have checkboxes for selecting students
+        next_academic_year_session = determine_next_academic_year_session()  # Assuming you have a method to determine the session for the next academic year
+        for student_id in student_ids:
+            student = EnrolledStudent.objects.get(id=student_id)
+            next_class = determine_next_class(student)
+            # Create a new class registration for the next academic year
+            ClassRegistration.objects.create(
+                class_name=next_class,
+                section=student.class_name.section,  # Assuming section remains the same
+                guide_teacher=student.class_name.guide_teacher,  # Assuming same teacher continues
+                session=next_academic_year_session,
+                student=student
+            )
+        messages.success(request, 'Students promoted successfully.')
+        return redirect('select_class')
+    else:
+        # Handle GET request if someone tries to access the view directly
+        return redirect('select_class')
+    
+def select_class(request):
+    if request.method == 'POST':
+        class_id = request.POST.get('class_id')
+        selected_class = ClassRegistration.objects.get(id=class_id)
+        
+        # Fetch all students enrolled in the selected class along with their marks and attendance
+        students = EnrolledStudent.objects.filter(class_name=selected_class)
+        for student in students:
+            try:
+                student.marks = Mark.objects.get(student=student)
+            except Mark.DoesNotExist:
+                student.marks = None
+            
+            student.attendance = Attendance.objects.filter(class_info_id=student.class_name.class_name_id)
+
+        context = {
+            'selected_class': selected_class,
+            'students': students
+        }
+        return render(request, 'promotestudent/select_class.html', context)
+    else:
+        # Handle GET request to render the form for selecting a class
+        classes = ClassRegistration.objects.all()
+        context = {
+            'class_registrations': classes
+        }
+        return render(request, 'promotestudent/select_class.html', context)
+
+
+
 #--------------cicrculars and notfications----#
 
 

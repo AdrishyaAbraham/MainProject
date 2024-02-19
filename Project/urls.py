@@ -27,6 +27,8 @@ urlpatterns = [
     path('s/', include('school.urls')),
     path('c/', include('chatroom.urls')),
     path('report/', include('progressreport.urls')),
+    path('online-exam/', include('onlineexam.urls')),
+
 
 
     path('logout/',user_logout,name='logout'),

@@ -1,0 +1,44 @@
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Class</title>
+</head>
+<body>
+    <h1>Select Class</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="class_id">Select Class:</label>
+        <select name="class_id" id="class_id">
+            {% for class_registration in class_registrations %}
+            <option value="{{ class_registration.id }}">{{ class_registration.class_name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Select</button>
+    </form>
+    
+    {% if selected_class %}
+    <h2>Class: {{ selected_class.class_name }}</h2>
+    <h3>Students:</h3>
+    <form method="post" action="{% url 'promote_students' %}">
+        {% csrf_token %}
+        <input type="hidden" name="class_id" value="{{ selected_class.id }}">
+        <ul>
+            {% for student in students %}
+            <li>
+                <input type="checkbox" name="student_ids" value="{{ student.id }}">
+                Name: {{ student.student.user.name }}<br>
+                Marks: {{ student.marks }}<br>
+                Attendance: {{ student.attendance }}<br>
+            </li>
+            {% endfor %}
+        </ul>
+        <button type="submit">Promote Selected Students</button>
+    </form>
+    {% endif %}
+</body>
+</html>
+{% endblock %}

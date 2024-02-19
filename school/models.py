@@ -318,16 +318,15 @@ class EnrolledStudent(models.Model):
     
     def __str__(self):
         return str(self.roll)    
-
+        
 class Attendance(models.Model):
-   
-    
-    ClassInfo_id = models.ForeignKey(EnrolledStudent, on_delete=models.DO_NOTHING)
+    class_info = models.ForeignKey(ClassInfo, on_delete=models.DO_NOTHING,null=True)
     attendance_date = models.DateField()
     session_year_id = models.ForeignKey(Session, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = models.Manager()
+
 
  
  
@@ -410,14 +409,15 @@ class TeacherNotice(models.Model):
 
 
 # models.py
-
 class Mark(models.Model):
     student = models.ForeignKey(EnrolledStudent, on_delete=models.CASCADE)
     subject1 = models.PositiveIntegerField(null=True, blank=True)
-    class_name = models.ForeignKey(ClassRegistration, on_delete=models.CASCADE,null=True)
+    class_name = models.ForeignKey(ClassRegistration, on_delete=models.CASCADE, null=True)
     
     def __str__(self):
-        return f"{self.student.student.personal_info.user.name} - Marks"
+        student_name = self.student.student.personal_info.user.name if self.student.student else "Unknown"
+        return f"{student_name} - Marks"
+
 
     
 class ScheduledClass(models.Model):
@@ -482,6 +482,7 @@ class Certificate(models.Model):
 
 
 #online exams.........
+ 
     
 class ExamSchedule(models.Model):
     hod = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -493,41 +494,4 @@ class ExamSchedule(models.Model):
     is_published = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.subject} - Class {self.class_name} - {self.date}"
-
-
-class Question(models.Model):
-    exam_schedule = models.ForeignKey(ExamSchedule, on_delete=models.CASCADE)
-    question_text = models.CharField(max_length=500)
-
-    def __str__(self):
-        return self.question_text
-
-
-class Option(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    option_text = models.CharField(max_length=200)
-    is_correct = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.option_text
-
-
-class StudentExamSubmission(models.Model):
-    student = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    exam_schedule = models.ForeignKey(ExamSchedule, on_delete=models.CASCADE)
-    submission_time = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.student} - {self.exam_schedule.subject} - {self.submission_time}"
-
-
-class StudentAnswer(models.Model):
-    submission = models.ForeignKey(StudentExamSubmission, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    selected_option = models.ForeignKey(Option, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.submission.student} - {self.question} - {self.selected_option}"
-
-    
+        return f"{self.subject} - Class {self.class_name} - {self.date} -{self.start_time}"

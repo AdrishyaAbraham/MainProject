@@ -69,7 +69,9 @@ urlpatterns = [
   #register class--------
   path('class_registration', views.class_registration, name='class-registration'),
   path('class-list', views.class_list, name='class-list'),
-
+  #promote students
+  path('promote/', views.promote_students, name='promote_students'),
+  path('select-class/', views.select_class, name='select_class'),
 
   #teacher...dashboard.....
   path('', views.uploadresource, name='uploadresource'),

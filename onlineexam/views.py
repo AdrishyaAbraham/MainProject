@@ -1,70 +1,65 @@
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from . models import *
 from .models import *
 from school.models import *
 from django.contrib.auth.decorators import login_required
 
+
 def online_exam(request):
     if request.method == 'POST':
-        date = request.POST.get('date')
-        start_time = request.POST.get('start_time')
-        duration_hours = request.POST.get('duration_hours')
-        class_name_id = request.POST.get('class_name_id')  # Assuming the class_name_id is provided in the form
-        
-        # Check if all required fields are provided
-        if date and start_time and duration_hours and class_name_id:
-            # Get the ClassInfo instance
-            class_name = ClassInfo.objects.get(id=class_name_id)
+        # Get the exam schedule ID from the form submission
+        exam_schedule_id = request.POST.get('exam_schedule')
+        if exam_schedule_id:
+            # Retrieve the exam schedule object
+            exam_schedule = ExamSchedule.objects.get(id=exam_schedule_id)
             
-            # Find an existing ExamSchedule instance for the given date, start time, and class
-            exam_schedule = ExamSchedule.objects.filter(date=date, start_time=start_time, class_name=class_name).first()
-            
-            if not exam_schedule:
-                # If an ExamSchedule doesn't exist for the given parameters, handle the situation accordingly
-                return HttpResponseBadRequest("No exam schedule found for the given parameters.")
-            
-            # Get the number of questions dynamically added to the form
+            # Get the total number of questions from the form
             question_count = int(request.POST.get('question_count'))
-            
-            # Loop through each question and its options
+
+            # Iterate through each question
             for i in range(1, question_count + 1):
-                question_text = request.POST.get(f'question{i}')
-                correct_option_index = int(request.POST.get(f'question{i}_answer'))
+                # Construct the keys for question text and answer from the form data
+                question_text_key = f'question{i}'
+                answer_key = f'question{i}_answer'
                 
-                # Create the Question instance associated with the retrieved ExamSchedule
-                question = Question.objects.create(exam_schedule=exam_schedule, question_text=question_text)
-                
-                # Loop through each option for the current question
-                for j in range(1, 5):  # Assuming there are always 4 options
-                    option_text = request.POST.get(f'question{i}_option{j}')
+                # Get the question text and correct answer from the form data
+                question_text = request.POST.get(question_text_key)
+                correct_answer = int(request.POST.get(answer_key))
+
+                # Create the question object and associate it with the exam schedule
+                question = Question.objects.create(
+                    exam_schedule=exam_schedule,
+                    question_text=question_text
+                )
+
+                # Iterate through each option for the current question
+                for j in range(1, 5):
+                    # Construct the key for option text from the form data
+                    option_text_key = f'question{i}_option{j}'
                     
-                    # Determine if the current option is correct based on its index
-                    is_correct = (j == correct_option_index)
+                    # Get the option text from the form data
+                    option_text = request.POST.get(option_text_key)
                     
-                    # Create the Option instance
-                    Option.objects.create(question=question, option_text=option_text, is_correct=is_correct)
-            
+                    # Determine if the current option is the correct answer
+                    is_correct = (j == correct_answer)
+
+                    # Create the option object and associate it with the current question
+                    Option.objects.create(
+                        question=question,
+                        option_text=option_text,
+                        is_correct=is_correct
+                    )
+
             # Redirect to a success page or another view
-            return redirect('exam_schedule_detail', pk=exam_schedule.pk)
+            return redirect('success_page')
         else:
-            # If any required field is missing, return a bad request response
-            return HttpResponseBadRequest("Missing required parameters")
+            # Return a bad request response if no exam schedule ID is provided
+            return HttpResponseBadRequest("Please select an exam schedule.")
     else:
-        default_date = '2024-02-09'  # Default date, you can change this
-        default_start_time = '09:00'  # Default start time, you can change this
-        default_duration_hours = '2'  # Default duration hours, you can change this
-        
-        context = {
-            'default_date': default_date,
-            'default_start_time': default_start_time,
-            'default_duration_hours': default_duration_hours,
-        }
-        # Render the form template
-        return render(request, 'teacher/onlineexam/set_questions.html', context)
-
-
-
+        # Handle GET request or other methods if needed
+        return HttpResponse("This view only supports POST requests.")
+    
 @login_required
 def take_exam(request, exam_schedule_id):
     exam_schedule = ExamSchedule.objects.get(pk=exam_schedule_id)
@@ -115,7 +110,7 @@ def schedule_exam(request):
             class_list = ClassInfo.objects.all()
             context = {
                 'class_list': class_list,
-                'error_message': error_message
+                'error_message': error_message         
             }
             return render(request, 'hod/schedule_exam.html', context)
         else:
@@ -131,9 +126,11 @@ def schedule_exam(request):
             return redirect('exam_schedule_detail')
     else:
         # Fetch all classes
+        exam_schedules = ExamSchedule.objects.all()
         class_list = ClassInfo.objects.all()
         context = {
             'class_list': class_list,
+             'exam_schedules': exam_schedules,
              # Default start time, you can change this
         }
         # Render a template with a form to schedule an exam along with the list of classes
@@ -180,3 +177,12 @@ def exam_submission_confirmation(request):
 
 
 # Create your views here.
+
+def list_questions_and_answers(request, exam_schedule_id):
+    exam_schedule = get_object_or_404(ExamSchedule, id=exam_schedule_id)
+    questions = exam_schedule.question_set.all()  # Assuming a reverse relation from ExamSchedule to Question model
+    context = {
+        'exam_schedule': exam_schedule,
+        'questions': questions,
+    }
+    return render(request, 'teacher/onlineexam/list_questions_and_answers.html', context)
