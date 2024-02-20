@@ -5,27 +5,26 @@
     <div class="container mt-5">
         <h2>Create Online Exam</h2>
 
-        <form method="post" action="{% url 'online_exam' %}">
+        <form method="post" action="">
 
             {% csrf_token %}
 
             <div class="form-group">
-    <label for="exam_schedule">Exam Schedule:</label>
-    <select class="form-control" id="exam_schedule" name="exam_schedule">
-        {% for schedule in exam_schedules %}
-        <option value="{{ schedule.id }}">{{ schedule }}</option>
-        {% endfor %}
-    </select>
-</div>
+                <label for="exam_schedule">Exam Schedule:</label>
+                <select class="form-control" id="exam_schedule" name="exam_schedule">
+                    {% for schedule in exam_schedules %}
+                    <option value="{{ schedule.id }}">{{ schedule }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-            
             <div id="questions-container">
                 <!-- Dynamic questions will be added here -->
             </div>
 
-            <button type="button" class="btn btn-primary" onclick="addQuestion()">Add Question</button>
-            <button type="button" class="btn btn-secondary" onclick="removeQuestion()">Remove Question</button>
-            <button type="button" class="btn btn-warning" onclick="resetQuestions()">Reset Questions</button>
+            <button type="button" class="btn btn-primary mb-2" onclick="addQuestion()">Add Question</button>
+            <button type="button" class="btn btn-secondary mb-2" onclick="removeQuestion()">Remove Question</button>
+            <button type="button" class="btn btn-warning mb-2" onclick="resetQuestions()">Reset Questions</button>
             <input type="hidden" name="question_count" id="question_count" value="0">
 
             <button type="submit" class="btn btn-primary">Create Online Exam</button>
@@ -45,7 +44,7 @@
 
             var questionInput = document.createElement("input");
             questionInput.type = "text";
-            questionInput.className = "form-control";
+            questionInput.className = "form-control mb-2";  // Added Bootstrap classes for styling
             questionInput.name = "question" + questionNumber;
             questionInput.placeholder = "ചോദ്യം";
             questionDiv.appendChild(questionInput);
@@ -53,7 +52,7 @@
             for (var i = 1; i <= 4; i++) {
                 var optionInput = document.createElement("input");
                 optionInput.type = "text";
-                optionInput.className = "form-control";
+                optionInput.className = "form-control mb-2";  // Added Bootstrap classes for styling
                 optionInput.name = "question" + questionNumber + "_option" + i;
                 optionInput.placeholder = "Option " + i;
                 questionDiv.appendChild(optionInput);
@@ -64,7 +63,7 @@
             questionDiv.appendChild(answerLabel);
 
             var answerSelect = document.createElement("select");
-            answerSelect.className = "form-control";
+            answerSelect.className = "form-control mb-2";  // Added Bootstrap classes for styling
             answerSelect.name = "question" + questionNumber + "_answer";
             answerSelect.required = true;
 
@@ -78,11 +77,7 @@
             questionDiv.appendChild(answerSelect);
 
             container.appendChild(questionDiv);
-            // Inside the addQuestion() function
-document.getElementById('question_count').value = container.childElementCount;
-
-// Inside the removeQuestion() function
-
+            document.getElementById('question_count').value = container.childElementCount;
         }
 
         function removeQuestion() {
@@ -93,7 +88,7 @@ document.getElementById('question_count').value = container.childElementCount;
                 container.removeChild(container.lastChild);
             }
             
-document.getElementById('question_count').value = container.childElementCount;
+            document.getElementById('question_count').value = container.childElementCount;
         }
 
         function resetQuestions() {

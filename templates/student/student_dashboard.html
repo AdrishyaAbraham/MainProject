@@ -171,11 +171,27 @@
             <span class="material-icons-outlined">upload_file</span> Certificate
             </a> 
           </li>
+
+
+
+          
 		   <li class="sidebar-list-item">
-            <a href="" target="_self">
+            <a href="{% url 'take_exam' exam_schedule_id=exam_schedule.id %}">
+            {% comment %} <a href="{% url 'exam_results' submission_id=submission.id %}">View Exam Results</a> {% endcomment %}
+
+            <span class="material-icons-outlined">forum</span>Take Exam</a>
+            </a>
+          </li>
+
+
+
+		   <li class="sidebar-list-item">
+      
             <span class="material-icons-outlined">forum</span> Feedback
             </a>
           </li>
+
+
           <li class="sidebar-list-item">
             <a href="#" target="_self">
             <span class="material-icons-outlined">campaign</span> Activities
@@ -221,9 +237,11 @@
 
           <div class="card">
             <div class="card-inner">
-              <h3>RULES AND FORUM</h3>
+             <a href="{% url 'video_chat_students' %}" style="text-decoration: none; color: inherit;">
+              <h3>COUNSELLING</h3>
                <span class="material-icons-outlined">campaign</span> 
             </div>
+            </a>
             <h1></h1>
           </div>
 

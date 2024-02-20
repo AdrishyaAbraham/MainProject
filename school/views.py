@@ -6,6 +6,8 @@ from django.shortcuts import render, redirect,get_object_or_404
 from django.urls import reverse
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
+
+from onlineexam.views import *
 from .models import *
 from .forms import *
 from django.shortcuts import render
@@ -148,10 +150,14 @@ def studentdashboard(request):
     user=request.user
     print(user)
     student = PersonalInfo.objects.all()
+    latest_submission = StudentExamSubmission.objects.filter(student=student).order_by('-submission_time').first()
+
     context = {
-        'student': student
+        'student': student,
+        'submission_id': latest_submission.id if latest_submission else None,
     }
     return render(request,'student/student_dashboard.html',context)
+
 from django.contrib.auth import authenticate, login
 
 
@@ -609,7 +615,8 @@ def teacherdashboard(request):
         'enrolled_student': enrolled_student,
         'student_id': student_id,  # Add student_id to the context
         'enrolled_student_id': student_id,
-        'exam_schedule_id': exam_schedule_id,  # Add enrolled_student_id to the context
+        'exam_schedule_id': exam_schedule_id,
+          'name':request.user.name  # Add enrolled_student_id to the context
     }
     return render(request, 'teacher/teacher_dashboard.html', context)
 

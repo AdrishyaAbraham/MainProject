@@ -1,0 +1,35 @@
+{% extends "student/sidebar.html" %}
+{% block content %}
+<main class="main-container" style="background-color: #C9C6C5;">
+    <div class="container mt-5">
+        <h2 style="color: black;">Exam Results</h2>
+        <h3 style="color: black;">Total Marks: {{ submission.total_marks }}</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Question</th>
+                        <th>Selected Option</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for answer in student_answers %}
+                    <tr>
+                        <td>{{ answer.question.question_text }}</td>
+                        <td>{{ answer.selected_option.option_text }}</td>
+                        <td>
+                            {% if answer.selected_option.is_correct %}
+                            <span class="text-success">Correct</span>
+                            {% else %}
+                            <span class="text-danger">Incorrect</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+{% endblock %}

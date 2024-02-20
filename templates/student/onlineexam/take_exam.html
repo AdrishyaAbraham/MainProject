@@ -1,0 +1,35 @@
+{% extends "student/sidebar.html" %}
+{% block content %}
+<main class="main-container" style="background-image: url(''); background-size: cover; background-position: center;">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="text-center mb-4">Exam: {{ exam_schedule.subject }}</h2>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            {% for question in questions %}
+                            <div class="question">
+                                <h4>{{ question.question_text }}</h4>
+                                {% for option in question.option_set.all %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="question_{{ question.id }}_option" value="{{ option.id }}" id="option{{ option.id }}">
+                                    <label class="form-check-label" for="option{{ option.id }}">
+                                        {{ option.option_text }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endfor %}
+                            <button type="submit" class="btn btn-primary mt-4">Submit Exam</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
