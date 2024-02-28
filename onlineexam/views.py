@@ -122,7 +122,7 @@ def take_exam(request, exam_schedule_id):
         submission.total_marks = total_marks
         submission.save()
 
-        return redirect('exam_results', submission_id=submission.id)
+        return redirect('exam_results', submission_id=submission.id) 
 
     context = {
         'exam_schedule': exam_schedule,

@@ -17,3 +17,4 @@ def progress_report_card_view(request):
     }
     
     return render(request, 'progressreport/progressreport.html', context)
+

@@ -1782,3 +1782,33 @@ def download_resource(request, resource_id):
     response = FileResponse(open(file_path, 'rb'))
     response['Content-Disposition'] = f'attachment; filename="{resource.resource_title}"'
     return response
+
+
+#-------------student details--------------#
+import pandas as pd
+from django.http import HttpResponse
+
+def download_student_details(request):
+    # Assuming you want to retrieve all students
+    students = CustomUser.objects.filter(role='student')
+
+    # Convert student data to a DataFrame
+    data = {
+        'Name': [student.name for student in students],
+        'Email': [student.email for student in students],
+        'Mobile': [student.mobile for student in students],
+        'Address': [student.address for student in students],
+        # Add other fields as needed
+    }
+    df = pd.DataFrame(data)
+
+    # Create Excel writer object
+    writer = pd.ExcelWriter('student_details.xlsx', engine='xlsxwriter')
+    df.to_excel(writer, index=False, sheet_name='Students')
+    writer.save()
+
+    # Prepare response
+    excel_file = open('student_details.xlsx', 'rb')
+    response = HttpResponse(excel_file.read(), content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=student_details.xlsx'
+    return response

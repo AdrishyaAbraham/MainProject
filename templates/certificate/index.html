@@ -1,0 +1,102 @@
+{% extends 'hod/base.html' %}
+
+{% block content %}
+<h2>
+    <i class="fa fa-certificate "></i> Issue Certificate
+</h2>
+<br/>
+<form enctype="multipart/form-data" method="post" class="needs-validation" novalidate>{% csrf_token %}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="eventName">Event Name</label>
+            <input type="text" class="form-control" id="eventName" required name="event_name">
+            <div class="invalid-feedback">
+                Please provide an event name.
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="eventType">Event Type</label>
+            <select class="form-control" id="eventType" name="event_type" required>
+                <option selected disabled>Choose...</option>
+                <option value="Webinar">Webinar</option>
+                <option value="Workshop">Workshop</option>
+                <option value="Expert Talk">Expert Talk</option>
+                <option value="Live Project">Live Project</option>
+                <option value="Quiz">Quiz</option>
+            </select>
+            <div class="invalid-feedback">
+                Please select an event type.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="templateFile">Upload Template</label>
+            <input type="file" class="form-control" id="templateFile" required name="template">
+            <div class="invalid-feedback">
+                Please choose a template file.
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label for="startDate">Starting Date</label>
+            <input type="date" class="form-control" id="startDate" required name="s-date">
+            <div class="invalid-feedback">
+                Please choose a starting date.
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label for="endDate">Ending Date</label>
+            <input type="date" class="form-control" id="endDate" required name="e-date">
+            <div class="invalid-feedback">
+                Please choose an ending date.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="csvInput">Upload CSV</label>
+            <input type="file" class="form-control" id="csvInput" required name="csv">
+            <div class="invalid-feedback">
+                Please choose a CSV file.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <button type="submit" class="btn btn-primary">Next</button>
+    </div>
+</div>
+</form>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="alert alert-success" role="alert">
+            Note :-
+            <ol>
+                <li>Template file should be in .ppt or .pptx format.</li>
+                <li>In template at the place of <b>Name</b>, please write <b>{{ "{{Full Name}" }}}</b></li>
+                <li>In template at the place of <b>Organization</b>, please write <b>{{"{{organization}"}}}</b></li>
+                <li>In template at the place of <b>Event Type</b>, please write <b>{{"{{Event Type}"}}}</b></li>
+                <li>In template at the place of <b>Topic</b>, please write <b>{{"{{topic}"}}}</b></li>
+                <li>In template at the place of <b>Date</b>, please write <b>{{"{{Date}"}}}</b></li>
+            </ol>
+        </div>
+    </div>
+</div>
+{% endblock %}
