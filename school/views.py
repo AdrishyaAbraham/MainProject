@@ -1115,14 +1115,42 @@ def admin_view_attendance(request):
  
 #-------------grade promotion------#
 
+
 def determine_next_class(student):
+    # Get the current class of the student
     current_class = student.class_name
-    # Logic to determine the next class based on your promotion criteria
-    # For example, you can increment the class number by 1 if the student meets the promotion criteria
-    next_class_number = current_class.class_number + 1
-    # Assuming you have a ClassInfo model with a field named class_number
-    next_class = ClassInfo.objects.get(class_number=next_class_number)
+
+    # Get the session of the current class
+    current_session = current_class.session
+
+    # Get the current year
+    current_year = datetime.now().year
+
+    # Get the next academic year session
+    next_session_year = current_year + 1
+    next_session_name = str(next_session_year)
+    try:
+        next_session = Session.objects.get(name=next_session_name)
+    except Session.DoesNotExist:
+        # Handle the case where the next session does not exist
+        return None
+
+    # Check if the current session is the last session of the academic year
+    sessions_of_current_year = Session.objects.filter(name=current_year)
+    last_session_of_current_year = sessions_of_current_year.latest('date')
+    
+    if current_session == last_session_of_current_year:
+        # Get the next class for the next academic year
+        next_class = ClassInfo.objects.get(class_name=current_class, session=next_session)
+    else:
+        # If the current session is not the last session of the academic year,
+        # the student remains in the same class for the next session
+        next_class = current_class
+    
     return next_class
+
+
+
     
 def determine_next_academic_year_session():
     current_year = datetime.now().year

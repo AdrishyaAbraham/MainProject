@@ -60,6 +60,34 @@
 .dropdown-content-info p:hover {
     background-color: #f1f1f1;
 }
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 10px; /* Width of the scrollbar */
+}
+
+/* Scrollbar Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Color of the scrollbar track */
+}
+
+/* Scrollbar Handle */
+::-webkit-scrollbar-thumb {
+    background: #888; /* Color of the scrollbar handle */
+    border-radius: 5px; /* Rounded corners of the scrollbar handle */
+}
+
+/* Hover styles for scrollbar handle */
+::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Color of the scrollbar handle on hover */
+}
+body {
+    overflow: hidden;
+}
+.main-container {
+    overflow: hidden;
+}
+
 </style>
   </head>
   <body>
@@ -228,13 +256,13 @@
             <li class="sidebar-list-item">
                 <a href="{% url 'promote_students'  %}" target="_blank">       
           <span class="material-icons-outlined">show_chart</span>Promote Students
-    </a>
-</li>
-<li class="sidebar-list-item">
+          </a>
+          </li>
+            <li class="sidebar-list-item">
                 <a href="{% url 'certificate-home'  %}" target="_blank">       
-          <span class="material-icons-outlined">developer_guide</span>Certificate generation
-    </a>
-</li>
+              <span class="material-icons-outlined">workspace_premium</span>Approve certificate
+            </a>
+            </li>
             
 <li class="sidebar-list-item">
                 <a href="" target="_blank">       
