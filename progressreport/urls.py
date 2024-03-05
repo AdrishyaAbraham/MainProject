@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import progress_report_card_view
+from .views import *
 
 urlpatterns = [
-    path('progress-report/', progress_report_card_view, name='progress_report_card'),
+    path('progress-report/<int:academic_info_id>/', progress_report, name='progress_report'),
     # Add more URL patterns as needed
 ]

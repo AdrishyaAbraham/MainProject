@@ -160,10 +160,11 @@ AUTHENTICATION_BACKENDS = (
 )
 # Email Configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_FILE_PATH = BASE_DIR/ "sent_emails"
+EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smptp.gmail.com'
+EMAIL_USE_SSL = False  # Set to False
+EMAIL_HOST = 'smtp.gmail.com'  # Corrected typo
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'adrishyamariaabraham2024@mca.ajce.in'
-EMAIL_HOST_PASSWORD = 'adrishyaabraham1234'
+EMAIL_HOST_USER = 'adrishyamariaabraham2024@gmail.com'
+EMAIL_HOST_PASSWORD = 'ryagnnelfbqmnvgv'
 

@@ -1,0 +1,31 @@
+{% extends 'parent/sidebar.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Student Marks</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Marks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mark in student_marks %}
+                        <tr>
+                            <td>{{ mark.student }}</td>
+                            <td>27</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

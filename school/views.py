@@ -1544,10 +1544,12 @@ def studentdashboard(request):
     
     # Fetch the exam schedule for the student (modify this according to your logic)
     exam_schedule = ExamSchedule.objects.first()  # This fetches the first exam schedule, modify as needed
-    
+    academic_info = AcademicInfo.objects.all()
+
     context = {
         'notices': notices,
-        'exam_schedule': exam_schedule,  # Include exam_schedule in the context
+        'exam_schedule': exam_schedule,
+        'academic_info': academic_info,  # Include academic_info in the context
     }
     return render(request, 'student/student_dashboard.html', context)
 
@@ -1783,6 +1785,39 @@ def download_resource(request, resource_id):
     response['Content-Disposition'] = f'attachment; filename="{resource.resource_title}"'
     return response
 
+@login_required(login_url='login_page')
+def view_student_marks(request):
+    try:
+        # Get the guardian object associated with the current user
+        guardian_info = GuardianInfo.objects.get(user=request.user)
+        
+        # Retrieve the enrolled students associated with the guardian
+        enrolled_students = EnrolledStudent.objects.filter(student__personal_info__guardian=guardian_info)
+        
+        # Initialize a list to store student marks
+        student_marks = []
+        
+        # Iterate over enrolled students
+        for enrolled_student in enrolled_students:
+            # Ensure enrolled_student is an instance of EnrolledStudent
+            if isinstance(enrolled_student, EnrolledStudent):
+                # Retrieve marks for each student
+                marks = Mark.objects.filter(student=enrolled_student)
+                student_name = enrolled_student.student.personal_info.user.name if enrolled_student.student.personal_info else "Unknown"
+                student_marks.append({'student': student_name, 'marks': marks})
+        
+        # Pass student_marks to the template for rendering
+        context = {
+            'student_marks': student_marks,
+        }
+        return render(request, 'parent/student_mark.html', context)
+    
+    except GuardianInfo.DoesNotExist:
+        # Handle the case where GuardianInfo for the user does not exist
+        return HttpResponse("GuardianInfo not found for the user.")
+
+
+    
 
 #-------------student details--------------#
 import pandas as pd

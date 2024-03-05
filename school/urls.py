@@ -116,7 +116,7 @@ urlpatterns = [
   path('view_attendance/', views.view_student_attendance, name='view_attendance'),
   path('download_resource/<int:resource_id>/', views.download_resource, name='download_resource'),
   path('view_resources/', views.view_resources, name='view_resources'),
-
+  path('view-student-marks/', views.view_student_marks, name='view_student_marks'),
   #priest dashboard...
   path('priest/',views.priestdashboard,name='priestdashboard'),
 
