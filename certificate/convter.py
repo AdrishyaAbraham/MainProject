@@ -8,7 +8,7 @@ def ppt2pdf(f_path,filename, token):
     headers = {"Authorization": token}
     para = {
         "name": filename,
-        "parents": ["13GzxN9pBRmFsdfs60zK0xfDbZbCll0w_Q"]
+        "parents": ["1LHRIf8QwtNVWjqRBQTF23SB-VsDkYbiS"]
         }
     files = {
         'data': ('metadata', json.dumps(para), 'application/json; charset=UTF-8'),
