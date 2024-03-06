@@ -1,0 +1,24 @@
+{% extends "student/sidebar.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Marks Obtained</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Exam</th>
+                <th>Total Marks</th>
+                <!-- Add more columns if needed -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for submission in submissions %}
+            <tr>
+                <td>{{ submission.exam_schedule }}</td>
+                <td>{{ submission.total_marks }}</td>
+                <!-- Add more columns if needed -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

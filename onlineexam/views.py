@@ -1,5 +1,8 @@
+import datetime
+from time import strptime
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
+from pandas import Timedelta
 
 from .forms import QuestionForm
 from . models import *
@@ -146,46 +149,41 @@ def exam_results(request, submission_id):
 
 from django.utils import timezone
 
-def schedule_exam(request,exam_schedule_id):
-    exam_schedule = ExamSchedule.objects.get(pk=exam_schedule_id)
-    
+
+from datetime import timedelta
+
+
+def schedule_exam(request):
     if request.method == 'POST':
-        form = QuestionForm(request.POST)
-        if form.is_valid():
-            # Extract data from the form
-            question_text = form.cleaned_data['question_text']
-            option1_text = form.cleaned_data['option1']
-            option2_text = form.cleaned_data['option2']
-            option3_text = form.cleaned_data['option3']
-            option4_text = form.cleaned_data['option4']
-            correct_option_index = int(form.cleaned_data['correct_option'])
-            
-            # Create the question
-            question = Question.objects.create(exam_schedule=exam_schedule, question_text=question_text)
-            
-            # Create options
-            options_data = [
-                (option1_text, 1),
-                (option2_text, 2),
-                (option3_text, 3),
-                (option4_text, 4)
-            ]
-            for option_text, option_index in options_data:
-                is_correct = (option_index == correct_option_index)
-                Option.objects.create(question=question, option_text=option_text, is_correct=is_correct)
-            
-            # Redirect to a success page or another view
-            return redirect('success_page')  # Replace 'success_page' with the actual URL name of your success page
+        # Retrieve form data
+        class_id = request.POST.get('class_name')
+        subject = request.POST.get('subject')
+        date = request.POST.get('date')
+        start_time = request.POST.get('start_time')
+        duration_hours = request.POST.get('duration_hours')
+
+        # Create datetime object for start time
+        start_datetime = datetime.strptime(f"{date} {start_time}", "%Y-%m-%d %H:%M")
+
+        # Calculate end time based on start time and duration
+        end_datetime = start_datetime + timedelta(hours=int(duration_hours))
+
+        # Create ExamSchedule object
+        exam_schedule = ExamSchedule(
+            class_id=class_id,
+            subject=subject,
+            start_time=start_datetime,
+            end_time=end_datetime
+        )
+        exam_schedule.save()
+
+        # Redirect to a success page or any other desired URL
+        return redirect('success_page')
+
     else:
-        form = QuestionForm()
+        # If it's a GET request, render the form template
+        return render(request, 'hod/schedule_exam.html', {'class_list': ClassInfo.objects.all()})
     
-    context = {
-        'form': form,
-        'exam_schedule': exam_schedule,
-    }
-    return render(request, 'teacher/set_question.html', context)
-
-
 def exam_schedule_detail(request):
     if request.method == 'POST':
         class_id = request.POST.get('class_id')
@@ -223,6 +221,7 @@ def submit_exam(request, exam_schedule_pk):
 
 def exam_submission_confirmation(request):
     return render(request, 'exam_submission_confirmation.html')
+
 
 
 # Create your views here.

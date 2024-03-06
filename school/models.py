@@ -454,7 +454,7 @@ class Registration(models.Model):
         unique_together = ('student', 'program')
 
     def __str__(self):
-        return f"{self.student.username} - {self.program.name}"
+        return f"{self.student.email} - {self.program.name}"
     
 
 

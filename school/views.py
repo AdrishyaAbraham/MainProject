@@ -1410,18 +1410,25 @@ def view_marks(request, student_id):
     context = {'student': student, 'marks': marks}
     return render(request, 'teacher/view_mark.html', context)
 
-
 @login_required(login_url='login_page')
 def add_mark(request, student_id):
     student = get_object_or_404(EnrolledStudent, id=student_id)
     
-    try:
-        guide_teacher = GuideTeacher.objects.get(name=request.user.teacherpersonalinfo)
-    except GuideTeacher.DoesNotExist:
+    # Ensure the user is a guide teacher
+    if not hasattr(request.user, 'teacherpersonalinfo'):
         return render(request, 'error.html', {'message': 'You are not a guide teacher!'})
-
-    class_registrations = ClassRegistration.objects.filter(guide_teacher=guide_teacher)
-    students = EnrolledStudent.objects.filter(class_name__in=class_registrations)
+    
+    # Retrieve the guide teacher information
+    teacher_personal_info = request.user.teacherpersonalinfo
+    
+    # Filter class registrations based on the guide teacher
+    class_registrations = ClassRegistration.objects.filter(guide_teacher=teacher_personal_info)
+    
+    # Extract class IDs associated with the guide teacher
+    class_ids = class_registrations.values_list('class_name', flat=True)
+    
+    # Filter students based on the classes associated with the guide teacher
+    students = EnrolledStudent.objects.filter(class_name__in=class_ids)
 
     # Check if a mark already exists for the student and class
     existing_mark = Mark.objects.filter(student=student, class_name=student.class_name).first()

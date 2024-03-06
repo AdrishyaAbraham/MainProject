@@ -7,14 +7,14 @@
     {% for program in programs %}
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">{{ program.name }}</h5>
-          <p class="card-text">{{ program.description }}</p>
+          <h5 class="card-title" style="color: black;">{{ program.name }}</h5>
+          <p class="card-text" style="color: black;">{{ program.description }}</p>  <!-- Change font color to black -->
 
           {% if program in registrations %}
-            <p class="text-success">Registered</p>
+            <p class="text-success" style="color: black;">Registered</p>  <!-- Change font color to black -->
           {% else %}
             {% if program.id in existing_registration_ids %}
-              <p class="text-warning">You are already registered for this program!</p>
+              <p class="text-warning" style="color: black;">You are already registered for this program!</p>  <!-- Change font color to black -->
             {% else %}
               <form method="post" action="{% url 'talent_programs' %}">
                 {% csrf_token %}
