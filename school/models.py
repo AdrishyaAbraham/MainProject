@@ -299,6 +299,7 @@ class AcademicInfo(models.Model):
     status = models.CharField(choices=status_select, default='not enroll', max_length=15)
     personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE, null=True)
     guardian_info = models.ForeignKey(GuardianInfo, on_delete=models.CASCADE, null=True)
+    academic_year=models.ForeignKey(Session,on_delete=models.CASCADE,null = True)
     previous_academic_info = models.ForeignKey(PreviousAcademicInfo, on_delete=models.CASCADE, null=True)
     previous_academic_certificate = models.ForeignKey(PreviousAcademicCertificate, on_delete=models.CASCADE, null=True)
     date = models.DateField(auto_now_add=True)

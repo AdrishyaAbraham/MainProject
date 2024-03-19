@@ -1,0 +1,65 @@
+{% extends 'priest/base.html' %}
+
+
+{% load static %}
+
+{% block content %}
+<div class="animated fadeIn">
+    <div class="">
+        <div class="">
+            <h2>Search Student</h2>
+        </div>
+        <div class="">
+            <form action="" method="GET">
+            
+                {{ forms }}
+                
+                {% comment %} <input type="text" id="registeratioin_no" placeholder="Registeration no"> {% endcomment %}
+                <input type="submit" value="search">
+            </form>
+        </div>
+    </div>
+</div>
+{% if student %}
+<div class="animated fadeIn">
+    <div class="">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Reg No</th>
+                    <th>Class</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in student %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ student.personal_info.user.name }}</td>
+                    <td>{{ student.registration_no }}</td>
+                    <td>{{ student.class_info }}</td>
+                    <td>{{ student.status }}</td>
+                    <td>{{ student.date }}</td>
+                    <td>
+                        <a class="btn btn-success" href="{% url 'student-profile' student.registration_no %}">
+                            <i class="fa fa-search-plus"></i>View
+                        </a>
+                        <a class="btn btn-info" href="{% url 'student-edit' student.registration_no %}">
+                            <i class="fa fa-edit"></i>Edit
+                        </a>
+                        <a class="btn btn-danger" href="{% url 'student-delete' student.registration_no %}">
+                            <i class="fa fa-trash-o"></i>Delete
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

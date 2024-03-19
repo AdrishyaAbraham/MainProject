@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from school.views import *
+from website.views import *
+
 from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 from django.conf import settings
@@ -29,10 +31,15 @@ urlpatterns = [
     path('report/', include('progressreport.urls')),
     path('online-exam/', include('onlineexam.urls')),
     path('certificate/',include('certificate.urls')),
+    path('flutterapp/',include('flutterapp.urls')),
+    path('website/',include('website.urls')),
+
 
     path('logout/',user_logout,name='logout'),
     path('t/',teacherdashboard, name='teacherdashboard'),
     path('',login_page, name='login_page'),
+    path('home/',home, name='home_page'),
+
     
 
     path('st/',studentdashboard, name='studentdashboard'),

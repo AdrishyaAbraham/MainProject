@@ -1,0 +1,201 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Priest Dashboard</title>
+
+    <!-- Montserrat Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+  
+       <style>
+    .header-right {
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-container {
+    position: relative;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.dropdown-toggle:hover + .dropdown-content-info,
+.dropdown-content-info:hover {
+    display: block;
+}
+
+.dropdown-content-info {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 180px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-content-info p {
+    color: black;
+    padding: 10px 14px;
+    text-decoration: none;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.dropdown-content-info p:last-child {
+    border-bottom: none;
+}
+
+.dropdown-content-info p:hover {
+    background-color: #f1f1f1;
+}
+</style>
+  </head>
+  <body>
+<div class="grid-container">
+
+      <!-- Header -->
+      <header class="header">
+        <div class="menu-icon" onclick="openSidebar()">
+          <span class="material-icons-outlined">menu</span>
+        </div>
+        <div class="header-left">
+          <span class="material-icons-outlined">search</span>
+        </div>
+        <div class="header-right">
+        <div class="dropdown-container">
+        <span class="material-icons-outlined dropdown-toggle">notifications</span>
+        <div class="dropdown-content-info">
+            <p>Notification 1</p>
+            <p>Notification 2</p>
+            <p>Notification 3</p>
+        </div>
+        </div>
+    
+    <div class="dropdown-container">
+        <span class="material-icons-outlined dropdown-toggle">email</span>
+        <div class="dropdown-content-info">
+            <p style="color:black;">{{ request.user.email }}</p>
+            
+        </div>
+    </div>
+
+    <div class="dropdown-container">
+        <span class="material-icons-outlined dropdown-toggle">account_circle</span>
+        <div class="dropdown-content-info">
+             <a href="{% url 'priest-profile' user.id  %}"><p>Profile</p></a>
+            <p>Settings</p>
+            <a href="{% url 'logout' %}"><p>Logout</p></a>
+        </div>
+    </div>
+
+      </header>
+      <!-- End Header -->
+
+      <!-- Sidebar -->
+ <aside id="sidebar">
+    <div class="sidebar-title">
+        <div class="sidebar-brand">
+            <span class="material-icons-outlined"></span> LightedtoLighten
+        </div>
+        <span class="material-icons-outlined" onclick="closeSidebar()">close</span>
+    </div>
+
+    <ul class="sidebar-list">
+        <li class="sidebar-list-item">
+            <a href="{% url '' }" target="_self">
+                <span class="material-icons-outlined">dashboard</span> Dashboard
+            </a>
+        </li>
+        
+
+        <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                <span class="material-icons-outlined">person</span> Teachers 
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content">
+            
+                <a href="{% url 'teacher-list' %}" target="_blank">Teacher List</a>
+                <a href="{% url 'admin_review_leaves' %}" target="_blank">Teacher Leave List</a>
+
+
+            </div>
+        </li>
+         <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                <span class="material-icons-outlined">class</span> Class 
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content">
+                <a href="{% url 'class-list' %}" target="_blank">Class Details</a>
+            </div>
+        </li>
+
+        <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                <span id="student" class="material-icons-outlined">person</span> Student 
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content" >
+
+                <a href="{% url 'student-list' %}" target="_blank">Student List</a>
+                <a href="{% url 'student-search' %}" target="_self">Search Student</a>
+                <a href="{% url 'enrolled-student-list' %}" target="_blank">Enrolled Student List</a>
+
+            </div>
+        </li>
+
+        <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                <span id="student" class="material-icons-outlined">person</span> Attendance 
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content" >
+                <a href="{% url 'attendance' %}" target="_blank">Student Attendance</a>
+            </div>
+        </li>
+                    <li class="sidebar-list-item">
+                      <a href="#" target="_blank">
+                      <span class="material-icons-outlined">campaign</span> Activities
+                      </a>
+                    </li>
+                      <li class="sidebar-list-item dropdown">
+            <span class="dropdown-title">
+                <span class="material-icons-outlined">fact_check</span> Circulars                 
+                <span class="material-icons-outlined">expand_more</span>
+            </span>
+            <div class="dropdown-content" >
+                 <a href="{% url 'addNotice' %}" target="_blank">Add notice
+                 <a href="{% url 'display_notices' %}" target="_blank">View notice
+                 <a href="{% url 'add_teacher_notice' %}" target="_blank">Add teacher notice
+               
+            </div>
+        </li>
+      
+                    <li class="sidebar-list-item">
+                      <a href="#" target="_blank">
+                        <span class="material-icons-outlined">poll</span> Reports
+                      </a>
+                    </li>
+                    <li class="sidebar-list-item">
+                      <a href="#" target="_blank">
+                        <span class="material-icons-outlined">settings</span> Settings
+                      </a>
+                    </li>
+                </ul>
+  </aside>
+
+  {% block content%}
+  {% endblock %}

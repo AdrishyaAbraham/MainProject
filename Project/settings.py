@@ -47,6 +47,9 @@ INSTALLED_APPS = [
     'progressreport',
     'onlineexam',
     'certificate',
+    'rest_framework',
+    'flutterapp',
+    'website',
     
     
 ]
@@ -168,3 +171,6 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'adrishyamariaabraham2024@gmail.com'
 EMAIL_HOST_PASSWORD = 'ryagnnelfbqmnvgv'
 
+REST_FRAMEWORK ={
+    'DEFAULT_RENDEER_CLASSES':('rest_framework.renderers.JSONRenderer',)
+}

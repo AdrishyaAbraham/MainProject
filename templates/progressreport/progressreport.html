@@ -1,5 +1,3 @@
-
-
 {% block content %}
 {% load static %}
 <!DOCTYPE html>
@@ -11,10 +9,17 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        /* Custom styles can be added here */
+        /* Custom styles */
+        body {
+            font-family: Arial, sans-serif; /* Set font to Arial */
+            font-size: 14px; /* Set font size to 14px */
+        }
         /* Adjust margins, paddings, font sizes, etc. */
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    
 </head>
+<body>
 <div class="container">
     <!-- Progress Report Card -->
     <div class="card mt-5">
@@ -25,10 +30,10 @@
             <!-- Student Information -->
             <h4 class="mb-4">Student Information</h4>
             <ul class="list-group mb-4">
-                <li class="list-group-item">Name: {{ student.name }}</li>
-                <li class="list-group-item">Student ID: {{ student.student_id }}</li>
+                <li class="list-group-item">Name: {{ student.student.personal_info.user.name }}</li>
+                <li class="list-group-item">Student ID: {{ student.student.registration_no }}</li>
                 <li class="list-group-item">Class: {{ student.class_name }}</li>
-                <li class="list-group-item">Academic Year: {{ student.academic_year }}</li>
+                <li class="list-group-item">Academic Year: {{ student.student.academic_year }}</li>
             </ul>
             <!-- Subject-wise Grades/Assessment -->
             <h4 class="mb-4">Subject-wise Grades/Assessment</h4>
@@ -44,7 +49,7 @@
                 <tbody>
                     {% for subject in subjects %}
                     <tr>
-                        <td>{{ subject.name }}</td>
+                        <td>Annual Test</td>
                         <td>{{ subject.grade }}</td>
                         <td>{{ subject.comments }}</td>
                         <td>{{ subject.attendance }}</td>
@@ -93,14 +98,12 @@
     <!-- End Progress Report Card -->
     <div class="text-center mt-3">
         <!-- Button to download PDF -->
-        <button class="btn btn-primary" onclick="downloadPDF()">Download PDF</button>
+        <button id="downloadPdfButton" class="btn btn-primary">Download PDF</button>
     </div>
 </div>
 
-<!-- Bootstrap JS and jsPDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
 <script>
-    function downloadPDF() {
+    document.getElementById('downloadPdfButton').addEventListener('click', function() {
         const reportCard = document.querySelector('.card');
         const pdf = new jsPDF();
         // Generate PDF from HTML element
@@ -110,7 +113,9 @@
                 pdf.save('progress_report_card.pdf');
             }
         });
-    }
+    });
 </script>
 
+</body>
+</html>
 {% endblock %}
