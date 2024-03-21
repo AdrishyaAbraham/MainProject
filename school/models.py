@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.core.validators import RegexValidator
 import random
@@ -174,7 +175,20 @@ class Session(models.Model):
 
     def __str__(self):
         return str(self.name)
-
+    
+    @classmethod
+    def determine_next_academic_year_session(cls):
+        # Get the current year
+        current_year = datetime.now().year
+        
+        # Calculate the next academic year
+        next_year = current_year + 1
+        
+        # Create or get the session for the next academic year
+        next_session_name = str(next_year)
+        next_session, created = cls.objects.get_or_create(name=next_session_name)
+        
+        return next_session
     
 class ClassInfo(models.Model):
     name = models.CharField(max_length=45, unique=True)

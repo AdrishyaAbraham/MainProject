@@ -16,7 +16,7 @@
         <div class="col-md-6">
           <div class="form-group">
             <label for="enrolled_class">Enrolled Class:</label>
-            <select class="form-control" name="enrolled_class" required>
+            <select class="form-control" id="selectclass"name="enrolled_class" required>
               {% for class_registration in class_registrations %}
                 <option value="{{ class_registration.id }}">{{ class_registration.class_name }}</option>
               {% endfor %}
@@ -27,7 +27,7 @@
         <div class="col-md-6">
           <div class="form-group">
             <label for="teacher">Teacher:</label>
-            <select class="form-control" name="teacher" required>
+            <select class="form-control" id="teacher" name="teacher" required>
               {% for guide_teacher in guide_teachers %}
                 <option value="{{ guide_teacher.id }}">{{ guide_teacher.name }}</option>
               {% endfor %}
@@ -56,11 +56,11 @@
 
       <div class="form-group">
         <label for="platform_link">Platform Link:</label>
-        <input type="url" class="form-control" name="platform_link" required>
+        <input type="url" class="form-control" id ="id" name="platform_link" required>
       </div>
 
       <div class="form-group text-center">
-        <button type="submit" class="btn btn-success">Schedule Class</button>
+        <button type="submit" id="submit" class="btn btn-success">Schedule Class</button>
       </div>
     <div class="form-group text-center">
     {% comment %} <form method="post" action="{% url 'delete_scheduled_class' scheduled_class.id %}">

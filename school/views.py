@@ -422,6 +422,12 @@ def student_registration(request):
     }
     return render(request, 'hod/hod_student/student-registration.html', context)
 
+@login_required
+def student_list_priest(request):
+    # Use select_related to prefetch related data
+    student = AcademicInfo.objects.select_related('personal_info__user').filter(is_delete=False).order_by('-id')
+    context = {'student': student}
+    return render(request, 'priest/student_list.html', context)
 
 @login_required
 def student_list(request):
@@ -499,14 +505,14 @@ def student_search(request):
             'forms': forms,
             'student': student
         }
-        return render(request, 'hod/hod_student/student-search.html', context)
+        return render(request, 'priest/student_serach.html', context)
     else:
         student = AcademicInfo.objects.filter(registration_no=reg_no)
         context = {
             'forms': forms,
             'student': student
         }
-        return render(request, 'hod/hod_student/student-search.html', context)
+        return render(request, 'priest/student_serach.html', context)
     
 
 
@@ -1117,34 +1123,27 @@ def admin_view_attendance(request):
 
 
 def determine_next_class(student):
-    # Get the current class of the student
     current_class = student.class_name
-
-    # Get the session of the current class
     current_session = current_class.session
-
-    # Get the current year
     current_year = datetime.now().year
 
-    # Get the next academic year session
     next_session_year = current_year + 1
     next_session_name = str(next_session_year)
+    
     try:
         next_session = Session.objects.get(name=next_session_name)
     except Session.DoesNotExist:
-        # Handle the case where the next session does not exist
         return None
 
-    # Check if the current session is the last session of the academic year
     sessions_of_current_year = Session.objects.filter(name=current_year)
     last_session_of_current_year = sessions_of_current_year.latest('date')
     
     if current_session == last_session_of_current_year:
-        # Get the next class for the next academic year
-        next_class = ClassInfo.objects.get(class_name=current_class, session=next_session)
+        try:
+            next_class = ClassInfo.objects.get(class_name=current_class, session=next_session)
+        except ClassInfo.DoesNotExist:
+            return None
     else:
-        # If the current session is not the last session of the academic year,
-        # the student remains in the same class for the next session
         next_class = current_class
     
     return next_class
@@ -1163,25 +1162,35 @@ def determine_next_academic_year_session():
 
 def promote_students(request):
     if request.method == 'POST':
-        student_ids = request.POST.getlist('student_ids')  # Assuming you have checkboxes for selecting students
-        next_academic_year_session = determine_next_academic_year_session()  # Assuming you have a method to determine the session for the next academic year
+        student_ids = request.POST.getlist('student_ids')
+        
+        # Determine the session for the next academic year
+        next_academic_year_session = Session.determine_next_academic_year_session()
+        
         for student_id in student_ids:
             student = EnrolledStudent.objects.get(id=student_id)
-            next_class = determine_next_class(student)
-            # Create a new class registration for the next academic year
-            ClassRegistration.objects.create(
-                class_name=next_class,
-                section=student.class_name.section,  # Assuming section remains the same
-                guide_teacher=student.class_name.guide_teacher,  # Assuming same teacher continues
-                session=next_academic_year_session,
-                student=student
-            )
+            next_class = determine_next_class(student)  # Ensure this returns ClassInfo
+            
+            # Ensure next_class is an instance of ClassInfo, not ClassRegistration
+            if isinstance(next_class, ClassInfo):
+                # Create a new class registration for the next academic year
+                ClassRegistration.objects.create(
+                    class_name=next_class,
+                    section=student.class_name.section,
+                    guide_teacher=student.class_name.guide_teacher,
+                    session=next_academic_year_session,
+                    student=student
+                )
+            else:
+                # Handle the case where next_class is not an instance of ClassInfo
+                # You might want to log an error or handle it differently based on your requirements
+                pass
+        
         messages.success(request, 'Students promoted successfully.')
         return redirect('select_class')
     else:
-        # Handle GET request if someone tries to access the view directly
         return redirect('select_class')
-    
+
 def select_class(request):
     if request.method == 'POST':
         class_id = request.POST.get('class_id')

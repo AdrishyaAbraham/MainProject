@@ -131,12 +131,12 @@
                <span class="material-icons-outlined">groups</span> Students 
                 <span class="material-icons-outlined">expand_more</span>
             </span>
-            <div class="dropdown-content">
+            <div class="dropdown-content" id ="student">
                 <a href="{% url 'class_student' %}" target="_blank">Students Details</a>
 
                 <a href="{% url 'mark_attendance'  %}" target="_blank">Student Attendance</a>
                 <a href="{% url 'view_class_attendance'  %}" target="_blank">View All Attendance</a>
-                <a href="{% url 'teacher_review_leave_applications' %}" target="_blank">Student Leave List</a>
+                <a href="{% url 'teacher_review_leave_applications' %}" target="_self" id="leave_list">Student Leave List</a>
                 <a href="{% url 'student_leave_approve' %}" target="_blank">Approved Leaves</a>
 
 
@@ -177,11 +177,11 @@
 
         <li class="sidebar-list-item dropdown">
             <span class="dropdown-title">
-                <span class="material-icons-outlined">quiz</span>Online exam
+                <span id="setexam" class="material-icons-outlined">quiz</span>Online exam
                 <span class="material-icons-outlined">expand_more</span>
             </span>
             <div class="dropdown-content">
-                <a href="{% url 'add_questions'  %}">Set Exam</a>
+                <a href="{% url 'add_questions'  %}" id="setexam" target="_self">Set Exam</a>
                 <a href="{% url 'list_questions_and_answers' exam_schedule_id %}">List Exam</a>
 
                 
@@ -233,7 +233,7 @@
 
          <div class="card">
          <a href="{% url 'schedule_class' %}" style="text-decoration: none; color: inherit;">
-        <div class="card-inner">
+        <div id="onlineclass" class="card-inner">
             <h3>ONLINE CLASS</h3>
             <span class="material-icons-outlined">category</span>
         </div>

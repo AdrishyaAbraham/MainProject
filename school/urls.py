@@ -37,6 +37,8 @@ urlpatterns = [
   #preist registeration..
     path('priest-registration', views.register_priest, name='register_priest'),
     path('view_priests/', views.view_priests, name='view_priests'),
+    path('student_list', views.student_list_priest, name='student_list'),
+
 
   #hod---class allotment---
   path('create-class', views.add_class, name='add_class'),
