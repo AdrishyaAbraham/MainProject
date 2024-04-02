@@ -112,5 +112,41 @@ class Hosttest(TestCase):
         time.sleep(2)
         print("Scheduled online class successfully")
 
+    def test_apply_leave(self):
+        driver = self.driver
+        driver.get(self.live_server_url)
+        driver.maximize_window()
+        time.sleep(1)
+
+        # Log in to the teacher dashboard
+        username_input = driver.find_element(By.CSS_SELECTOR, '#username')
+        username_input.send_keys("ishta@gmail.com")
+        password_input = driver.find_element(By.CSS_SELECTOR, '#password')
+        password_input.send_keys("STGEORGE")
+        submit_button = driver.find_element(By.CSS_SELECTOR, '#submit')
+        submit_button.click()
+        time.sleep(2)
+        print("Signed in successfully")
+
+        # Navigate to the apply leave page
+        apply_leave_link = driver.find_element(By.XPATH, "//a[contains(text(),'Apply Leave')]")
+        apply_leave_link.click()
+        time.sleep(2)
+        print("Clicked on Apply Leave link")
+
+        # Fill out the leave application form
+        
+        start_date_input = driver.find_element(By.CSS_SELECTOR, '#id_leave_date')
+        start_date_input.send_keys("17-03-2024")  # Replace with the desired start date
+
+        
+        reason_input = driver.find_element(By.CSS_SELECTOR, '#id_leave_message')
+        reason_input.send_keys("Feeling unwell")  # Replace with the reason for leave
+
+        # Submit the leave application form
+        submit_button = driver.find_element(By.ID, 'submit')
+        submit_button.click()
+        time.sleep(2)
+        print("Leave applied successfully")
 
 

@@ -190,6 +190,20 @@ class Session(models.Model):
         
         return next_session
     
+    @classmethod
+    def get_current_session(cls):
+        # Get the current year
+        current_year = datetime.now().year
+        
+        # Retrieve the current session based on the current year
+        try:
+            current_session = cls.objects.get(name=str(current_year))
+        except cls.DoesNotExist:
+            # If the session for the current year doesn't exist, create it
+            current_session = cls.objects.create(name=str(current_year))
+        
+        return current_session
+    
 class ClassInfo(models.Model):
     name = models.CharField(max_length=45, unique=True)
     display_name = models.CharField(max_length=10, unique=True)
@@ -332,7 +346,29 @@ class EnrolledStudent(models.Model):
         unique_together = ['class_name', 'roll']
     
     def __str__(self):
-        return str(self.student)    
+        return str(self.student)
+       
+    def has_completed_two_sessions_in_same_class(self):
+        # Get the current academic session
+        current_session = Session.objects.get_current_session()
+        
+        # Get the session when the student was enrolled in the current class
+        enrollment_session = self.class_name.session
+        
+        # Get the start year of the enrollment session
+        enrollment_session_start_year = int(enrollment_session.name)
+        
+        # Get the current year
+        current_year = datetime.now().year
+        
+        # Calculate the difference between the current year and the enrollment session start year
+        year_difference = current_year - enrollment_session_start_year
+        
+        # If the difference is greater than or equal to 2, the student has completed two sessions
+        if year_difference >= 2:
+            return True
+        
+        return False 
         
 class Attendance(models.Model):
     class_info = models.ForeignKey(ClassInfo, on_delete=models.DO_NOTHING,null=True)

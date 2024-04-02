@@ -1,11 +1,8 @@
-
-
 {% extends 'hod/base.html'%}
 
-{%load static %}
+{% load static %}
 
 {% block content %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,6 +42,36 @@
         <button type="submit">Promote Selected Students</button>
     </form>
     {% endif %}
+
+    <script>
+        // JavaScript code to handle checkbox clicks
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+            checkboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    const studentId = this.value;
+                    const isChecked = this.checked;
+
+                    // Send AJAX request to Django backend
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', '/promote-student/');
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            console.log('Student promoted successfully');
+                        } else {
+                            console.error('Error promoting student');
+                        }
+                    };
+
+                    const data = JSON.stringify({ student_id: studentId, is_checked: isChecked });
+                    xhr.send(data);
+                });
+            });
+        });
+    </script>
 </body>
 </html>
 {% endblock %}

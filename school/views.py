@@ -168,10 +168,12 @@ from django.contrib.auth import authenticate, login
 @login_required(login_url='login_page')
 def hoddashboard(request):
     exam_schedule = ExamSchedule.objects.first()
+    registrations = Registration.objects.filter(student=request.user)
     
     context = {
         'exam_schedule': exam_schedule,
         'admin': request.user,
+        'registrations': registrations,  # Include registrations in the context
     }
     return render(request, 'hod/hoddashboard.html', context)
 
@@ -1151,14 +1153,37 @@ def determine_next_class(student):
 
 
     
-def determine_next_academic_year_session():
+
+def determine_next_class(student):
+    current_class = student.class_name
+    current_session = current_class.session
     current_year = datetime.now().year
-    current_session = Session.objects.get(name=str(current_year))
-    next_year = current_year + 1
-    next_session_name = str(next_year)
-    # Check if the next session already exists, otherwise create it
-    next_session, created = Session.objects.get_or_create(name=next_session_name)
-    return next_session
+
+    next_session_year = current_year + 1
+    next_session_name = str(next_session_year)
+    
+    try:
+        next_session = Session.objects.get(name=next_session_name)
+    except Session.DoesNotExist:
+        return None
+
+    sessions_of_current_year = Session.objects.filter(name=current_year)
+    last_session_of_current_year = sessions_of_current_year.latest('date')
+    
+    if current_session == last_session_of_current_year:
+        # Check if the student has completed two academic sessions in the same class
+        if student.has_completed_two_sessions_in_same_class():
+            try:
+                next_class = ClassInfo.objects.get(class_name=current_class, session=next_session)
+            except ClassInfo.DoesNotExist:
+                return None
+        else:
+            # If the student hasn't completed two sessions in the same class, remain in the same class
+            next_class = current_class
+    else:
+        next_class = current_class
+    
+    return next_class
 
 def promote_students(request):
     if request.method == 'POST':
@@ -1181,6 +1206,9 @@ def promote_students(request):
                     session=next_academic_year_session,
                     student=student
                 )
+                # Mark the student as promoted
+                student.promoted = True
+                student.save()
             else:
                 # Handle the case where next_class is not an instance of ClassInfo
                 # You might want to log an error or handle it differently based on your requirements
@@ -1190,6 +1218,7 @@ def promote_students(request):
         return redirect('select_class')
     else:
         return redirect('select_class')
+
 
 def select_class(request):
     if request.method == 'POST':
@@ -1749,13 +1778,15 @@ def talent_programs(request):
 
 @login_required(login_url='login_page')
 def registration_details(request, registration_id):
-    registration = get_object_or_404(Registration, id=registration_id, student=request.user)
+    registration = get_object_or_404(Registration, id=registration_id)
     talent_program = registration.program  # Access the associated TalentProgram
+    student = registration.student  # Access the associated student
     return render(request, 'talentsearch/registration_details.html', {
         'registration': registration,
-        'registration_id': registration_id,
-        'talent_program': talent_program,  # Include the TalentProgram in the context
+        'talent_program': talent_program,
+        'student': student,  # Include the student in the context
     })
+
 
 #------parent dashboard-----#
 from django.shortcuts import render, get_list_or_404, redirect

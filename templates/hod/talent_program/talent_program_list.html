@@ -1,15 +1,19 @@
 {% extends 'hod/base.html' %}
 
 {% block content %}
-  <div class="container mt-4" style=" color: #000000;">
-    <h2 class="mb-4" style=" color: white;">Talent Programs List</h2>
+<div class="container mt-4" style="color: #000000;">
+    <h2 class="mb-4" style="color: white;">Talent Programs List</h2>
     <ul class="list-group">
-      {% for program in talent_programs %}
+        {% for program in talent_programs %}
         <li class="list-group-item">
-          <h5 class="mb-0" style="color: #000000;">{{ program.name }}</h5>
-          <p class="mb-1" style="color: #000000;">{{ program.description }}</p>
+            <h5 class="mb-0" style="color: #000000;">{{ program.name }}</h5>
+            <p class="mb-1" style="color: #000000;">{{ program.description }}</p>
+            
         </li>
-      {% endfor %}
+        {% endfor %}
     </ul>
-  </div>
+    
+  
+  
+</div>
 {% endblock %}

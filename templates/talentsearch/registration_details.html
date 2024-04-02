@@ -1,15 +1,30 @@
-{% extends 'student/sidebar.html' %}
+{% extends 'hod/base.html' %}
 
 {% block content %}
-  <div class="container">
-    <h2>Registration Details</h2>
-
-    <p><strong>Registration ID:</strong> {{ registration_id }}</p>
-    <p><strong>Program Name:</strong> {{ registration.program.name }}</p>
-    <p><strong>Program Description:</strong> {{ registration.program.description }}</p>
-    <p><strong>Registration Date:</strong> {{ registration.registration_date }}</p>
-
-    <!-- Add a button for paying the registration fee -->
-    {% comment %} <a href="{% url 'pay_registration_fee' registration_id=registration.id %}" class="btn btn-primary">Pay Registration Fee</a> {% endcomment %}
-  </div>
+<div class="container mt-4" style="color: #000000;">
+    <h2 class="mb-4" style="color: white;">Registration Details</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Student Details</h5>
+            <p class="card-text">Name: {{ student.get_full_name }}</p>
+            <p class="card-text">Email: {{ student.email }}</p>
+            <!-- Add more student details as needed -->
+        </div>
+    </div>
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title">Program Details</h5>
+            <p class="card-text">Program Name: {{ talent_program.name }}</p>
+            <p class="card-text">Description: {{ talent_program.description }}</p>
+            <!-- Add more program details as needed -->
+        </div>
+    </div>
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title">Registration Information</h5>
+            <p class="card-text">Registration Date: {{ registration.registration_date }}</p>
+            <!-- Add more registration details as needed -->
+        </div>
+    </div>
+</div>
 {% endblock %}
