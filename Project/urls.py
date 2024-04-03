@@ -37,8 +37,8 @@ urlpatterns = [
 
     path('logout/',user_logout,name='logout'),
     path('t/',teacherdashboard, name='teacherdashboard'),
-    path('',login_page, name='login_page'),
-    path('home/',home, name='home_page'),
+    path('login/',login_page, name='login_page'),
+    path('',home, name='home_page'),
 
     
 

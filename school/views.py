@@ -869,27 +869,28 @@ def mark_attendance(request):
 
     if request.method == "POST":
         absent_student_ids = request.POST.getlist('absent_students')
-        for student in students:
-            student_info = student.student.personal_info  # Moved inside the loop
+    for student in students:
+        # Get the ClassInfo instance associated with the class registration of the student
+        class_info = student.class_name
+        
+        # Create a record in the Attendance model
+        attendance = Attendance(
+            class_info=class_info,
+            attendance_date=today,
+            session_year_id=current_session
+        )
+        attendance.save()
 
-            # Create a record in the Attendance model
-            attendance = Attendance(
-                ClassInfo_id=student,
-                attendance_date=today,
-                session_year_id=current_session
-            )
-            attendance.save()
+        # Create a record in the AttendanceReport model
+        is_absent = str(student.id) in absent_student_ids
+        AttendanceReport.objects.create(
+            student_id=student.student.personal_info,
+            attendance_id=attendance,
+            status=not is_absent  # True if present, False if absent
+        )
 
-            # Create a record in the AttendanceReport model
-            is_absent = str(student.id) in absent_student_ids
-            AttendanceReport.objects.create(
-                student_id=student_info,
-                attendance_id=attendance,
-                status=not is_absent  # True if present, False if absent
-            )
-
-        messages.success(request, "Attendance marked successfully!")
-        return redirect('mark_attendance')  # Redirect to a suitable page
+    messages.success(request, "Attendance marked successfully!")
+    return redirect('mark_attendance')  # Redirect to a suitable page
 
     return render(request, 'teacher/attendance/mark_attendance.html', {'students': students})
 
@@ -961,14 +962,8 @@ def student_leave_view(request):
     }
     return render(request, 'student/student_leave_view.html', context)
 
-
-
 @login_required
 def student_leave_approve(request):
-    
-    leave = LeaveReportStudent.objects.get(id=leave_id)
-    approved_leaves = LeaveReportStudent.objects.filter(leave_status=LeaveReportStudent.APPROVED)
-
     if request.method == "POST":
         # Get the action from the POST data (approve or reject)
         action = request.POST.get('action')
@@ -983,13 +978,15 @@ def student_leave_approve(request):
         elif action == "reject":
             leave.leave_status = LeaveReportStudent.REJECTED
             leave.save()
-        return redirect('student_leave_approve')  # redirect back to the same page to see updates
+        return redirect('student_leave_approve')  # Redirect back to the same page to see updates
+
+    # Get the list of approved leaves
+    approved_leaves = LeaveReportStudent.objects.filter(leave_status=LeaveReportStudent.APPROVED)
 
     context = {
         "approved_leaves": approved_leaves
     }
-    return render(request, 'teacher/attendance/approved_leave.html', context)
- 
+    return render(request, 'teacher/attendance/approved_leaves.html', context)
 
 @login_required
 def student_leave_reject(request, leave_id):

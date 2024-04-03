@@ -1,9 +1,13 @@
-{% extends 'hod/base_class.html' %}  {# Assuming you have a base template #}
+{% extends 'teacher/base.html' %}  {# Assuming you have a base template #}
 
 <html>
 <head>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.0.0-beta3/css/bootstrap.min.css">
-    
+<style>
+    .grey-table {
+        background-color: #f0f0f0; /* Change this color as needed */
+    }
+</style>
 </head>
 {% block content %}
 
@@ -12,15 +16,14 @@
 
     <form method="post">
         {% csrf_token %}
-        <table class="table table-bordered table-striped">
         {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
+        <div class="messages">
+            {% for message in messages %}
             <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
-        {% endfor %}
-    </div>
-{% endif %}
-
+            {% endfor %}
+        </div>
+        {% endif %}
+        <table class="table table-bordered grey-table">
             <thead class="table-dark">
                 <tr>
                     <th>Student Name</th>
@@ -41,7 +44,7 @@
             </tbody>
         </table>
         <div class="mt-3">
-            <input type="submit" class="btn btn-primary" value="Mark Attendance">
+            <input type="submit" class="btn btn-primary" value="Submit">
         </div>
     </form>
 </div>
