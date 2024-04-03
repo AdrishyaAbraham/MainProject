@@ -1450,21 +1450,25 @@ def add_mark(request, student_id):
     student = get_object_or_404(EnrolledStudent, id=student_id)
     
     # Ensure the user is a guide teacher
-    if not hasattr(request.user, 'teacherpersonalinfo'):
-        return render(request, 'error.html', {'message': 'You are not a guide teacher!'})
+    if not hasattr(request.user, 'TeacherPersonalInfo'):
+        return render(request, 'teacher/error.html', {'message': 'You are not a guide teacher!'})
     
     # Retrieve the guide teacher information
-    teacher_personal_info = request.user.teacherpersonalinfo
-    
-    # Filter class registrations based on the guide teacher
-    class_registrations = ClassRegistration.objects.filter(guide_teacher=teacher_personal_info)
-    
-    # Extract class IDs associated with the guide teacher
-    class_ids = class_registrations.values_list('class_name', flat=True)
-    
-    # Filter students based on the classes associated with the guide teacher
-    students = EnrolledStudent.objects.filter(class_name__in=class_ids)
+    teacher_personal_info = GuideTeacher.objects.get(name=request.user.TeacherPersonalInfo)
 
+    
+    try:
+        # Filter class registrations based on the guide teacher
+        class_registrations = ClassRegistration.objects.filter(guide_teacher=teacher_personal_info)
+        
+        # Extract class IDs associated with the guide teacher
+        class_ids = class_registrations.values_list('class_name', flat=True)
+        
+        # Filter students based on the classes associated with the guide teacher
+        students = EnrolledStudent.objects.filter(class_name__in=class_ids)
+    except ClassRegistration.DoesNotExist:
+        students = []  # No students found for this guide teacher
+    
     # Check if a mark already exists for the student and class
     existing_mark = Mark.objects.filter(student=student, class_name=student.class_name).first()
 
@@ -1486,49 +1490,15 @@ def add_mark(request, student_id):
     context = {'form': form, 'students': students, 'student': student}
     return render(request, 'teacher/mark_updation.html', context)
 
-@login_required
-def update_student_marks(request, student_id):
-    # Get the logged-in teacher
-    teacher = TeacherPersonalInfo.objects.get(user=request.user)
- 
-    try:
-        # Get the student
-        student = EnrolledStudent.objects.get(id=student_id)
-        
-        # Ensure that the teacher is the class teacher for the student
-        if student.class_name.guide_teacher.id != teacher.id:
-            messages.error(request, 'You are not the class teacher for this student.')
-            return redirect('class_student_list')
-        
-        # Check if marks already exist for the student
-        mark_instance, created = Mark.objects.get_or_create(student=student)
-        
-        if request.method == 'POST':
-            form = MarkUpdateForm(request.POST, instance=mark_instance)
-            if form.is_valid():
-                form.save()
-                messages.success(request, 'Student marks updated successfully.')
-                return redirect('class_student_list')
-        else:
-            form = MarkUpdateForm(instance=mark_instance)
-        
-        context = {'form': form, 
-                   'students': student, 
-                   'student_id' : student_id
-                   }
 
-        return render(request, 'teacher/mark_updation.html', context)
-    
-    except EnrolledStudent.DoesNotExist:
-        messages.error(request, 'Student not found.')
-        return redirect('class_student_list')
-    
+
 @login_required(login_url='login_page')
 def schedule_class(request):
     try:
         guide_teacher = GuideTeacher.objects.get(name=request.user.teacherpersonalinfo)
     except GuideTeacher.DoesNotExist:
         return render(request, 'error.html', {'message': 'You are not a guide teacher!'})
+
 
     class_registrations = ClassRegistration.objects.filter(guide_teacher=guide_teacher)
 

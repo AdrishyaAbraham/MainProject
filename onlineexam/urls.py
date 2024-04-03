@@ -7,7 +7,7 @@ urlpatterns = [
 # path('online-exam/s/online_exam/', views.online_exam, name='online_exam'),
 path('online-exam/s/online_exam/', views.add_questions, name='add_questions'),
 
-path('schedule-exam/', views.schedule_exam, name='schedule_exam'),
+# path('schedule-exam/', views.schedule_exam, name='schedule_exam'),
 path('exam-schedule-detail/', views.exam_schedule_detail, name='exam_schedule_detail'),
 path('submission_confirmation/', views.submission_confirmation, name='submission_confirmation'),
 

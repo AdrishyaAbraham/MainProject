@@ -9,7 +9,7 @@ urlpatterns = [
     path('teacher_acprofile/<int:teacher_id>/', views.teacher_acprofile, name='teacher_acprofile'),
     path('parent_acprofile/<int:parent_id>/', views.parent_acprofile, name='parent_acprofile'),
     path('profile/<int:priest_id>/', views.priest_acprofile, name='priest-profile'),
-
+    path('h/',views.hoddashboard,name="hoddashboard"),
 
 
 
@@ -59,7 +59,7 @@ urlpatterns = [
   path('designation/<int:designation_id>/', views.update_designation, name='update_designation'),
   path('admin_review_leaves/', views.admin_review_leaves, name='admin_review_leaves'),
   path('mark_attendance/', views.mark_attendance, name='mark_attendance'),
-  path('update_marks/<int:student_id>/', views.update_student_marks, name='update_student_marks'),
+  # path('update_marks/<int:student_id>/', views.update_student_marks, name='update_student_marks'),
   path('scheduled-classes/', views.scheduled_classes, name='scheduled_classes'),
 
      

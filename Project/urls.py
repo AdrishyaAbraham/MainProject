@@ -43,7 +43,7 @@ urlpatterns = [
     
 
     path('st/',studentdashboard, name='studentdashboard'),
-    path('h/',hoddashboard,name="hoddashboard"),
+    
     path('p/',parentdashboard,name="parentdashboard"),
 
 

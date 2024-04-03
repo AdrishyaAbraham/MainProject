@@ -195,7 +195,7 @@ main-container {
             </span>
             <div class="dropdown-content" >
                 <a href="{% url 'student-registration' %}" target="_blank">Student Registration</a>
-                <a href="{% url 'student-list' %}" target="_blank">Student List</a>
+                {% comment %} <a href="{% url 'student-list' %}" target="_blank">Student List</a> {% endcomment %}
                 <a href="{% url 'student-search' %}" id="search" target="_self">Search Student</a>
                 <a href="{% url 'enrolled-student' %}" target="_blank" >Enrolled Student</a>
                 <a href="{% url 'enrolled-student-list' %}" target="_blank">Enrolled Student List</a>
@@ -224,8 +224,8 @@ main-container {
                
             </div>
             <div class="dropdown-content">
-                 <a href="{% url 'schedule_exam'  %}" target="_blank">Schedule Exam</a>
-                 <a href="{% url 'exam_schedule_detail'%}" target="_self">Schedule Exam Details</a>
+                 {% comment %} <a href="{% url 'schedule_exam'  %}" target="_blank">Schedule Exam</a> {% endcomment %}
+                 {% comment %} <a href="{% url 'exam_schedule_detail'%}" target="_self">Schedule Exam Details</a> {% endcomment %}
             </div>
         </li>
 
