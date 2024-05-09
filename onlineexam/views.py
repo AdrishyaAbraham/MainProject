@@ -9,8 +9,10 @@ from . models import *
 from .models import *
 from school.models import *
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 
-
+@never_cache
+@login_required(login_url='login_page')
 def add_questions(request):
     if request.method == 'POST':
         exam_schedule_id = request.POST.get('exam_schedule')
@@ -35,6 +37,8 @@ def add_questions(request):
         return render(request, 'teacher/onlineexam/set_questions.html', {'exam_schedules': exam_schedules})
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def online_exam(request):
     if request.method == 'POST':
         # Get the exam schedule ID from the form submission
@@ -92,11 +96,15 @@ def online_exam(request):
 
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def submission_confirmation(request):
     return render(request, 'submission_confirmation.html')
 
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def take_exam(request, exam_schedule_id):
     exam_schedule = ExamSchedule.objects.get(id=exam_schedule_id)
     print("Exam Schedule:", exam_schedule)
@@ -136,6 +144,8 @@ def take_exam(request, exam_schedule_id):
 
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def exam_results(request, submission_id):
     submission = StudentExamSubmission.objects.get(id=submission_id)
     student_answers = StudentAnswer.objects.filter(submission=submission)
@@ -153,6 +163,8 @@ from django.utils import timezone
 from datetime import timedelta
 
 
+@never_cache
+@login_required(login_url='login_page')
 def schedule_exam(request):
     if request.method == 'POST':
         # Retrieve form data
@@ -184,6 +196,8 @@ def schedule_exam(request):
         # If it's a GET request, render the form template
         return render(request, 'hod/schedule_exam.html', {'class_list': ClassInfo.objects.all()})
     
+@never_cache
+@login_required(login_url='login_page')    
 def exam_schedule_detail(request):
     if request.method == 'POST':
         class_id = request.POST.get('class_id')
@@ -200,6 +214,9 @@ def exam_schedule_detail(request):
     }
     return render(request, 'hod/exam_schedule_detail.html', context)
 
+
+@never_cache
+@login_required(login_url='login_page')
 def submit_exam(request, exam_schedule_pk):
     if request.method == 'POST':
         # Process exam submission
@@ -219,13 +236,17 @@ def submit_exam(request, exam_schedule_pk):
         questions = Question.objects.filter(exam_schedule=exam_schedule)
         return render(request, 'submit_exam.html', {'exam_schedule': exam_schedule, 'questions': questions})
 
+
+@never_cache
+@login_required(login_url='login_page')
 def exam_submission_confirmation(request):
     return render(request, 'exam_submission_confirmation.html')
 
 
 
 # Create your views here.
-
+@never_cache
+@login_required(login_url='login_page')
 def list_questions_and_answers(request, exam_schedule_id):
     exam_schedule = get_object_or_404(ExamSchedule, id=exam_schedule_id)
     questions = exam_schedule.question_set.all()  # Assuming a reverse relation from ExamSchedule to Question model

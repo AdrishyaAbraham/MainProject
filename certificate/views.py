@@ -11,10 +11,14 @@ from pptx import Presentation
 from django.core.mail import send_mail, EmailMessage
 import requests
 import os
+from django.views.decorators.cache import never_cache
+
 
 
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def create(request):
 	if request.method == "POST":
 		csv = request.FILES.get('csv')
@@ -39,6 +43,8 @@ def create(request):
 # 	return redirect('view_certificate_status')
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def track(request, id, slug):
 	event = Event.objects.filter(slug=slug, id=id).first()
 	if event.message:
@@ -154,11 +160,14 @@ def track(request, id, slug):
 
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def view_certificate_status(request):
 	return render(request, 'certificate/view_certificate_status.html',{
 		'events': Event.objects.filter(user=request.user)
 		})
-
+@never_cache
+@login_required(login_url='login_page')
 def download_certificate(request, id, f_id):
     my_obj = get_object_or_404(Certificate_url,id = id, certificate_id = f_id)
     f_id = my_obj.certificate_id
@@ -169,6 +178,8 @@ def download_certificate(request, id, f_id):
     return redirect(f"https://docs.google.com/presentation/d/{f_id}/export/pdf")
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def index(request):
 	if request.method == "POST":
 		csv = request.FILES.get('csv')
@@ -375,7 +386,8 @@ def index(request):
 # 		'title': "All Events"
 # 		})
 
-
+@never_cache
+@login_required(login_url='login_page')
 @login_required
 def upload_template(request):
 	return render(request, 'certificate/upload_template.html')

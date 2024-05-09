@@ -10,7 +10,11 @@ from django.contrib.auth.decorators import login_required
 from .models import CustomUser, TeacherPersonalInfo, ProgressReportRequest
 from .forms import ProgressReportRequestForm
 from datetime import date
+from django.views.decorators.cache import never_cache
 
+
+@never_cache
+@login_required(login_url='login_page')
 def progress_report(request, reg):
     # Retrieve student information
     student = get_object_or_404(EnrolledStudent, id=reg)
@@ -71,6 +75,8 @@ def progress_report(request, reg):
     return render(request, 'progressreport/progressreport.html', context)
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def request_progress_report(request, teacher_id):
     # Retrieve the teacher based on the provided ID
     try:
@@ -95,6 +101,8 @@ def request_progress_report(request, teacher_id):
     return render(request, 'request_progress_report.html', {'form': form, 'teacher': teacher})
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def student_list(request):
     # Assuming user is logged in and is a GuideTeacher
     try:

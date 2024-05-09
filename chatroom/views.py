@@ -4,10 +4,13 @@ from django.views.decorators.cache import never_cache
 from school.models import *
 # Create your views here.
 
+@never_cache
+@login_required(login_url='login_page')
 def video_chat(request):
     return render(request, 'chatroom/counselling.html', {'name':request.user.name})
 
-
+@never_cache
+@login_required(login_url='login_page')
 def video_chat_students(request):
     return render(request, 'chatroom/counselling_student.html')
 

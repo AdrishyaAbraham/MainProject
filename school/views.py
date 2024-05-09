@@ -272,13 +272,15 @@ def update_section(request, section_id):
         form = SectionForm(instance=section_instance)
     return render(request, 'hod/update_classsection.html', {'form': form})
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def delete_section(request, section_id):
     section_instance = get_object_or_404(Section, id=section_id)
     section_instance.delete()
     return redirect('create-section')
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def create_guide_teacher(request):
     forms = GuideTeacherForm()
     if request.method == 'POST':
@@ -293,7 +295,8 @@ def create_guide_teacher(request):
     }
     return render(request, 'hod/create_guideteacher.html', context)    
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def create_session(request):
     forms = SessionForm()
     if request.method == 'POST':
@@ -307,14 +310,17 @@ def create_session(request):
         'session': session
     }
     return render(request, 'hod/create_session.html', context)
-@login_required
+
+@never_cache
+@login_required(login_url='login_page')
 def delete_session(request, session_id):
     session = get_object_or_404(Session, id=session_id)
     session.is_deleted = True
     session.save()
     return redirect('create-session')
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def update_session(request, session_id):
     session_instance = get_object_or_404(Session, id=session_id)
     
@@ -337,7 +343,8 @@ def update_session(request, session_id):
 
     return render(request, 'hod/create_session.html', context)
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def class_registration(request):
     forms = ClassRegistrationForm()
     if request.method == 'POST':
@@ -348,7 +355,8 @@ def class_registration(request):
     context = {'forms': forms}
     return render(request, 'hod/class_registration.html', context)
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def class_list(request):
     register_class = ClassRegistration.objects.all()
     context = {'register_class': register_class}
@@ -356,13 +364,15 @@ def class_list(request):
 
 
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def class_wise_student_registration(request):
     register_class = ClassRegistration.objects.all()
     context = {'register_class': register_class}
     return render(request, 'hod/hod_student/class-wise-student-registration.html', context)
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def student_registration(request):
     academic_info_form = AcademicInfoForm(request.POST or None)
     personal_info_form = PersonalInfoForm(request.POST or None, request.FILES or None)
@@ -423,22 +433,24 @@ def student_registration(request):
         'previous_academic_certificate_form': previous_academic_certificate_form
     }
     return render(request, 'hod/hod_student/student-registration.html', context)
-
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def student_list_priest(request):
     # Use select_related to prefetch related data
     student = AcademicInfo.objects.select_related('personal_info__user').filter(is_delete=False).order_by('-id')
     context = {'student': student}
     return render(request, 'priest/student_list.html', context)
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def student_list(request):
     # Use select_related to prefetch related data
     student = AcademicInfo.objects.select_related('personal_info__user').filter(is_delete=False).order_by('-id')
     context = {'student': student}
     return render(request, 'hod/hod_student/student-list.html', context)
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def student_profile(request, reg_no):
     student = AcademicInfo.objects.get(registration_no=reg_no)
     context = {
@@ -447,8 +459,8 @@ def student_profile(request, reg_no):
     return render(request, 'hod/hod_student/student-profile.html', context)
 
 
-
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def student_edit(request, reg_no):
     student = AcademicInfo.objects.get(registration_no=reg_no)
     academic_info_form = AcademicInfoForm(instance=student)
@@ -486,7 +498,8 @@ def student_edit(request, reg_no):
     return render(request, 'hod/hod_student/student-edit.html', context)
 
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def student_delete(request, reg_no):
     student = AcademicInfo.objects.get(registration_no=reg_no)
     student.is_delete = True
@@ -494,7 +507,8 @@ def student_delete(request, reg_no):
     return redirect('student-list')
 
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def student_search(request):
     forms = StudentSearchForm()
     cls_name = request.GET.get('class_info', None)
@@ -517,8 +531,8 @@ def student_search(request):
         return render(request, 'priest/student_serach.html', context)
     
 
-
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def enrolled_student(request):
     forms = EnrolledStudentForm()
     cls = request.GET.get('class_name', None)
@@ -530,7 +544,8 @@ def enrolled_student(request):
     return render(request, 'hod/hod_student/enrolled.html', context)
 
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def student_enrolled(request, reg):
     student = AcademicInfo.objects.get(registration_no=reg)
     forms = StudentEnrollForm()
@@ -550,7 +565,8 @@ def student_enrolled(request, reg):
     return render(request, 'hod/hod_student/student-enrolled.html', context)
 
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def enrolled_student_list(request):
     student = EnrolledStudent.objects.all()
     forms = SearchEnrolledStudentForm()
@@ -591,6 +607,7 @@ def add_talent_program(request):
     return render(request, 'hod/talent_program/talent_program_form.html')
 
 
+@never_cache
 @login_required(login_url='login_page')
 def talent_program_list(request):
     talent_programs = TalentProgram.objects.all()
@@ -602,7 +619,8 @@ def talent_program_list(request):
 
 from django.shortcuts import render
 from .models import TeacherNotice, Notice, EnrolledStudent, TeacherPersonalInfo
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def teacherdashboard(request):
     latest_notices = TeacherNotice.objects.all().order_by('-date_created')[:5]
     notices = Notice.objects.all().order_by('-date_created')[:5]  # Fetch the latest 5 notices
@@ -629,7 +647,8 @@ def teacherdashboard(request):
     return render(request, 'teacher/teacher_dashboard.html', context)
 
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def staff_take_attendance(request):
     subjects = ClassRegistration.objects.filter(staff_id=request.user.id)
     session_years = Session.objects.all()
@@ -642,14 +661,16 @@ def staff_take_attendance(request):
  
 
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def user_logout(request):
     logout(request)
     return redirect('/')
 from datetime import date, datetime, timedelta
 
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def register_priest(request):
     form = PreistPersonalInfoForm(request.POST or None, request.FILES or None)
 
@@ -691,8 +712,8 @@ def register_priest(request):
     return render(request, 'hod/register_priest.html', context)
 
 
-
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def view_priests(request):
     priests = PreistPersonalInfo.objects.all()
     context = {
@@ -700,8 +721,8 @@ def view_priests(request):
     }
     return render(request, 'hod/view_priest.html', context)
 
-
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def teacher_registration(request):
     form = TeacherPersonalInfoForm(request.POST or None, request.FILES or None)
     education_form = EducationInfoForm(request.POST or None)
@@ -748,15 +769,16 @@ def teacher_registration(request):
 
 
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def teacher_list(request):
     teacher = TeacherPersonalInfo.objects.filter(is_delete=False)
   
     context = {'teacher': teacher}
     return render(request, 'hod/teacher-list.html', context)
 
-
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def teacher_profile(request, teacher_id):
     teacher = get_object_or_404(TeacherPersonalInfo, id=teacher_id)
     context = {
@@ -764,7 +786,8 @@ def teacher_profile(request, teacher_id):
     }
     return render(request, 'hod/teacher-profile.html', context)
 
-
+@never_cache
+@login_required(login_url='login_page')
 @login_required
 def teacher_delete(request, teacher_id):
     teacher = TeacherPersonalInfo.objects.get(id=teacher_id)
@@ -772,6 +795,8 @@ def teacher_delete(request, teacher_id):
     teacher.save()
     return redirect('teacher-list')
 
+@never_cache
+@login_required(login_url='login_page')
 @login_required
 def teacher_edit(request, teacher_id):
     teacher = TeacherPersonalInfo.objects.get(id=teacher_id)
@@ -804,7 +829,8 @@ def teacher_edit(request, teacher_id):
 
 
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def add_designation(request):
     forms = AddDesignationForm()
     if request.method == 'POST':
@@ -817,7 +843,8 @@ def add_designation(request):
     return render(request, 'hod/designation.html', context)
 
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def update_designation(request, designation_id):
     instance = get_object_or_404(Designation, id=designation_id)
     forms = AddDesignationForm(request.POST or None, instance=instance)
@@ -836,7 +863,8 @@ from django.core.exceptions import ObjectDoesNotExist
 #---------------attendance and leaves--------#
 
 from django.contrib.auth.decorators import login_required
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def mark_attendance(request):
     today = datetime.today().date()
 
@@ -894,7 +922,8 @@ def mark_attendance(request):
 
     return render(request, 'teacher/attendance/mark_attendance.html', {'students': students})
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def view_class_attendance(request):
     # Get the teacher's assigned class
     try:
@@ -912,7 +941,8 @@ def view_class_attendance(request):
 
     return render(request, 'teacher/attendance/view_class_attendance.html', {'attendance_records': attendance_records})
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def view_student_attendance(request):
     # Ensure the user is a student
     if not hasattr(request.user, 'personalinfo'):  # Replace with your student-related attribute check
@@ -926,7 +956,8 @@ def view_student_attendance(request):
 
 
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def student_leave_view(request):
     if request.method == "POST":
         form = LeaveReportStudentForm(request.POST)
@@ -961,8 +992,8 @@ def student_leave_view(request):
         "leaves": leaves
     }
     return render(request, 'student/student_leave_view.html', context)
-
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def student_leave_approve(request):
     if request.method == "POST":
         # Get the action from the POST data (approve or reject)
@@ -988,7 +1019,8 @@ def student_leave_approve(request):
     }
     return render(request, 'teacher/attendance/approved_leaves.html', context)
 
-@login_required
+@never_cache
+@login_required(login_url='login_page')
 def student_leave_reject(request, leave_id):
     leave = LeaveReportStudent.objects.get(id=leave_id)
     leave.leave_status = 2
@@ -997,6 +1029,8 @@ def student_leave_reject(request, leave_id):
 
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def teacher_review_leave_applications(request):
     # Fetch all leave applications that are pending
     pending_leaves = LeaveReportStudent.objects.filter(leave_status=LeaveReportStudent.PENDING)
@@ -1026,6 +1060,8 @@ def teacher_review_leave_applications(request):
 
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def staff_leave_apply(request):
     staff_user = request.user
     staff_personal_info = TeacherPersonalInfo.objects.get(user=staff_user)
@@ -1058,6 +1094,8 @@ def staff_leave_apply(request):
 
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def admin_review_leaves(request):
     # Fetch all leave applications that are pending
     pending_leaves = LeaveReportStaff.objects.filter(leave_status=LeaveReportStaff.PENDING).select_related('staff_id')
@@ -1093,6 +1131,8 @@ def admin_review_leaves(request):
 
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def staff_leave_approve(request, leave_id):
     leave = LeaveReportStaff.objects.get(id=leave_id)
     leave.leave_status = 1
@@ -1101,6 +1141,8 @@ def staff_leave_approve(request, leave_id):
  
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def staff_leave_reject(request, leave_id):
     leave = LeaveReportStaff.objects.get(id=leave_id)
     leave.leave_status = 2
@@ -1109,6 +1151,8 @@ def staff_leave_reject(request, leave_id):
  
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def admin_view_attendance(request):
     subjects = ClassInfo.objects.all()
     session_years = Session.objects.all()
@@ -1120,7 +1164,8 @@ def admin_view_attendance(request):
  
 #-------------grade promotion------#
 
-
+@never_cache
+@login_required(login_url='login_page')
 def determine_next_class(student):
     current_class = student.class_name
     current_session = current_class.session
@@ -1150,7 +1195,8 @@ def determine_next_class(student):
 
 
     
-
+@never_cache
+@login_required(login_url='login_page')
 def determine_next_class(student):
     current_class = student.class_name
     current_session = current_class.session
@@ -1182,6 +1228,8 @@ def determine_next_class(student):
     
     return next_class
 
+@never_cache
+@login_required(login_url='login_page')
 def promote_students(request):
     if request.method == 'POST':
         student_ids = request.POST.getlist('student_ids')
@@ -1216,7 +1264,8 @@ def promote_students(request):
     else:
         return redirect('select_class')
 
-
+@never_cache
+@login_required(login_url='login_page')
 def select_class(request):
     if request.method == 'POST':
         class_id = request.POST.get('class_id')
@@ -1251,7 +1300,8 @@ def select_class(request):
 
 
 
-
+@never_cache
+@login_required(login_url='login_page')
 @login_required
 def addNotice(request):    
     if request.user.is_authenticated:
@@ -1266,7 +1316,8 @@ def addNotice(request):
     else: 
         return redirect('hoddashboard') 
 
-
+@never_cache
+@login_required(login_url='login_page')
 @login_required
 def display_notices(request):
     if request.user.is_authenticated:
@@ -1277,7 +1328,9 @@ def display_notices(request):
     else:
         return redirect('hoddashboard')
 
-@login_required    
+@login_required 
+@never_cache
+@login_required(login_url='login_page')   
 def update_notice(request, notice_id):
     notice_instance = get_object_or_404(Notice, id=notice_id)
 
@@ -1302,6 +1355,8 @@ def update_notice(request, notice_id):
 
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def class_student(request):
     # Assuming user is logged in and is a GuideTeacher
     try:
@@ -1320,6 +1375,8 @@ def class_student(request):
 
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def add_teacher_notice(request):    
     if request.user.is_authenticated:
         form = TeacherNoticeForm()
@@ -1333,7 +1390,9 @@ def add_teacher_notice(request):
     else: 
         return redirect('hoddashboard')
 
-@login_required   
+@login_required 
+@never_cache
+@login_required(login_url='login_page')  
 def display_teacher_notices(request):
     if request.user.is_authenticated:
         notice = TeacherNotice.objects.all().order_by('-date_created')
@@ -1345,7 +1404,9 @@ def display_teacher_notices(request):
     else:
         return redirect('hoddashboard')
 
-@login_required    
+@login_required 
+@never_cache
+@login_required(login_url='login_page')   
 def add_resource(request):
     # Assuming the teacher is the logged-in user
     teacher = TeacherPersonalInfo.objects.get(user=request.user)
@@ -1379,11 +1440,15 @@ def basename(value):
     return os.path.basename(value)
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def view_resource():
  return HttpResponseRedirect(reverse('index_resource'))
 
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def edit_resource(request, id):  
     if request.method == 'POST':
         resource = Resource.objects.get(pk=id)
@@ -1406,6 +1471,8 @@ def edit_resource(request, id):
 
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def delete_resource(request):
     if request.method == 'POST':
      resource = Resource.objects.get(pk=id)
@@ -1414,11 +1481,15 @@ def delete_resource(request):
 
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def uploadresource(request):
    return render(request,'teacher/resource.html')
 
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def index_resource(request):
     # Get the logged-in teacher's resources
     teacher = TeacherPersonalInfo.objects.get(user=request.user)
@@ -1427,6 +1498,8 @@ def index_resource(request):
     return render(request,'teacher/index_resource.html', {'resources': resources})
 
 
+@login_required(login_url='login_page')
+@never_cache
 @login_required(login_url='login_page')
 def view_marks(request, student_id):
     
@@ -1445,6 +1518,7 @@ def view_marks(request, student_id):
     context = {'student': student, 'marks': marks}
     return render(request, 'teacher/view_mark.html', context)
 
+@never_cache
 @login_required(login_url='login_page')
 def add_mark(request, student_id):
     student = get_object_or_404(EnrolledStudent, id=student_id)
@@ -1491,7 +1565,7 @@ def add_mark(request, student_id):
     return render(request, 'teacher/mark_updation.html', context)
 
 
-
+@never_cache
 @login_required(login_url='login_page')
 def schedule_class(request):
     try:
@@ -1525,7 +1599,7 @@ def schedule_class(request):
     return render(request, 'teacher/schedule_online_class.html', context)
 
 
-# views.py
+@never_cache
 @login_required(login_url='login_page')
 def scheduled_classes(request):
     try:
@@ -1546,6 +1620,8 @@ def scheduled_classes(request):
     # else:
     #         return render(request, 'teacher/no_classes.html')
 
+@never_cache
+@login_required(login_url='login_page')
 def delete_scheduled_class(request, scheduled_class_id):
     # Retrieve the scheduled class object
     scheduled_class = get_object_or_404(ScheduledClass, pk=scheduled_class_id)
@@ -1598,7 +1674,8 @@ def studentdashboard(request):
 #     resources = Resource.objects.filter(class_registration=student_class)
 #     return render(request, 'student/resources.html', {'resources': resources})
 
-
+@never_cache
+@login_required(login_url='login_page')
 @login_required
 def student_resources(request):
     # Fetch the PersonalInfo for the logged-in user.
@@ -1633,6 +1710,8 @@ def editprofile(request):
 
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def online_classes(request):
     # Get the enrolled student based on the logged-in user
     student = EnrolledStudent.objects.get(student__personal_info__user=request.user)
@@ -1654,6 +1733,7 @@ def attend_class(request, class_id):
     # Additional logic to check if the student is assigned to the class
     return render(request, 'student/attend_class.html', {'online_class': online_class})
 # views.py
+@never_cache
 @login_required(login_url='login_page')
 def view_own_marks(request):
     try:
@@ -1665,6 +1745,7 @@ def view_own_marks(request):
         # Handle the case where EnrolledStudent does not exist for the user
         return HttpResponse("EnrolledStudent does not exist for this user.")
 
+@never_cache
 @login_required(login_url='login_page')
 def request_certificate(request, reg):
     # Assuming the user is logged in
@@ -1710,6 +1791,7 @@ def request_certificate(request, reg):
     return render(request, 'student/request_certificate.html', context)
 
 #-----register for talent search------#
+@never_cache
 @login_required(login_url='login_page')
 def talent_programs(request):
     programs = TalentProgram.objects.all()
@@ -1742,7 +1824,7 @@ def talent_programs(request):
 
     return render(request, 'talentsearch/programs.html', context)
 
-
+@never_cache
 @login_required(login_url='login_page')
 def registration_details(request, registration_id):
     registration = get_object_or_404(Registration, id=registration_id)
@@ -1788,6 +1870,8 @@ def parentdashboard(request):
 
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def view_student_attendance(request):
 
     # Check if user is a parent by getting their children
@@ -1803,6 +1887,8 @@ def view_student_attendance(request):
     return render(request, 'parent/viewattendace.html', {'attendance_by_student': attendance_by_student})
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def view_resources(request):
     # Fetch students associated with the logged-in parent
     students = PersonalInfo.objects.filter(guardian__user=request.user)
@@ -1814,6 +1900,8 @@ def view_resources(request):
     return render(request, 'parent/downloadresource.html', {'student_resources': student_resources})
 
 @login_required
+@never_cache
+@login_required(login_url='login_page')
 def download_resource(request, resource_id):
     resource = get_object_or_404(Resource, id=resource_id)
     # Check if the user trying to download the resource is indeed the parent of the student the resource is for.
@@ -1827,6 +1915,7 @@ def download_resource(request, resource_id):
     response['Content-Disposition'] = f'attachment; filename="{resource.resource_title}"'
     return response
 
+@never_cache
 @login_required(login_url='login_page')
 def view_student_marks(request):
     try:
@@ -1865,6 +1954,8 @@ def view_student_marks(request):
 import pandas as pd
 from django.http import HttpResponse
 
+@never_cache
+@login_required(login_url='login_page')
 def download_student_details(request):
     # Assuming you want to retrieve all students
     students = CustomUser.objects.filter(role='student')
